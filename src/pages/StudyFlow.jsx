@@ -1,3 +1,6 @@
+import { AppSidebar } from '../studyflow/components/AppSidebar';
+import { AppTopBar } from '../studyflow/components/AppTopBar';
+import { HeroCard, StatCards } from '../studyflow/components/DashboardCards';
 import { useState, useEffect, useRef, useMemo, useCallback, Fragment } from 'react';
 import {
     Menu as MenuIcon, Search, Bell, Home, FileText, Layers, CheckSquare,
@@ -13,7 +16,7 @@ import {
 } from '@mui/material';
 
 import {
-    orbFloat1Anim, orbFloat2Anim, orbFloat3Anim, fadeInUpAnim, deadlineShimmerAnim,
+    orbFloat1Anim, orbFloat2Anim, orbFloat3Anim, deadlineShimmerAnim,
     GLASS_PANEL, HEAT_COLORS,
     DEMO_COURSES, DEMO_CARDS, DEMO_EVENTS,
 } from '../studyflow/constants';
@@ -26,16 +29,11 @@ import { StatistikyView } from '../studyflow/components/StatistikyView';
 import { PlanovacView } from '../studyflow/components/PlanovacView';
 import { ZenMode } from '../studyflow/components/ZenMode';
 
-const searchIcon = (type) => {
-    if (type === 'notes') return <FileText size={16} color={COLORS.blue} />;
-    if (type === 'cards') return <Layers size={16} color={COLORS.accent} />;
-    if (type === 'tests') return <CheckSquare size={16} color={COLORS.green} />;
-    return <BookOpen size={16} color={COLORS.orange} />;
-};
+
 
 import { StudyFlowProvider, useStudyFlow } from '../studyflow/StudyFlowContext';
 
-const escapeRegExp = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 
 export default function StudyFlow() {
     return (
@@ -50,7 +48,7 @@ function StudyFlowContent() {
         courses, setCourses, 
         cards, setCards, 
         events, setEvents, 
-        notes, getAllTopics,
+        notes, // getAllTopics,
         exportData, importData
     } = useStudyFlow();
 
@@ -73,7 +71,7 @@ function StudyFlowContent() {
     const [showZen, setShowZen] = useState(false);
     const [zenCards, setZenCards] = useState(null);
     const searchInputRef = useRef(null);
-    const [addTopicForCourse, setAddTopicForCourse] = useState(null);
+    // const [addTopicForCourse, setAddTopicForCourse] = useState(null);
     const mainScrollRef = useRef(null);
     const searchBlurTimerRef = useRef(null);
 
@@ -119,7 +117,8 @@ function StudyFlowContent() {
     }, []);
 
     useEffect(() => {
-        return () => clearTimeout(searchBlurTimerRef.current);
+        const currentRef = searchBlurTimerRef.current;
+        return () => clearTimeout(currentRef);
     }, []);
 
     useEffect(() => {
@@ -196,19 +195,19 @@ function StudyFlowContent() {
         setCards(prev => prev.filter(c => c.courseId !== courseId));
     }, [setCourses, setCards]);
 
-    const handleAddTopicFromTree = useCallback((courseId) => {
-        setAddTopicForCourse(courseId);
-    }, []);
+    // const handleAddTopicFromTree = useCallback((courseId) => {
+    //     setAddTopicForCourse(courseId);
+    // }, []);
 
-    const handleSaveNewTopic = useCallback((topic) => {
-        if (!addTopicForCourse) return;
-        setCourses(prev => prev.map(c =>
-            c.id === addTopicForCourse
-                ? { ...c, topics: [...(c.topics || []), topic] }
-                : c
-        ));
-        setAddTopicForCourse(null);
-    }, [addTopicForCourse, setCourses]);
+    // const handleSaveNewTopic = useCallback((topic) => {
+    //     if (!addTopicForCourse) return;
+    //     setCourses(prev => prev.map(c =>
+    //         c.id === addTopicForCourse
+    //             ? { ...c, topics: [...(c.topics || []), topic] }
+    //             : c
+    //     ));
+    //     setAddTopicForCourse(null);
+    // }, [addTopicForCourse, setCourses]);
 
     const handleRenameTopic = useCallback((courseId, topicId, newName) => {
         setCourses(prev => prev.map(c =>
@@ -281,9 +280,9 @@ function StudyFlowContent() {
         setSearchQuery('');
     }, []);
 
-    const scrollRef = useRef(null);
-    const scrollLeft = () => scrollRef.current?.scrollBy({ left: -300, behavior: 'smooth' });
-    const scrollRight = () => scrollRef.current?.scrollBy({ left: 300, behavior: 'smooth' });
+    // const scrollRef = useRef(null);
+    // const scrollLeft = () => scrollRef.current?.scrollBy({ left: -300, behavior: 'smooth' });
+    // const scrollRight = () => scrollRef.current?.scrollBy({ left: 300, behavior: 'smooth' });
 
     const heatmapData = useMemo(() => Array.from({ length: 14 }, () =>
         Array.from({ length: 7 }, () => Math.random() > 0.5 ? Math.floor(Math.random() * 4 + 1) : 0)
@@ -344,129 +343,7 @@ function StudyFlowContent() {
 
 
             {/* ═══════════════ SIDEBAR & LAYOUT ═══════════════ */}
-            {/* Mobile Overlay */}
-            {sidebarOpen && (
-                <Box onClick={() => setSidebarOpen(false)}
-                    sx={{ position: 'fixed', inset: 0, bgcolor: 'rgba(0,0,0,0.6)', zIndex: 190, backdropFilter: 'blur(4px)', transition: 'opacity 0.3s', display: { md: 'none' } }} />
-            )}
-
-            <Box component="aside"
-                sx={{
-                    position: { xs: 'fixed', md: 'sticky' }, top: 0, left: 0, alignSelf: { md: 'flex-start' },
-                    height: { xs: '100%', md: '100vh' }, display: 'flex', flexDirection: 'column',
-                    borderRight: '1px solid rgba(255,255,255,0.06)', transition: 'all 0.3s', zIndex: 200, flexShrink: 0,
-                    backdropFilter: 'blur(48px)', background: 'rgba(22,27,39,0.85)',
-                    width: sidebarOpen ? 260 : { xs: 260, md: 68 },
-                    transform: sidebarOpen ? 'translateX(0)' : { xs: 'translateX(-100%)', md: 'translateX(0)' },
-                }}>
-
-                {/* Profile area */}
-                <Stack sx={{ p: 2, borderBottom: '1px solid rgba(255,255,255,0.06)', gap: 1.5, overflow: 'hidden', flexShrink: 0, transition: 'all 0.3s', ...(!sidebarOpen && { alignItems: 'center', justifyContent: 'center' }) }}>
-                    <Stack direction="row" alignItems="center" sx={{ gap: sidebarOpen ? 1.5 : 0, justifyContent: sidebarOpen ? 'flex-start' : 'center' }}>
-                        <Box sx={{ width: 36, height: 36, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, background: 'linear-gradient(135deg, #9055FF, #13E2DA)', color: 'white', flexShrink: 0, boxShadow: '0 4px 16px rgba(144,85,255,0.35)' }}>
-                            JN
-                        </Box>
-                        {sidebarOpen && (
-                            <Stack sx={{ whiteSpace: 'nowrap', minWidth: 0 }}>
-                                <Typography sx={{ fontWeight: 600, fontSize: 13, color: 'white' }}>Jan Novák</Typography>
-                                <Stack direction="row" alignItems="center" gap={0.5} mt={0.25}>
-                                    <Flame size={11} style={{ color: COLORS.orange }} />
-                                    <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>32 dní v řadě</Typography>
-                                </Stack>
-                            </Stack>
-                        )}
-                    </Stack>
-                    {sidebarOpen && (
-                        <Box sx={{ width: '100%' }}>
-                            <Stack direction="row" justifyContent="space-between" mb={0.5}>
-                                <Typography sx={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>Dnešní cíl</Typography>
-                                <Typography sx={{ fontSize: 10, color: 'rgba(255,255,255,0.55)', fontFamily: 'monospace' }}>{currentDone}/{TOTAL_DAILY}</Typography>
-                            </Stack>
-                            <LinearProgress variant="determinate" value={dailyPercent}
-                                sx={{ height: 5, borderRadius: 99, bgcolor: 'rgba(255,255,255,0.06)', '& .MuiLinearProgress-bar': { borderRadius: 99, background: 'linear-gradient(90deg, #9055FF, #13E2DA)', transition: 'all 0.7s' } }} />
-                        </Box>
-                    )}
-                </Stack>
-
-                {/* Nav items */}
-                <Box component="nav" sx={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }, py: 1.5, px: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                    <NavItem icon={<Home size={19} />} label="Dashboard" active={activeNav === 'Dashboard'} open={sidebarOpen} onClick={() => { setOpenTopic(null); setActiveNav('Dashboard'); }} />
-                    <NavItem icon={<FileText size={19} />} label="Poznámky" active={activeNav === 'Poznámky'} open={sidebarOpen} onClick={() => { setOpenTopic(null); setActiveNav('Poznámky'); }} />
-                    <NavItem icon={<Layers size={19} />} label="Kartičky" badge={cards.filter(c => c.type === 'flashcard').length || null} active={activeNav === 'Kartičky'} open={sidebarOpen} onClick={() => { setOpenTopic(null); setActiveNav('Kartičky'); }} />
-                    <NavItem icon={<CheckSquare size={19} />} label="Testy" badge={cards.filter(c => c.type === 'test').length || null} active={activeNav === 'Testy'} open={sidebarOpen} onClick={() => { setOpenTopic(null); setActiveNav('Testy'); }} />
-                    <NavItem icon={<BarChart2 size={19} />} label="Statistiky" active={activeNav === 'Statistiky'} open={sidebarOpen} onClick={() => setActiveNav('Statistiky')} />
-                    <NavItem icon={<Calendar size={19} />} label="Plánovač" active={activeNav === 'Plánovač'} open={sidebarOpen} onClick={() => setActiveNav('Plánovač')} />
-
-                    <Box sx={{ my: 1, borderTop: '1px solid rgba(255,255,255,0.05)', mx: 1 }} />
-
-                    <NavItem icon={<Settings size={19} />} label="Nastavení" active={activeNav === 'Nastavení'} open={sidebarOpen} onClick={() => setActiveNav('Nastavení')} />
-                    <NavItem icon={<HelpCircle size={19} />} label="O aplikaci" active={activeNav === 'O aplikaci'} open={sidebarOpen} onClick={() => setActiveNav('O aplikaci')} />
-
-                    {/* Courses tree */}
-                    {sidebarOpen && (
-                        <Box sx={{ mt: 2, px: 0.5 }}>
-                            <Box sx={{ height: '1px', width: '100%', mb: 2, mx: 0.5, background: 'linear-gradient(90deg, transparent, rgba(124,111,247,0.25), transparent)' }} />
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5} px={1}>
-                                <Typography sx={{ fontSize: 12, fontFamily: '"Clash Display", sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Moje kurzy</Typography>
-                                <IconButton size="small" onClick={() => setActiveNav('Poznámky')}
-                                    sx={{ width: 24, height: 24, borderRadius: 2, color: 'rgba(255,255,255,0.35)', '&:hover': { color: COLORS.accent, bgcolor: 'rgba(124,111,247,0.1)', boxShadow: '0 0 10px rgba(124,111,247,0.3)' } }}>
-                                    <Plus size={14} />
-                                </IconButton>
-                            </Stack>
-                            <Stack gap={0.5}>
-                                {courses.map(c => (
-                                    <TreeItem key={c.id} title={c.name} color={c.color} courseId={c.id} topics={c.topics || []}
-                                        topicStats={topicStats}
-                                        onClick={() => { setOpenTopic(null); setActiveNav('Poznámky'); }}
-                                        onTopicClick={(topic) => setOpenTopic({ courseId: c.id, course: c, topic })}
-                                        onRenameCourse={handleRenameCourse}
-                                        onDeleteCourse={handleDeleteCourse}
-                                        onAddTopic={() => handleAddTopicFromTree(c.id)}
-                                        onRenameTopic={handleRenameTopic}
-                                        onDeleteTopic={handleDeleteTopic}
-                                        onMoveTopic={handleMoveTopic} />
-                                ))}
-                            </Stack>
-
-                            <Box sx={{ my: 3, borderTop: '1px solid rgba(255,255,255,0.05)', mx: 1 }} />
-                            
-                            <Stack gap={1} px={1} mb={2}>
-                                <Typography sx={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.05em', mb: 0.5 }}>Správa dat</Typography>
-                                <Button 
-                                    size="small" 
-                                    startIcon={<Download size={14} />} 
-                                    onClick={exportData}
-                                    sx={{ 
-                                        justifyContent: 'flex-start', color: 'rgba(255,255,255,0.5)', textTransform: 'none', fontSize: 12, 
-                                        '&:hover': { color: COLORS.primary, background: 'rgba(144,85,255,0.05)' } 
-                                    }}
-                                >
-                                    Exportovat data
-                                </Button>
-                                <Button 
-                                    size="small" 
-                                    component="label"
-                                    startIcon={<Upload size={14} />}
-                                    sx={{ 
-                                        justifyContent: 'flex-start', color: 'rgba(255,255,255,0.5)', textTransform: 'none', fontSize: 12,
-                                        '&:hover': { color: COLORS.green, background: 'rgba(74,222,128,0.05)' } 
-                                    }}
-                                >
-                                    Importovat data
-                                    <input
-                                        type="file"
-                                        hidden
-                                        accept=".json"
-                                        onChange={(e) => {
-                                            if (e.target.files?.[0]) importData(e.target.files[0]);
-                                        }}
-                                    />
-                                </Button>
-                            </Stack>
-                        </Box>
-                    )}
-                </Box>
-            </Box>
+            <AppSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} activeNav={activeNav} setActiveNav={setActiveNav} setOpenTopic={setOpenTopic} courses={courses} cards={cards} events={events} topicStats={topicStats} currentDone={currentDone} TOTAL_DAILY={TOTAL_DAILY} dailyPercent={dailyPercent} handleRenameCourse={handleRenameCourse} handleDeleteCourse={handleDeleteCourse} handleRenameTopic={handleRenameTopic} handleDeleteTopic={handleDeleteTopic} handleMoveTopic={handleMoveTopic} exportData={exportData} importData={importData} />
 
             {/* ═══════════════ MAIN AREA ═══════════════ */}
             <Stack sx={{ flex: 1, height: '100vh', position: 'relative', overflow: 'hidden', transition: 'all 0.3s' }}>
@@ -479,137 +356,10 @@ function StudyFlowContent() {
                 </Box>
 
                 {/* ── TOPBAR ── */}
-                <Stack component="header" direction="row" alignItems="center" justifyContent="space-between"
-                    sx={{ height: 56, position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(48px)', borderBottom: '1px solid rgba(255,255,255,0.05)', px: 2.5, flexShrink: 0, background: 'rgba(15,17,23,0.6)' }}>
-                    <Stack direction="row" alignItems="center" gap={2}>
-                        <Stack direction="row" alignItems="center" gap={1.5}>
-                            <IconButton onClick={() => setSidebarOpen(!sidebarOpen)} size="small"
-                                sx={{ color: 'rgba(255,255,255,0.55)', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.05)' } }}>
-                                <MenuIcon size={18} />
-                            </IconButton>
-                            <Typography sx={{ fontSize: 18, fontFamily: '"Clash Display", sans-serif', fontWeight: 700, background: 'linear-gradient(90deg, #7C6FF7, #4F9CF9, #7C6FF7)', backgroundSize: '200% auto', backgroundClip: 'text', WebkitBackgroundClip: 'text', color: 'transparent', animation: 'shimmer 3s linear infinite', '@keyframes shimmer': { '0%': { backgroundPosition: '0% center' }, '100%': { backgroundPosition: '200% center' } }, display: { xs: 'none', sm: 'block' } }}>
-                                StudyFlow
-                            </Typography>
-                        </Stack>
-                    </Stack>
-
-                    {/* Search bar */}
-                    <Box sx={{ position: 'relative', display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center', flex: 1, maxWidth: 'xl', mx: { xs: 1.5, sm: 3 } }}>
-
-                        <Box sx={{ position: 'relative', width: '100%', transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)', maxWidth: searchFocused ? 560 : 480 }}>
-                            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)' }} />
-                            <TextField
-                                inputRef={searchInputRef}
-                                placeholder="Hledat poznámky, kartičky, kurzy..."
-                                size="small"
-                                fullWidth
-                                value={searchQuery}
-                                onFocus={() => {
-                                    clearTimeout(searchBlurTimerRef.current);
-                                    setSearchFocused(true);
-                                }}
-                                onBlur={() => {
-                                    clearTimeout(searchBlurTimerRef.current);
-                                    searchBlurTimerRef.current = setTimeout(() => setSearchFocused(false), 200);
-                                }}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: 3, py: 0.25, pl: 4.5, pr: 7, fontSize: 13, color: 'white',
-                                        background: 'rgba(30,37,54,0.5)',
-                                        '& fieldset': { borderColor: searchFocused ? 'rgba(124,111,247,0.4)' : 'rgba(255,255,255,0.07)' },
-                                        '&:hover fieldset': { borderColor: 'rgba(124,111,247,0.3)' },
-                                    },
-                                    '& input::placeholder': { color: '#4A5270', opacity: 1 },
-                                }}
-                            />
-                            <Typography component="kbd" sx={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 10, px: 0.75, py: 0.25, borderRadius: 1, fontFamily: 'monospace', bgcolor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'var(--text-muted)' }}>⌘K</Typography>
-                        </Box>
-
-                        {searchFocused && (
-                            <Paper elevation={8} sx={{ position: 'absolute', top: 44, width: '100%', maxWidth: 560, borderRadius: 3, overflow: 'hidden', zIndex: 101, animation: `${fadeInUpAnim} 0.3s ease-out forwards`, background: 'var(--bg-secondary)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                                {filteredItems.length === 0 ? (
-                                    <Typography sx={{ p: 2, fontSize: 13, color: 'rgba(255,255,255,0.35)', textAlign: 'center' }}>
-                                        {searchQuery.trim() ? `Žádné výsledky pro „${searchQuery}"` : 'Začni psát pro vyhledání'}
-                                    </Typography>
-                                ) : (
-                                    <>
-                                        {!searchQuery.trim() && (
-                                            <Typography sx={{ px: 1.5, py: 0.75, fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.35)', borderBottom: '1px solid rgba(255,255,255,0.05)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Návrhy</Typography>
-                                        )}
-                                        {['courses', 'notes', 'cards', 'tests'].map(type => {
-                                            const items = filteredItems.filter(i => i.type === type);
-                                            if (!items.length) return null;
-                                            const labels = { notes: '📄 Témata', cards: '🃏 Kartičky', tests: '✅ Testy', courses: '📚 Kurzy' };
-                                            return (
-                                                <Fragment key={type}>
-                                                    {searchQuery.trim() && (
-                                                        <Typography sx={{ px: 1.5, py: 0.75, fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.35)', borderBottom: '1px solid rgba(255,255,255,0.05)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{labels[type]}</Typography>
-                                                    )}
-                                                    {items.map((item, idx) => {
-                                                        const highlight = (text, query) => {
-                                                            if (!query || !text) return text;
-                                                            const safeQuery = escapeRegExp(query);
-                                                            const parts = String(text).split(new RegExp(`(${safeQuery})`, 'gi'));
-                                                            return parts.map((p, j) => p.toLowerCase() === query.toLowerCase() 
-                                                                ? <Box key={j} component="span" sx={{ color: COLORS.primary, fontWeight: 800, background: 'rgba(144,85,255,0.15)', px: '2px', borderRadius: '1.5px' }}>{p}</Box> 
-                                                                : p
-                                                            );
-                                                        };
-                                                        return (
-                                                            <Stack key={idx} direction="row" alignItems="center" gap={1.5}
-                                                                onClick={() => handleSearchItemClick(item)}
-                                                                sx={{ px: 1.5, py: 1, cursor: 'pointer', transition: 'background 0.2s', '&:hover': { bgcolor: 'rgba(255,255,255,0.04)' } }}>
-                                                                {searchIcon(item.type)}
-                                                                <Box>
-                                                                    <Typography sx={{ fontSize: 13, color: '#C8CDD8' }}>{highlight(item.label, searchQuery)}</Typography>
-                                                                    {item.subtitle && <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{highlight(item.subtitle, searchQuery)}</Typography>}
-                                                                    {item.searchText && item.searchText.toLowerCase().includes(searchQuery.toLowerCase()) && !item.label.toLowerCase().includes(searchQuery.toLowerCase()) && (
-                                                                        <Typography sx={{ fontSize: 9, color: COLORS.green, mt: 0.25, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                                                            ✓ v obsahu
-                                                                        </Typography>
-                                                                    )}
-                                                                </Box>
-                                                            </Stack>
-                                                        );
-                                                    })}
-                                                </Fragment>
-                                            );
-                                        })}
-                                    </>
-                                )}
-                            </Paper>
-                        )}
-                    </Box>
-
-                    {/* Right side */}
-                    <Stack direction="row" alignItems="center" gap={1}>
-                        <IconButton sx={{ display: { md: 'none' }, color: 'rgba(255,255,255,0.55)', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.05)' } }}>
-                            <Search size={18} />
-                        </IconButton>
-                        <Box sx={{ position: 'relative' }}>
-                            <IconButton onClick={() => setNotifOpen(!notifOpen)}
-                                sx={{ color: 'rgba(255,255,255,0.55)', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.05)' } }}>
-                                <Bell size={18} />
-                                <Box sx={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, bgcolor: COLORS.red, borderRadius: '50%', border: '2px solid var(--bg-primary)' }} />
-                            </IconButton>
-                            {notifOpen && (
-                                <Paper elevation={8} sx={{ position: 'absolute', right: 0, top: 44, width: 320, maxWidth: 'calc(100vw - 1rem)', borderRadius: 3, overflow: 'hidden', zIndex: 102, animation: `${fadeInUpAnim} 0.3s ease-out forwards`, background: 'var(--bg-secondary)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                        <Typography sx={{ fontSize: 13, fontWeight: 600 }}>Oznámení</Typography>
-                                        <IconButton size="small" onClick={() => setNotifOpen(false)} sx={{ color: 'rgba(255,255,255,0.35)', '&:hover': { color: 'white' } }}><X size={14} /></IconButton>
-                                    </Stack>
-                                    <NotifItem color={COLORS.blue} title="Nový test k dispozici" sub="Lineární algebra · před 2h" />
-                                    <NotifItem color={COLORS.green} title="Série 30 dní! 🎉" sub="Gratulujeme! · před 1d" />
-                                    <NotifItem color={COLORS.orange} title="5 kartiček expiruje" sub="Dějepis · před 3d" isLast />
-                                </Paper>
-                            )}
-                        </Box>
-                    </Stack>
-                </Stack>
+                <AppTopBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} searchFocused={searchFocused} setSearchFocused={setSearchFocused} searchQuery={searchQuery} setSearchQuery={setSearchQuery} filteredItems={filteredItems} handleSearchItemClick={handleSearchItemClick} searchInputRef={searchInputRef} searchBlurTimerRef={searchBlurTimerRef} notifOpen={notifOpen} setNotifOpen={setNotifOpen} />
 
                 {/* ── MAIN SCROLL AREA ── */}
-                <Box ref={mainScrollRef} component="main" sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' }, position: 'relative', zIndex: 10, px: { xs: 1.5, sm: 2.5, md: 4, lg: 6 }, py: { xs: 2, sm: 3, md: 4 }, pb: 12 }} onScroll={handleMainScroll}>
+                <Box ref={mainScrollRef} component="main" sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', ...HIDE_SCROLLBAR, position: 'relative', zIndex: 10, px: { xs: 1.5, sm: 2.5, md: 4, lg: 6 }, py: { xs: 2, sm: 3, md: 4 }, pb: 12 }} onScroll={handleMainScroll}>
                     {openTopic ? (
                         <TopicView
                             course={courses.find(c => c.id === openTopic.courseId) || openTopic.course}
@@ -644,259 +394,54 @@ function StudyFlowContent() {
                         <Stack sx={{ maxWidth: 1140, mx: 'auto', gap: { xs: '20px', sm: '28px', md: '32px' } }}>
 
                             {/* ── SECTION 1: HERO ── */}
-                            <Box component="section" sx={{
-                                position: 'relative', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)',
-                                borderRadius: { xs: 4, sm: 6 }, p: { xs: '20px', sm: '28px', lg: '40px' },
-                                display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'flex-start', md: 'center' },
-                                justifyContent: 'space-between', gap: { xs: '20px', sm: '32px' }, background: 'var(--bg-secondary)',
-                            }}>
-                                <Box sx={{
-                                    position: 'absolute', top: 0, right: 0, width: '100%', height: '100%', opacity: 0.3, pointerEvents: 'none',
-                                    background: 'radial-gradient(circle at 80% 0%, rgba(124,111,247,0.2) 0%, transparent 60%), radial-gradient(circle at 20% 100%, rgba(79,156,249,0.15) 0%, transparent 60%)',
-                                }} />
-
-                                <Stack sx={{ position: 'relative', zIndex: 10, gap: '12px', maxWidth: 'xl' }}>
-                                    <FadeUp delay={50}>
-                                        <Typography variant="h1" sx={{
-                                            fontSize: { xs: '1.5rem', sm: '1.875rem', lg: '2.75rem' }, fontFamily: '"Clash Display", sans-serif',
-                                            fontWeight: 700, mb: 1, letterSpacing: '-0.025em', lineHeight: 1.15, color: 'white',
-                                        }}>
-                                            Ahoj Jane! <Typography component="span" sx={{ display: 'inline-block', animation: 'bounce 2s infinite', '@keyframes bounce': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } } }}>👋</Typography><br />
-                                            <Typography component="span" sx={{ background: 'linear-gradient(to right, #7C6FF7, #4F9CF9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Dnes jsi v ráži.</Typography>
-                                        </Typography>
-                                    </FadeUp>
-                                    <FadeUp delay={100}>
-                                        <Typography sx={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: 1.625 }}>
-                                            Máš před sebou skvělý den. Zbývá ti probrat <Typography component="strong" sx={{ color: 'white', fontWeight: 500 }}>{TOTAL_DAILY - currentDone} kartiček</Typography> a mrknout na <Typography component="strong" sx={{ color: 'white', fontWeight: 500 }}>2 nedokončené testy</Typography>. Pustíme se do toho?
-                                        </Typography>
-                                    </FadeUp>
-                                </Stack>
-
-                                <FadeUp delay={150} sx={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '12px', flexShrink: 0, width: { xs: '100%', md: 'auto' }, minWidth: { md: 240 } }}>
-                                    <Typography sx={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: COLORS.accent, fontWeight: 700, mb: 0.5, pl: 0.5 }}>Rychlé akce</Typography>
-                                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)', md: 'repeat(2, 1fr)' }, gap: { xs: 1, sm: 1.5 } }}>
-                                        {[
-                                            { icon: <Play size={14} style={{ fill: 'currentColor' }} />, label: 'Opakování', accent: COLORS.accent, action: () => { setZenCards(null); setShowZen(true); } },
-                                            { icon: <FileText size={14} />, label: 'Poznámka', accent: COLORS.blue, action: () => { setOpenTopic(null); setActiveNav('Poznámky'); } },
-                                            { icon: <Layers size={14} />, label: 'Kartička', accent: COLORS.green, action: () => { setOpenTopic(null); setActiveNav('Kartičky'); } },
-                                            { icon: <CheckSquare size={14} />, label: 'Nový test', accent: COLORS.orange, action: () => { setOpenTopic(null); setActiveNav('Testy'); } },
-                                        ].map((a, i) => (
-                                            <Button key={i} onClick={a.action} sx={{
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, px: 2, py: 1.5,
-                                                borderRadius: 4, fontSize: '13px', fontWeight: 700, textTransform: 'none',
-                                                transition: 'all 0.2s', '&:hover': { transform: 'scale(1.03)' }, '&:active': { transform: 'scale(0.98)' },
-                                                background: `${a.accent}15`, color: a.accent, border: `1px solid ${a.accent}30`, boxShadow: `0 4px 15px ${a.accent}15`,
-                                            }}>
-                                                {a.icon} {a.label}
-                                            </Button>
-                                        ))}
-                                    </Box>
-                                </FadeUp>
-                            </Box>
+                            <HeroCard TOTAL_DAILY={TOTAL_DAILY} currentDone={currentDone} setShowZen={setShowZen} setZenCards={setZenCards} setOpenTopic={setOpenTopic} setActiveNav={setActiveNav} />
 
                             {/* ── SECTION 2: THREE STAT CARDS ── */}
-                            <Box component="section" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: { xs: 2, sm: '20px' } }}>
-
-                                {/* Daily Goal */}
-                                <FadeUp delay={80} sx={{
-                                    border: '1px solid rgba(255,255,255,0.06)', borderRadius: 4, p: '20px', position: 'relative',
-                                    overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center',
-                                    background: 'var(--bg-secondary)', transition: 'all 0.3s',
-                                    '&:hover': { borderColor: 'rgba(255,255,255,0.12)', transform: 'translateY(-4px)', boxShadow: '0 12px 40px rgba(0,0,0,0.3)' },
-                                }}>
-                                    <Typography sx={{ position: 'absolute', top: 20, left: 20, fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Dnešní cíl</Typography>
-                                    <Box sx={{ position: 'relative', width: 112, height: 112, mt: '20px' }}>
-                                        <svg viewBox="0 0 36 36" style={{ display: 'block', margin: '0 auto', width: '100%', height: '100%' }}>
-                                            <path fill="none" stroke="#1E2536" strokeWidth="3.8" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                            <path fill="none" strokeWidth="3.8" strokeLinecap="round" stroke="url(#goalGrad)" strokeDasharray={`${dailyPercent}, 100`} style={{ transition: 'stroke-dasharray 0.8s ease' }} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                            <defs><linearGradient id="goalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stopColor="#7C6FF7" /><stop offset="100%" stopColor="#4ADE80" />
-                                            </linearGradient></defs>
-                                        </svg>
-                                        <Stack sx={{ position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center' }}>
-                                            <Typography sx={{ fontSize: '1.5rem', fontFamily: 'monospace', fontWeight: 700, lineHeight: 1 }}>{currentDone}<Typography component="span" sx={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>/{TOTAL_DAILY}</Typography></Typography>
-                                            <Typography sx={{ fontSize: '10px', color: 'var(--text-muted)', mt: 0.25 }}>karet</Typography>
-                                        </Stack>
-                                    </Box>
-                                    <Stack direction="row" sx={{
-                                        width: '100%', mt: 2, borderRadius: 3, px: 2, py: 1.25,
-                                        justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer',
-                                        background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
-                                        transition: 'background 0.2s', '&:hover': { background: 'rgba(255,255,255,0.04)' },
-                                        '&:hover .arrow-icon': { transform: 'translateX(4px)' },
-                                    }}>
-                                        <Typography sx={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Zbývá <Typography component="strong" sx={{ color: 'white' }}>{TOTAL_DAILY - currentDone}</Typography></Typography>
-                                        <Box className="arrow-icon" sx={{ transition: 'transform 0.2s', display: 'flex' }}><ArrowRight size={14} style={{ color: '#7C6FF7' }} /></Box>
-                                    </Stack>
-                                </FadeUp>
-
-                                {/* Streak */}
-                                <FadeUp delay={140} sx={{
-                                    border: '1px solid rgba(255,255,255,0.06)', borderRadius: 4, p: 2, display: 'flex', flexDirection: 'column',
-                                    justifyContent: 'space-between', background: 'var(--bg-secondary)', minWidth: 0, transition: 'all 0.3s',
-                                    '&:hover': { borderColor: 'rgba(255,255,255,0.12)', transform: 'translateY(-4px)', boxShadow: '0 12px 40px rgba(0,0,0,0.3)' },
-                                }}>
-                                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5, gap: 1, minWidth: 0 }}>
-                                        <Box sx={{ minWidth: 0 }}>
-                                            <Stack direction="row" sx={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', mb: 0.5, alignItems: 'center', gap: 0.5 }}>
-                                                <Typography sx={{ fontSize: 'inherit', fontWeight: 'inherit', color: 'inherit', textTransform: 'inherit', letterSpacing: 'inherit' }}>Tvá série</Typography>
-                                                <Flame size={12} style={{ color: '#FB923C', flexShrink: 0 }} />
-                                            </Stack>
-                                            <Typography sx={{ fontSize: '1.875rem', fontFamily: 'monospace', fontWeight: 700, color: 'white', lineHeight: 1 }}>32 <Typography component="span" sx={{ fontSize: '1rem', color: 'var(--text-secondary)', fontFamily: '"DM Sans", sans-serif', fontWeight: 500 }}>dní</Typography></Typography>
-                                        </Box>
-                                        <Chip label="Nejdelší: 45" size="small" sx={{ fontSize: '10px', fontWeight: 500, flexShrink: 0, whiteSpace: 'nowrap', height: 'auto', py: 0.5, px: 0.25, borderRadius: 2, background: 'rgba(251,146,60,0.08)', color: '#FB923C', border: '1px solid rgba(251,146,60,0.15)', '& .MuiChip-label': { px: 0.75 } }} />
-                                    </Stack>
-                                    <Box sx={{ minWidth: 0 }}>
-                                        <Typography sx={{ fontSize: '10px', color: 'var(--text-muted)', mb: 1, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tento týden</Typography>
-                                        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px' }}>
-                                            {['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'].map((d, i) => (
-                                                <Stack key={i} sx={{ alignItems: 'center', gap: 0.5 }}>
-                                                    <Typography sx={{ fontSize: '9px', color: 'var(--text-muted)', lineHeight: 1 }}>{d}</Typography>
-                                                    <Box sx={{
-                                                        width: '100%', aspectRatio: '1', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px',
-                                                        ...(i < 4
-                                                            ? { background: 'rgba(74,222,128,0.15)', color: '#4ADE80' }
-                                                            : i === 4
-                                                                ? { background: 'rgba(251,146,60,0.15)', color: '#FB923C' }
-                                                                : { background: 'rgba(255,255,255,0.03)', color: 'var(--text-muted)' }
-                                                        ),
-                                                    }}>
-                                                        {i < 4 ? <CheckSquare size={10} /> : i === 4 ? <Flame size={10} /> : '·'}
-                                                    </Box>
-                                                </Stack>
-                                            ))}
-                                        </Box>
-                                    </Box>
-                                </FadeUp>
-
-                                {/* Tip of the day (flip) */}
-                                <FadeUp delay={200} sx={{ position: 'relative', height: '100%', minHeight: { xs: 250, sm: 280 }, perspective: '1000px' }}>
-                                    <Box sx={{ width: '100%', height: '100%' }}
-                                        onClick={() => {
-                                            if (!tipFlipped && !tipStatus) setTipFlipped(true);
-                                        }}>
-                                        <Box sx={{ transition: 'transform 0.6s', transformStyle: 'preserve-3d', position: 'relative', width: '100%', height: '100%', transform: tipFlipped ? 'rotateY(180deg)' : 'none' }}>
-                                            <Stack sx={{
-                                                border: '1px solid', borderRadius: 4, p: '20px', transition: 'all 0.7s',
-                                                position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
-                                                ...(!tipStatus ? { cursor: 'pointer', '&:hover': { borderColor: 'rgba(255,255,255,0.1)' } } : {}),
-                                                ...(tipStatus === 'success'
-                                                    ? { background: 'rgba(74,222,128,0.1)', borderColor: 'rgba(74,222,128,0.4)', boxShadow: '0 0 30px rgba(74,222,128,0.15)' }
-                                                    : tipStatus === 'fail'
-                                                        ? { background: 'rgba(248,113,113,0.1)', borderColor: 'rgba(248,113,113,0.4)', boxShadow: '0 0 30px rgba(248,113,113,0.15)' }
-                                                        : { background: 'linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary))', borderColor: 'rgba(255,255,255,0.06)' }
-                                                ),
-                                            }}>
-                                                <Stack direction="row" sx={{ alignItems: 'center', gap: 1, color: '#4F9CF9', fontSize: '0.75rem', fontWeight: 600, mb: 1.5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                                    <Lightbulb size={14} style={{ color: tipStatus === 'success' ? '#4ADE80' : tipStatus === 'fail' ? '#F87171' : undefined }} />
-                                                    <Typography sx={{ fontSize: 'inherit', fontWeight: 'inherit', color: 'inherit', textTransform: 'inherit', letterSpacing: 'inherit' }}>
-                                                        {tipStatus === 'success' ? 'Skvělá práce!' : tipStatus === 'fail' ? 'Nevadí, příště to půjde!' : 'Tip dne'}
-                                                    </Typography>
-                                                </Stack>
-                                                <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', px: 1 }}>
-                                                    <Typography sx={{
-                                                        fontFamily: '"Clash Display", sans-serif', fontSize: '1.125rem', fontWeight: 500, lineHeight: 1.4,
-                                                        transition: 'color 0.5s',
-                                                        color: tipStatus === 'success' ? '#4ADE80' : tipStatus === 'fail' ? '#F87171' : 'white',
-                                                    }}>
-                                                        {tipStatus ? 'Tenhle tip už máš zmáknutý.' : 'Co je to derivace funkce?'}
-                                                    </Typography>
-                                                </Box>
-                                                <Typography sx={{
-                                                    textAlign: 'center', fontSize: '11px', mt: 1.5, py: 1, borderRadius: 2, transition: 'color 0.5s, background 0.5s',
-                                                    background: tipStatus === 'success' ? 'rgba(74,222,128,0.1)' : tipStatus === 'fail' ? 'rgba(248,113,113,0.1)' : 'rgba(255,255,255,0.03)',
-                                                    color: tipStatus === 'success' ? '#4ADE80' : tipStatus === 'fail' ? '#F87171' : 'var(--text-muted)',
-                                                }}>
-                                                    {tipStatus ? 'Dokončeno ✓' : 'Klikni pro zobrazení odpovědi'}
-                                                </Typography>
-                                            </Stack>
-                                            <Stack sx={{
-                                                border: '1px solid rgba(124,111,247,0.25)', borderRadius: 4, p: '20px', justifyContent: 'space-between',
-                                                position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
-                                                background: 'linear-gradient(135deg, #1A2033, #121624)',
-                                            }}>
-                                                <Stack direction="row" sx={{ alignItems: 'center', gap: 1, color: '#4F9CF9', fontSize: '0.75rem', fontWeight: 600, mb: 1, textTransform: 'uppercase', letterSpacing: '0.05em' }}><Lightbulb size={14} /> <Typography sx={{ fontSize: 'inherit', fontWeight: 'inherit', color: 'inherit', textTransform: 'inherit', letterSpacing: 'inherit' }}>Odpověď</Typography></Stack>
-                                                <Typography sx={{ fontSize: '0.875rem', lineHeight: 1.625, px: 0.5, color: '#C8CDD8' }}>
-                                                    Derivace udává okamžitou rychlost změny funkce. Geometricky odpovídá směrnici tečny ke grafu funkce v daném bodě.
-                                                </Typography>
-                                                <Stack direction="row" sx={{ gap: 1, mt: 1.5 }}>
-                                                    <Button sx={{
-                                                        flex: 1, py: 1, borderRadius: 3, fontSize: '0.75rem', fontWeight: 500, textTransform: 'none',
-                                                        display: 'flex', gap: 0.5, justifyContent: 'center', alignItems: 'center',
-                                                        transition: 'all 0.2s', '&:hover': { transform: 'scale(1.03)' }, '&:active': { transform: 'scale(0.97)' },
-                                                        background: 'rgba(248,113,113,0.1)', color: '#F87171', border: '1px solid rgba(248,113,113,0.2)',
-                                                    }}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setTipStatus('fail');
-                                                            setTimeout(() => setTipFlipped(false), 150);
-                                                        }}>
-                                                        <Frown size={13} /> Nevím
-                                                    </Button>
-                                                    <Button sx={{
-                                                        flex: 1, py: 1, borderRadius: 3, fontSize: '0.75rem', fontWeight: 500, textTransform: 'none',
-                                                        display: 'flex', gap: 0.5, justifyContent: 'center', alignItems: 'center',
-                                                        transition: 'all 0.2s', '&:hover': { transform: 'scale(1.03)' }, '&:active': { transform: 'scale(0.97)' },
-                                                        background: 'rgba(74,222,128,0.1)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.2)',
-                                                    }}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setTipStatus('success');
-                                                            setTimeout(() => setTipFlipped(false), 150);
-                                                        }}>
-                                                        <Smile size={13} /> Znám
-                                                    </Button>
-                                                </Stack>
-                                            </Stack>
-                                        </Box>
-                                    </Box>
-                                </FadeUp>
-                            </Box>
-
+                            <StatCards TOTAL_DAILY={TOTAL_DAILY} currentDone={currentDone} dailyPercent={dailyPercent} tipFlipped={tipFlipped} setTipFlipped={setTipFlipped} tipStatus={tipStatus} setTipStatus={setTipStatus} />
 
                             {/* ── SECTION 3: ACTIVITY ── */}
                             <Box component="section">
                                 <FadeUp sx={{
-                                    border: '1px solid rgba(255,255,255,0.06)', borderRadius: 4, p: { xs: 2, sm: '20px' },
+                                    border: `1px solid ${COLORS.border}`, borderRadius: 4, p: { xs: 2, sm: '20px' },
                                     display: 'flex', flexDirection: { xs: 'column', xl: 'row' }, gap: { xs: 2, sm: 3 }, alignItems: 'stretch',
-                                    background: 'var(--bg-secondary)',
+                                    background: COLORS.bgSecondary,
                                 }}>
                                     <Stack sx={{ flex: 1, justifyContent: 'center', minWidth: 0 }}>
                                         <Stack direction="row" sx={{ alignItems: 'center', gap: 1.25, mb: 2 }}>
-                                            <Box sx={{ width: 32, height: 32, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(79,156,249,0.1)' }}>
-                                                <Activity size={16} style={{ color: '#4F9CF9' }} />
+                                            <Box sx={{ width: 32, height: 32, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${COLORS.blue}1a` }}>
+                                                <Activity size={16} sx={{ color: COLORS.blue }} />
                                             </Box>
                                             <Typography variant="h2" sx={{ fontSize: '1rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 600 }}>Tvoje aktivita</Typography>
                                         </Stack>
 
                                         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: { xs: 1, sm: 1.5 }, mb: 2 }}>
-                                            <Box sx={{ borderRadius: 3, px: 2, py: 1.5, border: '1px solid rgba(255,255,255,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'rgba(15,17,23,0.4)' }}>
+                                            <Box sx={{ borderRadius: 3, px: 2, py: 1.5, border: `1px solid ${COLORS.borderSubtle}`, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: COLORS.overlayDark }}>
                                                 <Typography sx={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5, fontWeight: 600 }}>Karet za týden</Typography>
                                                 <Stack direction="row" sx={{ fontSize: '1.25rem', fontFamily: 'monospace', fontWeight: 700, color: 'white', alignItems: 'center', gap: 1, mt: 0.5 }}>
                                                     <Typography sx={{ fontSize: 'inherit', fontFamily: 'inherit', fontWeight: 'inherit', color: 'inherit' }}>248</Typography>
-                                                    <Chip icon={<TrendingUp size={10} />} label="12%" size="small" sx={{ fontSize: '10px', fontWeight: 500, height: 'auto', py: 0.25, background: 'rgba(74,222,128,0.1)', color: '#4ADE80', '& .MuiChip-icon': { color: '#4ADE80', ml: 0.5 }, '& .MuiChip-label': { px: 0.5 } }} />
+                                                    <Chip icon={<TrendingUp size={10} />} label="12%" size="small" sx={{ fontSize: '10px', fontWeight: 500, height: 'auto', py: 0.25, background: `${COLORS.green}1a`, color: COLORS.green, '& .MuiChip-icon': { color: COLORS.green, ml: 0.5 }, '& .MuiChip-label': { px: 0.5 } }} />
                                                 </Stack>
                                             </Box>
 
-                                            <Box sx={{ borderRadius: 3, px: 2, py: 1.5, border: '1px solid rgba(255,255,255,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'rgba(15,17,23,0.4)' }}>
+                                            <Box sx={{ borderRadius: 3, px: 2, py: 1.5, border: `1px solid ${COLORS.borderSubtle}`, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: COLORS.overlayDark }}>
                                                 <Typography sx={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5, fontWeight: 600 }}>Čas učení dnes</Typography>
                                                 <Stack sx={{ mt: 0.5 }}>
                                                     <Typography sx={{ fontSize: '1.25rem', fontFamily: 'monospace', fontWeight: 700, color: 'white', lineHeight: 1, mb: 0.75 }}>
-                                                        4<Typography component="span" sx={{ fontSize: '0.875rem', fontFamily: '"DM Sans", sans-serif', color: 'var(--text-muted)' }}>h</Typography> 20<Typography component="span" sx={{ fontSize: '0.875rem', fontFamily: '"DM Sans", sans-serif', color: 'var(--text-muted)' }}>m</Typography>
+                                                        4<Typography component="span" sx={{ fontSize: '0.875rem', fontFamily: '"DM Sans", sans-serif', color: COLORS.textMuted }}>h</Typography> 20<Typography component="span" sx={{ fontSize: '0.875rem', fontFamily: '"DM Sans", sans-serif', color: COLORS.textMuted }}>m</Typography>
                                                     </Typography>
-                                                    <Stack direction="row" sx={{ fontSize: '10px', color: '#4ADE80', alignItems: 'center', gap: 0.25, fontWeight: 500 }}>
+                                                    <Stack direction="row" sx={{ fontSize: '10px', color: COLORS.green, alignItems: 'center', gap: 0.25, fontWeight: 500 }}>
                                                         <TrendingUp size={10} /> <Typography sx={{ fontSize: 'inherit', color: 'inherit', fontWeight: 'inherit' }}>+45m oproti včerejšku</Typography>
                                                     </Stack>
                                                 </Stack>
                                             </Box>
 
-                                            <Box sx={{ borderRadius: 3, px: 2, py: 1.5, border: '1px solid rgba(255,255,255,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'rgba(15,17,23,0.4)' }}>
-                                                <Typography sx={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5, fontWeight: 600 }}>Úspěšnost</Typography>
+                                            <Box sx={{ borderRadius: 3, px: 2, py: 1.5, border: `1px solid ${COLORS.borderSubtle}`, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: COLORS.overlayDark }}>
+                                                <Typography sx={{ fontSize: '10px', color: COLORS.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5, fontWeight: 600 }}>Úspěšnost</Typography>
                                                 <Stack sx={{ mt: 0.5 }}>
                                                     <Typography sx={{ fontSize: '1.25rem', fontFamily: 'monospace', fontWeight: 700, color: 'white', lineHeight: 1, mb: 0.75 }}>
-                                                        85<Typography component="span" sx={{ fontSize: '0.875rem', fontFamily: '"DM Sans", sans-serif', color: 'var(--text-muted)' }}>%</Typography>
+                                                        85<Typography component="span" sx={{ fontSize: '0.875rem', fontFamily: '"DM Sans", sans-serif', color: COLORS.textMuted }}>%</Typography>
                                                     </Typography>
-                                                    <Stack direction="row" sx={{ fontSize: '10px', color: '#4ADE80', alignItems: 'center', gap: 0.25, fontWeight: 500 }}>
+                                                    <Stack direction="row" sx={{ fontSize: '10px', color: COLORS.green, alignItems: 'center', gap: 0.25, fontWeight: 500 }}>
                                                         <TrendingUp size={10} /> <Typography sx={{ fontSize: 'inherit', color: 'inherit', fontWeight: 'inherit' }}>+5% oproti včerejšku</Typography>
                                                     </Stack>
                                                 </Stack>
@@ -904,17 +449,17 @@ function StudyFlowContent() {
                                         </Box>
 
                                         <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, fontSize: '10px' }}>
-                                            <Chip icon={<Award size={11} />} label="Týden v řadě ✓" size="small" sx={{ fontSize: '10px', fontWeight: 500, height: 'auto', py: 0.5, px: 0.5, borderRadius: 2, background: 'rgba(74,222,128,0.06)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.12)', '& .MuiChip-icon': { color: '#4ADE80', ml: 0.5 }, '& .MuiChip-label': { px: 0.5 } }} />
-                                            <Chip icon={<Layers size={11} />} label="100 karet ✓" size="small" sx={{ fontSize: '10px', fontWeight: 500, height: 'auto', py: 0.5, px: 0.5, borderRadius: 2, background: 'rgba(124,111,247,0.06)', color: '#7C6FF7', border: '1px solid rgba(124,111,247,0.12)', '& .MuiChip-icon': { color: '#7C6FF7', ml: 0.5 }, '& .MuiChip-label': { px: 0.5 } }} />
-                                            <Chip icon={<Clock size={11} />} label="Speed run ✗" size="small" title="Dokonči test za méně než 2 minuty" sx={{ fontSize: '10px', fontWeight: 500, height: 'auto', py: 0.5, px: 0.5, borderRadius: 2, cursor: 'help', background: 'rgba(255,255,255,0.02)', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.04)', '& .MuiChip-icon': { color: 'var(--text-muted)', ml: 0.5 }, '& .MuiChip-label': { px: 0.5 } }} />
+                                            <Chip icon={<Award size={11} />} label="Týden v řadě ✓" size="small" sx={{ fontSize: '10px', fontWeight: 500, height: 'auto', py: 0.5, px: 0.5, borderRadius: 2, background: `${COLORS.green}0f`, color: COLORS.green, border: `1px solid ${COLORS.green}1f`, '& .MuiChip-icon': { color: COLORS.green, ml: 0.5 }, '& .MuiChip-label': { px: 0.5 } }} />
+                                            <Chip icon={<Layers size={11} />} label="100 karet ✓" size="small" sx={{ fontSize: '10px', fontWeight: 500, height: 'auto', py: 0.5, px: 0.5, borderRadius: 2, background: `${COLORS.primary}0f`, color: COLORS.accent, border: `1px solid ${COLORS.accent}1f`, '& .MuiChip-icon': { color: COLORS.accent, ml: 0.5 }, '& .MuiChip-label': { px: 0.5 } }} />
+                                            <Chip icon={<Clock size={11} />} label="Speed run ✗" size="small" title="Dokonči test za méně než 2 minuty" sx={{ fontSize: '10px', fontWeight: 500, height: 'auto', py: 0.5, px: 0.5, borderRadius: 2, cursor: 'help', background: COLORS.glassBgLight, color: COLORS.textMuted, border: `1px solid ${COLORS.borderSubtle}`, '& .MuiChip-icon': { color: COLORS.textMuted, ml: 0.5 }, '& .MuiChip-label': { px: 0.5 } }} />
                                         </Stack>
                                     </Stack>
 
                                     {/* Heatmap */}
                                     <Stack sx={{
                                         flexShrink: 0, justifyContent: 'center', borderRadius: 3, p: { xs: 1.5, sm: 2 },
-                                        border: '1px solid rgba(255,255,255,0.04)', width: { xs: '100%', xl: 'auto' }, overflow: 'hidden',
-                                        background: 'rgba(15,17,23,0.3)',
+                                        border: `1px solid ${COLORS.borderSubtle}`, width: { xs: '100%', xl: 'auto' }, overflow: 'hidden',
+                                        background: COLORS.bgDialog,
                                     }}>
                                         <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 1.5, fontSize: '10px', color: 'var(--text-muted)' }}>
                                             <Typography sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: 'inherit', color: 'inherit' }}>14 týdnů</Typography>
@@ -947,7 +492,7 @@ function StudyFlowContent() {
                             <Box component="section">
                                 <FadeUp>
                                     <Typography variant="h2" sx={{ fontSize: { xs: '1rem', sm: '1.125rem' }, fontFamily: '"Clash Display", sans-serif', fontWeight: 600, mb: { xs: 2, sm: 2.5 }, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <Target size={18} style={{ color: '#7C6FF7' }} /> Co tě čeká
+                                        <Target size={18} sx={{ color: COLORS.accent }} /> Co tě čeká
                                     </Typography>
                                 </FadeUp>
 
@@ -957,8 +502,8 @@ function StudyFlowContent() {
                                         <Box sx={{ borderRadius: 3, p: 2, height: '100%', ...GLASS_PANEL }}>
                                             <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                                                 <Typography variant="h3" sx={{ fontSize: '1rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1.25, color: 'white' }}>
-                                                    <Box sx={{ width: 28, height: 28, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(74,222,128,0.15)' }}>
-                                                        <CheckSquare size={15} style={{ color: '#4ADE80' }} />
+                                                    <Box sx={{ width: 28, height: 28, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${COLORS.green}26` }}>
+                                                        <CheckSquare size={15} sx={{ color: COLORS.green }} />
                                                     </Box>
                                                     Úkoly
                                                 </Typography>
@@ -978,14 +523,14 @@ function StudyFlowContent() {
                                                             '&:hover .task-title': task.done ? {} : { color: 'white' },
                                                             '&:hover .task-check': task.done ? {} : { opacity: 0.6 },
                                                         }}>
-                                                        <Box className="task-icon-box" sx={{ p: 0.75, borderRadius: 2, transition: 'background 0.2s', bgcolor: task.done ? 'transparent' : 'rgba(255,255,255,0.04)' }}>
-                                                            <Layers size={15} style={{ color: '#7C6FF7' }} />
+                                                        <Box className="task-icon-box" sx={{ p: 0.75, borderRadius: 2, transition: 'background 0.2s', bgcolor: task.done ? 'transparent' : `${COLORS.white}0a` }}>
+                                                            <Layers size={15} sx={{ color: COLORS.accent }} />
                                                         </Box>
                                                         <Typography className="task-title" sx={{ fontSize: '0.875rem', fontWeight: 500, transition: 'all 0.3s', flex: 1, textDecoration: task.done ? 'line-through' : 'none', color: task.done ? 'var(--text-muted)' : 'rgba(255,255,255,0.8)' }}>
                                                             {task.title}
                                                         </Typography>
                                                         <Box className="task-check" sx={{ flexShrink: 0, transition: 'all 0.3s', opacity: task.done ? 1 : 0, transform: task.done ? 'scale(1.1)' : 'scale(1)' }}>
-                                                            <CheckSquare size={16} style={{ color: task.done ? '#4ADE80' : 'var(--text-muted)' }} />
+                                                            <CheckSquare size={16} sx={{ color: task.done ? COLORS.green : COLORS.textMuted }} />
                                                         </Box>
                                                     </Stack>
                                                 ))}
@@ -1000,8 +545,8 @@ function StudyFlowContent() {
                                     <FadeUp delay={80}>
                                         <Box sx={{ borderRadius: 3, p: 2, height: '100%', ...GLASS_PANEL }}>
                                             <Typography variant="h3" sx={{ fontSize: '1rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1.25, color: 'white' }}>
-                                                <Box sx={{ width: 28, height: 28, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(248,113,113,0.15)' }}>
-                                                    <Calendar size={15} style={{ color: '#F87171' }} />
+                                                <Box sx={{ width: 28, height: 28, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${COLORS.red}26` }}>
+                                                    <Calendar size={15} sx={{ color: COLORS.red }} />
                                                 </Box>
                                                 Blížící se zkoušky
                                             </Typography>
@@ -1018,7 +563,7 @@ function StudyFlowContent() {
                                                                 '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' },
                                                             }}>
                                                                 <Box sx={{ width: 32, height: 32, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: `${color}15` }}>
-                                                                    <FileText size={14} style={{ color }} />
+                                                                    <FileText size={14} sx={{ color }} />
                                                                 </Box>
                                                                 <Box sx={{ flex: 1, minWidth: 0 }}>
                                                                     <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{exam.title}</Typography>
@@ -1044,8 +589,8 @@ function StudyFlowContent() {
                                     <FadeUp delay={160} sx={{ gridColumn: { sm: 'span 2', lg: 'span 1' } }}>
                                         <Box sx={{ borderRadius: 3, p: 2, height: '100%', ...GLASS_PANEL }}>
                                             <Typography variant="h3" sx={{ fontSize: '1rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1.25, color: 'white' }}>
-                                                <Box sx={{ width: 28, height: 28, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(251,146,60,0.15)' }}>
-                                                    <Clock size={15} style={{ color: '#FB923C' }} />
+                                                <Box sx={{ width: 28, height: 28, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${COLORS.orange}26` }}>
+                                                    <Clock size={15} sx={{ color: COLORS.orange }} />
                                                 </Box>
                                                 Deadliny
                                             </Typography>
@@ -1108,7 +653,7 @@ function StudyFlowContent() {
                             <Box component="section">
                                 <FadeUp delay={50} sx={{ mb: { xs: 2, sm: 2.5 } }}>
                                     <Typography variant="h2" sx={{ fontSize: { xs: '1rem', sm: '1.125rem' }, fontFamily: '"Clash Display", sans-serif', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <Folder size={18} style={{ color: '#4ADE80' }} /> Pokračuj tam, kde jsi skončil
+                                        <Folder size={18} sx={{ color: COLORS.green }} /> Pokračuj tam, kde jsi skončil
                                     </Typography>
                                 </FadeUp>
 
@@ -1117,10 +662,10 @@ function StudyFlowContent() {
                                     py: 2, my: -2, scrollSnapType: 'x mandatory',
                                 }}>
                                     {[
-                                        { title: "Matematika", clr: "#60a5fa", notes: 12, tests: 2, cards: 145, date: "Dnes, 09:41", icon: <Folder style={{ color: '#60a5fa' }} />, delay: 0 },
-                                        { title: "Angličtina B2", clr: "#c084fc", notes: 5, tests: 1, cards: 320, date: "Včera", icon: <Folder style={{ color: '#c084fc' }} />, delay: 100 },
-                                        { title: "Fyzika", clr: "#4ade80", notes: 8, tests: 4, cards: 85, date: "Před 2 dny", icon: <Folder style={{ color: '#4ade80' }} />, delay: 200 },
-                                        { title: "Dějepis", clr: "#facc15", notes: 24, tests: 0, cards: 410, date: "Před 3 dny", icon: <Folder style={{ color: '#facc15' }} />, delay: 300 },
+                                        { title: "Matematika", clr: COLORS.blue, notes: 12, tests: 2, cards: 145, date: "Dnes, 09:41", icon: <Folder sx={{ color: COLORS.blue }} />, delay: 0 },
+                                        { title: "Angličtina B2", clr: COLORS.purple, notes: 5, tests: 1, cards: 320, date: "Včera", icon: <Folder sx={{ color: COLORS.purple }} />, delay: 100 },
+                                        { title: "Fyzika", clr: COLORS.green, notes: 8, tests: 4, cards: 85, date: "Před 2 dny", icon: <Folder sx={{ color: COLORS.green }} />, delay: 200 },
+                                        { title: "Dějepis", clr: COLORS.yellow, notes: 24, tests: 0, cards: 410, date: "Před 3 dny", icon: <Folder sx={{ color: COLORS.yellow }} />, delay: 300 },
                                     ].map((item, idx) => (
                                         <FadeUp key={idx} delay={item.delay} sx={{ width: { xs: '78vw', sm: '55vw', md: 'calc(33.333% - 0.75rem)', lg: 'calc(25% - 0.75rem)' }, flexShrink: 0, scrollSnapAlign: 'start', minHeight: 220 }}>
                                             <HoloCard item={item} />
@@ -1136,11 +681,11 @@ function StudyFlowContent() {
                                 <FadeUp sx={{ gridColumn: { lg: 'span 3' } }}>
                                     <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
                                         <Typography variant="h2" sx={{ fontSize: '1.125rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            Kartičky na dnes <Chip label={TOTAL_DAILY - currentDone + completedCards.length} size="small" sx={{ fontSize: '11px', fontFamily: 'monospace', fontWeight: 500, height: 'auto', py: 0.25, background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)', '& .MuiChip-label': { px: 1 } }} />
+                                            Kartičky na dnes <Chip label={TOTAL_DAILY - currentDone + completedCards.length} size="small" sx={{ fontSize: '11px', fontFamily: 'monospace', fontWeight: 500, height: 'auto', py: 0.25, background: COLORS.glassBgLight, color: COLORS.textMuted, '& .MuiChip-label': { px: 1 } }} />
                                         </Typography>
                                         <Button 
                                             onClick={() => { setZenCards(null); setShowZen(true); }}
-                                            sx={{ fontSize: '0.75rem', color: '#7C6FF7', textTransform: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 0.5, '&:hover': { textDecoration: 'underline', bgcolor: 'transparent' } }}>
+                                            sx={{ fontSize: '0.75rem', color: COLORS.accent, textTransform: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 0.5, '&:hover': { textDecoration: 'underline', bgcolor: 'transparent' } }}>
                                             Začít vše <ArrowRight size={13} />
                                         </Button>
                                     </Stack>
@@ -1149,14 +694,14 @@ function StudyFlowContent() {
                                         <Stack sx={{ alignItems: 'center', justifyContent: 'center', py: 6, px: 3, border: '1px dashed rgba(255,255,255,0.08)', borderRadius: 4, background: 'rgba(255,255,255,0.01)' }}>
                                             <Typography sx={{ fontSize: '3rem', mb: 2, animation: 'bounce 3s infinite', '@keyframes bounce': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } } }}>🏖️</Typography>
                                             <Typography variant="h3" sx={{ fontSize: '1.125rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 700, color: 'white', mb: 1 }}>Vše hotovo!</Typography>
-                                            <Typography sx={{ fontSize: '0.875rem', color: 'var(--text-muted)', textAlign: 'center', maxWidth: 320 }}>Pro dnešek máš volno. Odpočiň si nebo pokračuj v testech z jiných kurzů.</Typography>
+                                            <Typography sx={{ fontSize: '0.875rem', color: COLORS.textMuted, textAlign: 'center', maxWidth: 320 }}>Pro dnešek máš volno. Odpočiň si nebo pokračuj v testech z jiných kurzů.</Typography>
                                         </Stack>
                                     ) : (
                                         <Stack sx={{ gap: 1.5 }}>
                                             <Stack sx={{ gap: 1 }}>
-                                                <Stack direction="row" sx={{ fontSize: '0.75rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 600, mb: 1, alignItems: 'center', gap: 1, color: '#F87171' }}>
-                                                    <Box sx={{ width: 20, height: 20, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(248,113,113,0.12)' }}>
-                                                        <Frown size={11} style={{ color: '#F87171' }} />
+                                                <Stack direction="row" sx={{ fontSize: '0.75rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 600, mb: 1, alignItems: 'center', gap: 1, color: COLORS.red }}>
+                                                    <Box sx={{ width: 20, height: 20, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${COLORS.red}1f` }}>
+                                                        <Frown size={11} sx={{ color: COLORS.red }} />
                                                     </Box>
                                                     <Typography sx={{ fontSize: 'inherit', fontFamily: 'inherit', fontWeight: 'inherit', color: 'inherit' }}>Těžké (2)</Typography>
                                                 </Stack>
@@ -1167,9 +712,9 @@ function StudyFlowContent() {
                                             <Box sx={{ height: 1, width: '100%', my: 0.5, background: 'rgba(255,255,255,0.04)' }} />
 
                                             <Stack sx={{ gap: 1 }}>
-                                                <Stack direction="row" sx={{ fontSize: '0.75rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 600, mb: 1, alignItems: 'center', gap: 1, color: '#FB923C' }}>
-                                                    <Box sx={{ width: 20, height: 20, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(251,146,60,0.12)' }}>
-                                                        <Target size={11} style={{ color: '#FB923C' }} />
+                                                <Stack direction="row" sx={{ fontSize: '0.75rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 600, mb: 1, alignItems: 'center', gap: 1, color: COLORS.orange }}>
+                                                    <Box sx={{ width: 20, height: 20, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${COLORS.orange}1f` }}>
+                                                        <Target size={11} sx={{ color: COLORS.orange }} />
                                                     </Box>
                                                     <Typography sx={{ fontSize: 'inherit', fontFamily: 'inherit', fontWeight: 'inherit', color: 'inherit' }}>Střední (10)</Typography>
                                                 </Stack>
@@ -1177,9 +722,9 @@ function StudyFlowContent() {
                                                 <CardRow title="React useEffect hook" color="#FB923C" delay={260} completed={completedCards.includes('React useEffect hook')} onToggle={toggleCard} />
                                                 <Button sx={{
                                                     width: '100%', textAlign: 'center', mt: 1, py: 1.5, fontSize: '0.75rem', fontWeight: 600, textTransform: 'none',
-                                                    color: 'rgba(255,255,255,0.5)', borderRadius: 3, transition: 'all 0.2s',
-                                                    border: '1px dashed rgba(255,255,255,0.1)',
-                                                    '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.04)' },
+                                                    color: `${COLORS.white}80`, borderRadius: 3, transition: 'all 0.2s',
+                                                    border: `1px dashed ${COLORS.white}1a`,
+                                                    '&:hover': { color: 'white', bgcolor: `${COLORS.white}0a` },
                                                     '&:active': { transform: 'scale(0.98)' },
                                                 }}>
                                                     Zobrazit dalších 8 karet <ChevronDown size={14} style={{ display: 'inline', marginLeft: 4, marginBottom: 2 }} />
@@ -1198,10 +743,10 @@ function StudyFlowContent() {
                                         overflow: 'hidden', height: 'fit-content', background: 'rgba(22,27,39,0.5)',
                                     }}>
                                         <Box sx={{ position: 'absolute', top: 0, right: 0, p: 1.5, opacity: 0.05 }}>
-                                            <Activity size={100} style={{ color: '#F87171' }} />
+                                            <Activity size={100} sx={{ color: COLORS.red }} />
                                         </Box>
                                         <Typography variant="h2" sx={{ fontSize: '1rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 600, color: 'white', mb: 2.5, display: 'flex', alignItems: 'center', gap: 1, position: 'relative', zIndex: 10 }}>
-                                            Nejslabší kartičky <Flame size={16} style={{ color: '#F87171' }} />
+                                            Nejslabší kartičky <Flame size={16} sx={{ color: COLORS.red }} />
                                         </Typography>
 
                                         <Stack sx={{ gap: 1.5, position: 'relative', zIndex: 10, mb: 3 }}>
@@ -1214,7 +759,7 @@ function StudyFlowContent() {
                                             width: '100%', py: 1.25, borderRadius: 3, fontWeight: 700, textTransform: 'none',
                                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, fontSize: '0.875rem',
                                             position: 'relative', zIndex: 10, transition: 'all 0.2s', '&:hover': { transform: 'scale(1.02)' },
-                                            background: 'rgba(248,113,113,0.1)', color: '#F87171', border: '1px solid rgba(248,113,113,0.2)', boxShadow: '0 4px 15px rgba(248,113,113,0.15)',
+                                            background: `${COLORS.red}1a`, color: COLORS.red, border: `1px solid ${COLORS.red}33`, boxShadow: `0 4px 15px ${COLORS.red}26`,
                                         }}>
                                             Procvičit slabá místa <ArrowRight size={14} strokeWidth={2.5} />
                                         </Button>
@@ -1228,9 +773,9 @@ function StudyFlowContent() {
 
 
                             {/* ── FOOTER ── */}
-                            <Box component="footer" sx={{ mt: 4, pt: 3, borderTop: '1px solid rgba(255,255,255,0.04)', textAlign: 'center' }}>
-                                <Stack direction="row" sx={{ fontSize: '11px', color: 'var(--text-muted)', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                                    <Typography sx={{ background: 'linear-gradient(to right, #7C6FF7, #4F9CF9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: '"Clash Display", sans-serif', fontWeight: 700, fontSize: 'inherit' }}>StudyFlow</Typography>
+                            <Box component="footer" sx={{ mt: 4, pt: 3, borderTop: `1px solid ${COLORS.borderSubtle}`, textAlign: 'center' }}>
+                                <Stack direction="row" sx={{ fontSize: '11px', color: COLORS.textMuted, alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                                    <Typography sx={{ background: `linear-gradient(to right, ${COLORS.accent}, ${COLORS.blue})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: '"Clash Display", sans-serif', fontWeight: 700, fontSize: 'inherit' }}>StudyFlow</Typography>
                                     <Typography sx={{ fontSize: 'inherit', color: 'inherit' }}>•</Typography>
                                     <Typography sx={{ fontSize: 'inherit', color: 'inherit' }}>Vytvořeno s ❤️ pro lepší učení</Typography>
                                 </Stack>

@@ -34,7 +34,7 @@ export const HEAT_COLORS = {
 
 // --- COURSE CONSTANTS ---
 export const COURSE_COLORS = [
-    '#60a5fa', '#3b82f6', '#38bdf8', '#06b6d4',
+    COLORS.blue, '#3b82f6', '#38bdf8', '#06b6d4',
     COLORS.green, '#22c55e', '#a3e635', COLORS.yellow,
     COLORS.orange, COLORS.red, '#f43f5e', '#e879f9',
     COLORS.purple, '#a78bfa', '#818cf8', '#ffffff',
@@ -49,12 +49,12 @@ export const COURSE_ICONS = [
 // --- DEMO DATA ---
 export const DEMO_COURSES = [
     {
-        id: 'c1', name: 'Matematika', color: '#60a5fa', color2: null, useGradient: false, icon: '🧮',
+        id: 'c1', name: 'Matematika', color: COLORS.blue, color2: null, useGradient: false, icon: '🧮',
         description: 'Lineární algebra, analýza a statistika', createdAt: '2026-01-15', lastOpened: '2026-03-07T09:41:00', notes: 12, cards: 145, tests: 2,
         topics: [
-            { id: 't1', name: 'Lineární algebra', color: '#60a5fa', notes: 5, cards: 60, createdAt: '2026-01-16' },
-            { id: 't2', name: 'Matematická analýza', color: '#38bdf8', notes: 4, cards: 50, createdAt: '2026-01-20' },
-            { id: 't3', name: 'Statistika', color: '#818cf8', notes: 3, cards: 35, createdAt: '2026-02-01' },
+            { id: 't1', name: 'Lineární algebra', color: COLORS.blue, notes: 5, cards: 60, createdAt: '2026-01-16' },
+            { id: 't2', name: 'Matematická analýza', color: COLORS.blue, notes: 4, cards: 50, createdAt: '2026-01-20' },
+            { id: 't3', name: 'Statistika', color: COLORS.blue, notes: 3, cards: 35, createdAt: '2026-02-01' },
         ],
     },
     {
@@ -62,7 +62,7 @@ export const DEMO_COURSES = [
         description: 'Gramatika, slovní zásoba a konverzace', createdAt: '2026-01-20', lastOpened: '2026-03-06T18:22:00', notes: 5, cards: 320, tests: 1,
         topics: [
             { id: 't4', name: 'Gramatika', color: COLORS.purple, notes: 2, cards: 120, createdAt: '2026-01-21' },
-            { id: 't5', name: 'Phrasal verbs', color: '#38bdf8', notes: 3, cards: 200, createdAt: '2026-01-28' },
+            { id: 't5', name: COLORS.blue, notes: 3, cards: 200, createdAt: '2026-01-28' },
         ],
     },
     {
@@ -86,12 +86,12 @@ export const DEMO_COURSES = [
 ];
 
 export const DEMO_CARDS = [
-    { id: 'k1', type: 'flashcard', front: 'Co je determinant matice?', back: 'Skalární hodnota charakterizující čtvercovou matici. Značí se det(A) nebo |A|.', courseId: 'c1', courseName: 'Matematika', courseColor: '#60a5fa', topicId: 't1', topicName: 'Lineární algebra', difficulty: 'hard', successRate: 35, totalReviews: 18, lastReviewed: '2026-03-06', nextReview: '2026-03-08', createdAt: '2026-01-20' },
-    { id: 'k2', type: 'flashcard', front: 'Definice limity funkce', back: 'Limita f(x) v bodě a je L, pokud pro každé ε>0 existuje δ>0 tak, že |f(x)−L|<ε pro 0<|x−a|<δ.', courseId: 'c1', courseName: 'Matematika', courseColor: '#60a5fa', topicId: 't2', topicName: 'Matematická analýza', difficulty: 'hard', successRate: 42, totalReviews: 22, lastReviewed: '2026-03-05', nextReview: '2026-03-08', createdAt: '2026-01-22' },
-    { id: 'k3', type: 'test', question: 'Která hodnota je determinant jednotkové matice 2×2?', options: [{ text: '0', correct: false }, { text: '1', correct: true }, { text: '-1', correct: false }, { text: '2', correct: false }], courseId: 'c1', courseName: 'Matematika', courseColor: '#60a5fa', topicId: 't1', topicName: 'Lineární algebra', difficulty: 'medium', successRate: 78, totalReviews: 12, lastReviewed: '2026-03-04', nextReview: '2026-03-11', createdAt: '2026-01-25' },
-    { id: 'k4', type: 'flashcard', front: 'Pythagorova věta', back: 'V pravoúhlém trojúhelníku: a² + b² = c², kde c je přepona.', courseId: 'c1', courseName: 'Matematika', courseColor: '#60a5fa', topicId: 't1', topicName: 'Lineární algebra', difficulty: 'easy', successRate: 92, totalReviews: 30, lastReviewed: '2026-03-07', nextReview: '2026-03-14', createdAt: '2026-01-18' },
-    { id: 'k5', type: 'flashcard', front: 'Co dělá useEffect v Reactu?', back: 'Hook pro vedlejší efekty — fetching, subscriptions, DOM manipulace. Spouští se po renderování.', courseId: 'c1', courseName: 'Matematika', courseColor: '#60a5fa', topicId: 't3', topicName: 'Statistika', difficulty: 'medium', successRate: 65, totalReviews: 14, lastReviewed: '2026-03-07', nextReview: '2026-03-09', createdAt: '2026-02-01' },
-    { id: 'k6', type: 'test', question: 'Který čas se používá pro probíhající děje v angličtině?', options: [{ text: 'Past Simple', correct: false }, { text: 'Present Simple', correct: false }, { text: 'Present Continuous', correct: true }, { text: 'Future Perfect', correct: false }], courseId: 'c2', courseName: 'Angličtina B2', courseColor: COLORS.purple, topicId: 't4', topicName: 'Gramatika', difficulty: 'easy', successRate: 85, totalReviews: 20, lastReviewed: '2026-03-06', nextReview: '2026-03-12', createdAt: '2026-01-28' },
+    { id: 'k1', type: 'flashcard', front: 'Co je determinant matice?', back: 'Skalární hodnota charakterizující čtvercovou matici. Značí se det(A) nebo |A|.', courseId: 'c1', courseName: 'Matematika', courseColor: COLORS.blue, topicId: 't1', topicName: 'Lineární algebra', difficulty: 'hard', successRate: 35, totalReviews: 18, lastReviewed: '2026-03-06', nextReview: '2026-03-08', createdAt: '2026-01-20' },
+    { id: 'k2', type: 'flashcard', front: 'Definice limity funkce', back: 'Limita f(x) v bodě a je L, pokud pro každé ε>0 existuje δ>0 tak, že |f(x)−L|<ε pro 0<|x−a|<δ.', courseId: 'c1', courseName: 'Matematika', courseColor: COLORS.blue, topicId: 't2', topicName: 'Matematická analýza', difficulty: 'hard', successRate: 42, totalReviews: 22, lastReviewed: '2026-03-05', nextReview: '2026-03-08', createdAt: '2026-01-22' },
+    { id: 'k3', type: 'test', question: 'Která hodnota je determinant jednotkové matice 2×2?', options: [{ text: '0', correct: false }, { text: '1', correct: true }, { text: '-1', correct: false }, { text: '2', correct: false }], courseId: 'c1', courseName: 'Matematika', courseColor: COLORS.blue, topicId: 't1', topicName: 'Lineární algebra', difficulty: 'medium', successRate: 78, totalReviews: 12, lastReviewed: '2026-03-04', nextReview: '2026-03-11', createdAt: '2026-01-25' },
+    { id: 'k4', type: 'flashcard', front: 'Pythagorova věta', back: 'V pravoúhlém trojúhelníku: a² + b² = c², kde c je přepona.', courseId: 'c1', courseName: 'Matematika', courseColor: COLORS.blue, topicId: 't1', topicName: 'Lineární algebra', difficulty: 'easy', successRate: 92, totalReviews: 30, lastReviewed: '2026-03-07', nextReview: '2026-03-14', createdAt: '2026-01-18' },
+    { id: 'k5', type: 'flashcard', front: 'Co dělá useEffect v Reactu?', back: 'Hook pro vedlejší efekty — fetching, subscriptions, DOM manipulace. Spouští se po renderování.', courseId: 'c1', courseName: 'Matematika', courseColor: COLORS.blue, topicId: 't3', topicName: 'Statistika', difficulty: 'medium', successRate: 65, totalReviews: 14, lastReviewed: '2026-03-07', nextReview: '2026-03-09', createdAt: '2026-02-01' },
+    { id: 'k6', type: 'test', question: 'Který čas se používá pro probíhající děя в angličtině?', options: [{ text: 'Past Simple', correct: false }, { text: 'Present Simple', correct: false }, { text: 'Present Continuous', correct: true }, { text: 'Future Perfect', correct: false }], courseId: 'c2', courseName: 'Angličtina B2', courseColor: COLORS.purple, topicId: 't4', topicName: 'Gramatika', difficulty: 'easy', successRate: 85, totalReviews: 20, lastReviewed: '2026-03-06', nextReview: '2026-03-12', createdAt: '2026-01-28' },
     { id: 'k7', type: 'flashcard', front: 'Newtonův druhý zákon pohybu', back: 'F = m · a — síla se rovná součinu hmotnosti a zrychlení.', courseId: 'c3', courseName: 'Fyzika', courseColor: COLORS.green, topicId: 't6', topicName: 'Mechanika', difficulty: 'medium', successRate: 58, totalReviews: 16, lastReviewed: '2026-03-05', nextReview: '2026-03-08', createdAt: '2026-01-30' },
 ];
 

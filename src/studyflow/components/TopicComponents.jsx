@@ -138,9 +138,10 @@ export const CourseDetailView = ({ course, onBack, onOpenTopic }) => {
         setShowAddTopic(false);
     };
 
-    const handleUpdateCourse = (updated) => {
-        setCourses(courses.map(c => c.id === updated.id ? updated : c));
-    };
+    // handleUpdateCourse is defined but not used.  Since handleUpdateCourse is used in PoznamkyView, it's possible it was copied here accidentally, or is meant for future use. For now, comment it out.
+    // const handleUpdateCourse = (updated) => {
+    //     setCourses(courses.map(c => c.id === updated.id ? updated : c));
+    // };
 
     const topics = course.topics || [];
 

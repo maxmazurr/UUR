@@ -139,27 +139,27 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Typography variant="body2" color="text.secondary">{topicCards.length} flashcard kartiček</Typography>
                         <Button onClick={() => setShowCardWizard(true)} variant="outlined" size="small" startIcon={<Plus size={14} />}
-                            sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, borderColor: 'rgba(74,222,128,0.3)', color: '#4ade80', '&:hover': { borderColor: '#4ade80', background: 'rgba(74,222,128,0.08)' } }}>
+                            sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, borderColor: `${COLORS.green}4d`, color: COLORS.green, '&:hover': { borderColor: COLORS.green, background: `${COLORS.green}14` } }}>
                             Nová kartička
                         </Button>
                     </Stack>
                     {topicCards.length === 0 ? (
-                        <Paper elevation={0} sx={{ p: 5, borderRadius: 3, border: '1px dashed rgba(255,255,255,0.08)', textAlign: 'center' }}>
-                            <Layers size={36} color="rgba(255,255,255,0.1)" style={{ margin: '0 auto 12px' }} />
-                            <Typography fontWeight={700} mb={0.5}>Žádné kartičky</Typography>
-                            <Typography variant="body2" color="text.secondary">Vytvořte první flashcard kartičku pro toto téma.</Typography>
+                        <Paper elevation={0} sx={{ p: 5, borderRadius: 3, border: `1px dashed ${COLORS.borderSubtle}`, background: 'transparent', textAlign: 'center' }}>
+                            <Layers size={36} sx={{ color: COLORS.borderLight, margin: '0 auto 12px', display: 'block' }} />
+                            <Typography fontWeight={700} mb={0.5} sx={{ color: COLORS.white }}>Žádné kartičky</Typography>
+                            <Typography variant="body2" sx={{ color: COLORS.textSecondary }}>Vytvořte první flashcard kartičku pro toto téma.</Typography>
                         </Paper>
                     ) : (
                         topicCards.map(card => {
                             const isDue = card.nextReview <= today;
                             return (
-                                <Paper key={card.id} elevation={0} sx={{ p: 2.5, borderRadius: 2.5, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', transition: 'all 0.2s', '&:hover': { background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.12)' } }}>
+                                <Paper key={card.id} elevation={0} sx={{ p: 2.5, borderRadius: 2.5, background: COLORS.glassBgLight, border: `1px solid ${COLORS.border}`, transition: 'all 0.2s', '&:hover': { background: COLORS.glassBg, borderColor: COLORS.borderLight } }}>
                                     <Stack direction="row" alignItems="flex-start" gap={2}>
                                         <Box sx={{ flex: 1, minWidth: 0 }}>
                                             <Stack direction="row" gap={1} mb={1}>
-                                                <Chip label="Flashcard" size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 700, background: 'rgba(79,156,249,0.15)', color: '#4F9CF9' }} />
+                                                <Chip label="Flashcard" size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 700, background: `${COLORS.blue}26`, color: COLORS.blue }} />
                                                 <Chip label={DIFF_LABELS[card.difficulty]} size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 600, background: `${DIFF_COLORS[card.difficulty]}15`, color: DIFF_COLORS[card.difficulty] }} />
-                                                {isDue && <Chip label="K opakování" size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 700, background: 'rgba(248,113,113,0.12)', color: '#f87171' }} />}
+                                                {isDue && <Chip label="K opakování" size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 700, background: `${COLORS.red}1f`, color: COLORS.red }} />}
                                             </Stack>
                                             <Typography fontWeight={600} mb={0.5}>{card.front}</Typography>
                                             <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{card.back}</Typography>
@@ -196,36 +196,36 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Typography variant="body2" color="text.secondary">{topicTests.length} testů ABCD</Typography>
                         <Button onClick={() => setShowTestWizard(true)} variant="outlined" size="small" startIcon={<Plus size={14} />}
-                            sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, borderColor: 'rgba(192,132,252,0.3)', color: '#c084fc', '&:hover': { borderColor: '#c084fc', background: 'rgba(192,132,252,0.08)' } }}>
+                            sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, borderColor: `${COLORS.purple}4d`, color: COLORS.purple, '&:hover': { borderColor: COLORS.purple, background: `${COLORS.purple}14` } }}>
                             Nový test
                         </Button>
                     </Stack>
                     {topicTests.length === 0 ? (
-                        <Paper elevation={0} sx={{ p: 5, borderRadius: 3, border: '1px dashed rgba(255,255,255,0.08)', textAlign: 'center' }}>
-                            <CheckSquare size={36} color="rgba(255,255,255,0.1)" style={{ margin: '0 auto 12px' }} />
-                            <Typography fontWeight={700} mb={0.5}>Žádné testy</Typography>
-                            <Typography variant="body2" color="text.secondary">Vytvořte první ABCD test pro toto téma.</Typography>
+                        <Paper elevation={0} sx={{ p: 5, borderRadius: 3, border: `1px dashed ${COLORS.borderSubtle}`, background: 'transparent', textAlign: 'center' }}>
+                            <CheckSquare size={36} sx={{ color: COLORS.borderLight, margin: '0 auto 12px', display: 'block' }} />
+                            <Typography fontWeight={700} mb={0.5} sx={{ color: COLORS.white }}>Žádné testy</Typography>
+                            <Typography variant="body2" sx={{ color: COLORS.textSecondary }}>Vytvořte první ABCD test pro toto téma.</Typography>
                         </Paper>
                     ) : (
                         topicTests.map(card => {
                             const isDue = card.nextReview <= today;
                             return (
-                                <Paper key={card.id} elevation={0} sx={{ p: 2.5, borderRadius: 2.5, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', transition: 'all 0.2s', '&:hover': { background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.12)' } }}>
+                                <Paper key={card.id} elevation={0} sx={{ p: 2.5, borderRadius: 2.5, background: COLORS.glassBgLight, border: `1px solid ${COLORS.border}`, transition: 'all 0.2s', '&:hover': { background: COLORS.glassBg, borderColor: COLORS.borderLight } }}>
                                     <Stack direction="row" alignItems="flex-start" gap={2}>
                                         <Box sx={{ flex: 1, minWidth: 0 }}>
                                             <Stack direction="row" gap={1} mb={1}>
-                                                <Chip label="Test ABCD" size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 700, background: 'rgba(192,132,252,0.15)', color: '#c084fc' }} />
+                                                <Chip label="Test ABCD" size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 700, background: `${COLORS.purple}26`, color: COLORS.purple }} />
                                                 <Chip label={DIFF_LABELS[card.difficulty]} size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 600, background: `${DIFF_COLORS[card.difficulty]}15`, color: DIFF_COLORS[card.difficulty] }} />
-                                                {isDue && <Chip label="K opakování" size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 700, background: 'rgba(248,113,113,0.12)', color: '#f87171' }} />}
+                                                {isDue && <Chip label="K opakování" size="small" sx={{ borderRadius: 1.5, height: 22, fontSize: 11, fontWeight: 700, background: `${COLORS.red}1f`, color: COLORS.red }} />}
                                             </Stack>
                                             <Typography fontWeight={600} mb={1}>{card.question}</Typography>
                                             <Stack gap={0.5}>
                                                 {card.options?.map((opt, i) => (
                                                     <Stack key={i} direction="row" alignItems="center" gap={1}>
-                                                        <Box sx={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid', borderColor: opt.correct ? '#4ade80' : 'rgba(255,255,255,0.1)', background: opt.correct ? '#4ade8020' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                                            {opt.correct && <Box sx={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80' }} />}
+                                                        <Box sx={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid', borderColor: opt.correct ? COLORS.green : COLORS.borderSubtle, background: opt.correct ? `${COLORS.green}33` : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                            {opt.correct && <Box sx={{ width: 6, height: 6, borderRadius: '50%', background: COLORS.green }} />}
                                                         </Box>
-                                                        <Typography variant="body2" sx={{ color: opt.correct ? '#4ade80' : 'rgba(255,255,255,0.5)', fontWeight: opt.correct ? 600 : 400 }}>{opt.text}</Typography>
+                                                        <Typography variant="body2" sx={{ color: opt.correct ? COLORS.green : COLORS.textSecondary, fontWeight: opt.correct ? 600 : 400 }}>{opt.text}</Typography>
                                                     </Stack>
                                                 ))}
                                             </Stack>
@@ -264,19 +264,19 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
 
             {/* Backlinks section */}
             {backlinks.length > 0 && (
-                <Box sx={{ mt: 6, pt: 4, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <Box sx={{ mt: 6, pt: 4, borderTop: `1px solid ${COLORS.border}` }}>
                     <Stack direction="row" alignItems="center" gap={1.25} mb={2.5}>
-                        <Box sx={{ width: 28, height: 28, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(144,85,255,0.1)' }}>
-                            <Network size={14} style={{ color: '#9055FF' }} />
+                        <Box sx={{ width: 28, height: 28, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${COLORS.purple}1a` }}>
+                            <Network size={14} sx={{ color: COLORS.purple }} />
                         </Box>
-                        <Typography variant="h6" sx={{ fontSize: '0.9rem', fontWeight: 700, color: 'rgba(255,255,255,0.7)' }}>Odkazy sem ({backlinks.length})</Typography>
+                        <Typography variant="h6" sx={{ fontSize: '0.9rem', fontWeight: 700, color: COLORS.textSecondary }}>Odkazy sem ({backlinks.length})</Typography>
                     </Stack>
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)' }, gap: 1.5 }}>
                         {backlinks.map(({ topic: bt, snippet }, i) => (
                             <Paper key={i} onClick={() => handleNavigateToTopic(bt.id)} elevation={0} 
                                 sx={{ 
-                                    p: 1.5, borderRadius: 2, cursor: 'pointer', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
-                                    transition: 'all 0.2s', '&:hover': { background: 'rgba(144,85,255,0.04)', borderColor: 'rgba(144,85,255,0.2)' }
+                                    p: 1.5, borderRadius: 2, cursor: 'pointer', background: COLORS.glassBgLight, border: `1px solid ${COLORS.border}`,
+                                    transition: 'all 0.2s', '&:hover': { background: `${COLORS.purple}0a`, borderColor: `${COLORS.purple}33` }
                                 }}>
                                 <Typography fontSize={13} fontWeight={700} noWrap sx={{ mb: 0.5 }}>{bt.name}</Typography>
                                 <Typography fontSize={10} color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', mb: 1, opacity: 0.6, fontStyle: 'italic' }}>

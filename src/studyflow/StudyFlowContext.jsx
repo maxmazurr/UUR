@@ -3,6 +3,7 @@ import { DEMO_COURSES, DEMO_CARDS, DEMO_EVENTS } from './constants';
 
 const StudyFlowContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useStudyFlow = () => {
     const context = useContext(StudyFlowContext);
     if (!context) throw new Error('useStudyFlow must be used within a StudyFlowProvider');
@@ -95,7 +96,7 @@ export const StudyFlowProvider = ({ children }) => {
                 if (data.events) setEventsState(data.events);
                 if (data.notes) setNotesState(data.notes);
                 alert('Data úspěšně importována!');
-            } catch (err) {
+            } catch {
                 alert('Chyba při importu: Neplatný formát souboru.');
             }
         };

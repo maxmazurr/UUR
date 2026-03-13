@@ -100,7 +100,7 @@ export const WikiLinkNode = Node.create({
 });
 
 // ─── WikiLink Suggestion Dropdown (rendered outside the editor) ───
-export const WikiLinkSuggestion = forwardRef(({ editor, allTopics = [] }, ref) => {
+export const WikiLinkSuggestion = forwardRef(({ editor, allTopics = [] }, _ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -115,6 +115,39 @@ export const WikiLinkSuggestion = forwardRef(({ editor, allTopics = [] }, ref) =
             t.courseName?.toLowerCase().includes(q)
         ).slice(0, 8);
     }, [query, allTopics]);
+
+    const insertWikiLink = useCallback((topic) => {
+        if (!editor) return;
+
+        const { state } = editor;
+        const { $from } = state.selection;
+        const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
+        const lastOpen = textBefore.lastIndexOf('[[');
+
+        if (lastOpen === -1) return;
+
+        // Calculate the absolute start position of `[[` in the document
+        const startOfNode = $from.pos - $from.parentOffset;
+        const deleteFrom = startOfNode + lastOpen;
+        const deleteTo = $from.pos;
+
+        editor
+            .chain()
+            .focus()
+            .deleteRange({ from: deleteFrom, to: deleteTo })
+            .insertContent({
+                type: 'wikiLink',
+                attrs: {
+                    topicId: topic.id,
+                    topicName: topic.name,
+                },
+            })
+            .insertContent(' ')
+            .run();
+
+        setIsOpen(false);
+        setQuery('');
+    }, [editor]);
 
     // Listen for text input to detect `[[` trigger
     useEffect(() => {
@@ -183,40 +216,7 @@ export const WikiLinkSuggestion = forwardRef(({ editor, allTopics = [] }, ref) =
 
         document.addEventListener('keydown', handleKeyDown, true);
         return () => document.removeEventListener('keydown', handleKeyDown, true);
-    }, [isOpen, filtered, selectedIdx, editor]);
-
-    const insertWikiLink = useCallback((topic) => {
-        if (!editor) return;
-
-        const { state } = editor;
-        const { $from } = state.selection;
-        const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
-        const lastOpen = textBefore.lastIndexOf('[[');
-
-        if (lastOpen === -1) return;
-
-        // Calculate the absolute start position of `[[` in the document
-        const startOfNode = $from.pos - $from.parentOffset;
-        const deleteFrom = startOfNode + lastOpen;
-        const deleteTo = $from.pos;
-
-        editor
-            .chain()
-            .focus()
-            .deleteRange({ from: deleteFrom, to: deleteTo })
-            .insertContent({
-                type: 'wikiLink',
-                attrs: {
-                    topicId: topic.id,
-                    topicName: topic.name,
-                },
-            })
-            .insertContent(' ')
-            .run();
-
-        setIsOpen(false);
-        setQuery('');
-    }, [editor]);
+    }, [isOpen, filtered, selectedIdx, editor, insertWikiLink]);
 
     if (!isOpen || !filtered.length) return null;
 

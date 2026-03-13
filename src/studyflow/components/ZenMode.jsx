@@ -46,7 +46,7 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
                 <Typography fontSize={48} mb={2}>🎉</Typography>
                 <Typography variant="h6" fontWeight={700} mb={1}>Vše hotovo!</Typography>
                 <Typography variant="body2" color="text.secondary" mb={3}>Žádné kartičky k opakování. Vrať se zítra.</Typography>
-                <Button onClick={onClose} variant="contained" sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: '#7C6FF7' }}>Zavřít</Button>
+                <Button onClick={onClose} variant="contained" sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: COLORS.accent }}>Zavřít</Button>
             </Dialog>
         );
     }
@@ -60,11 +60,11 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
                 <Typography fontSize={48} mb={2}>{pct >= 70 ? '🎉' : pct >= 40 ? '💪' : '📚'}</Typography>
                 <Typography variant="h5" fontWeight={800} mb={1}>Výsledky</Typography>
                 <Stack direction="row" justifyContent="center" gap={4} my={3}>
-                    <Box><Typography fontSize={28} fontWeight={800} color="#4ade80">{correct}</Typography><Typography variant="caption" color="text.secondary">správně</Typography></Box>
-                    <Box><Typography fontSize={28} fontWeight={800} color="#f87171">{total - correct}</Typography><Typography variant="caption" color="text.secondary">špatně</Typography></Box>
-                    <Box><Typography fontSize={28} fontWeight={800} sx={{ color: pct >= 70 ? '#4ade80' : pct >= 40 ? '#fb923c' : '#f87171' }}>{pct}%</Typography><Typography variant="caption" color="text.secondary">úspěšnost</Typography></Box>
+                    <Box><Typography fontSize={28} fontWeight={800} sx={{ color: COLORS.green }}>{correct}</Typography><Typography variant="caption" sx={{ color: COLORS.textSecondary }}>správně</Typography></Box>
+                    <Box><Typography fontSize={28} fontWeight={800} sx={{ color: COLORS.red }}>{total - correct}</Typography><Typography variant="caption" sx={{ color: COLORS.textSecondary }}>špatně</Typography></Box>
+                    <Box><Typography fontSize={28} fontWeight={800} sx={{ color: pct >= 70 ? COLORS.green : pct >= 40 ? COLORS.orange : COLORS.red }}>{pct}%</Typography><Typography variant="caption" sx={{ color: COLORS.textSecondary }}>úspěšnost</Typography></Box>
                 </Stack>
-                <Button onClick={onClose} variant="contained" fullWidth sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: '#7C6FF7', mt: 1 }}>Hotovo</Button>
+                <Button onClick={onClose} variant="contained" fullWidth sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: COLORS.accent, mt: 1 }}>Hotovo</Button>
             </Dialog>
         );
     }
@@ -73,10 +73,10 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
         <Dialog open onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: DIALOG_PAPER_SX }}>
             <DialogTitle sx={{ pb: 0 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="body2" color="text.secondary" fontWeight={600}>{idx + 1} / {dueCards.length}</Typography>
-                    <IconButton onClick={onClose} size="small" sx={{ color: 'rgba(255,255,255,0.4)' }}><X size={16} /></IconButton>
+                    <Typography variant="body2" sx={{ color: COLORS.textSecondary, fontWeight: 600 }}>{idx + 1} / {dueCards.length}</Typography>
+                    <IconButton onClick={onClose} size="small" sx={{ color: COLORS.textMuted }}><X size={16} /></IconButton>
                 </Stack>
-                <LinearProgress variant="determinate" value={((idx + 1) / dueCards.length) * 100} sx={{ mt: 1, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)', '& .MuiLinearProgress-bar': { borderRadius: 2, background: 'linear-gradient(90deg, #7C6FF7, #4F9CF9)' } }} />
+                <LinearProgress variant="determinate" value={((idx + 1) / dueCards.length) * 100} sx={{ mt: 1, height: 4, borderRadius: 2, background: COLORS.bgTertiary, '& .MuiLinearProgress-bar': { borderRadius: 2, background: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.blue})` } }} />
             </DialogTitle>
             <DialogContent sx={{ pt: 3, pb: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 {current.type === 'flashcard' ? (
@@ -101,12 +101,12 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
                                 display: 'flex', flexDirection: 'column',
                                 alignItems: 'center', justifyContent: 'center',
                                 textAlign: 'center', p: 3, borderRadius: 3,
-                                background: 'rgba(79,156,249,0.04)',
-                                border: '1px solid rgba(79,156,249,0.15)',
+                                background: `${COLORS.blue}0a`,
+                                border: `1px solid ${COLORS.blue}26`,
                             }}>
-                                <Chip label="Otázka" size="small" sx={{ mb: 2, borderRadius: 2, background: 'rgba(79,156,249,0.12)', color: '#4F9CF9', fontWeight: 700 }} />
-                                <Typography variant="h6" fontWeight={700} sx={{ lineHeight: 1.5 }}>{current.front}</Typography>
-                                <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>Klikni pro otočení</Typography>
+                                <Chip label="Otázka" size="small" sx={{ mb: 2, borderRadius: 2, background: `${COLORS.blue}1f`, color: COLORS.blue, fontWeight: 700 }} />
+                                <Typography variant="h6" fontWeight={700} sx={{ lineHeight: 1.5, color: COLORS.white }}>{current.front}</Typography>
+                                <Typography variant="caption" sx={{ color: COLORS.textSecondary, mt: 2, display: 'block' }}>Klikni pro otočení</Typography>
                             </Box>
 
                             {/* Back face */}
@@ -118,11 +118,11 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
                                 display: 'flex', flexDirection: 'column',
                                 alignItems: 'center', justifyContent: 'center',
                                 textAlign: 'center', p: 3, borderRadius: 3,
-                                background: 'rgba(74,222,128,0.04)',
-                                border: '1px solid rgba(74,222,128,0.15)',
+                                background: `${COLORS.green}0a`,
+                                border: `1px solid ${COLORS.green}26`,
                             }}>
-                                <Chip label="Odpověď" size="small" sx={{ mb: 2, borderRadius: 2, background: 'rgba(74,222,128,0.12)', color: '#4ade80', fontWeight: 700 }} />
-                                <Typography variant="h6" fontWeight={700} sx={{ lineHeight: 1.5 }}>{current.back}</Typography>
+                                <Chip label="Odpověď" size="small" sx={{ mb: 2, borderRadius: 2, background: `${COLORS.green}1f`, color: COLORS.green, fontWeight: 700 }} />
+                                <Typography variant="h6" fontWeight={700} sx={{ lineHeight: 1.5, color: COLORS.white }}>{current.back}</Typography>
                             </Box>
                         </Box>
                     </Box>
@@ -132,8 +132,8 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
                         <Stack gap={1}>
                             {current.options?.map((opt, i) => (
                                 <Paper key={i} elevation={0} onClick={() => handleAnswer(opt.correct)}
-                                    sx={{ p: 2, borderRadius: 2, cursor: 'pointer', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)', transition: 'all 0.2s', '&:hover': { borderColor: '#7C6FF7', background: 'rgba(124,111,247,0.08)' } }}>
-                                    <Typography fontSize={14}><strong style={{ marginRight: 8, color: 'rgba(255,255,255,0.3)' }}>{String.fromCharCode(65 + i)}</strong> {opt.text}</Typography>
+                                    sx={{ p: 2, borderRadius: 2, cursor: 'pointer', border: `1px solid ${COLORS.border}`, background: COLORS.glassBgLight, transition: 'all 0.2s', '&:hover': { borderColor: COLORS.accent, background: `${COLORS.accent}14` } }}>
+                                    <Typography fontSize={14}><Box component="strong" sx={{ marginRight: 1, color: COLORS.textMuted }}>{String.fromCharCode(65 + i)}</Box> {opt.text}</Typography>
                                 </Paper>
                             ))}
                         </Stack>
@@ -142,10 +142,10 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
             </DialogContent>
             {current.type === 'flashcard' && flipped && (
                 <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
-                    <Button onClick={() => handleAnswer(false)} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, borderColor: 'rgba(248,113,113,0.3)', color: '#f87171', '&:hover': { borderColor: '#f87171', background: 'rgba(248,113,113,0.08)' } }}>
+                    <Button onClick={() => handleAnswer(false)} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, borderColor: `${COLORS.red}4d`, color: COLORS.red, '&:hover': { borderColor: COLORS.red, background: `${COLORS.red}14` } }}>
                         Nevěděl/a jsem
                     </Button>
-                    <Button onClick={() => handleAnswer(true)} variant="contained" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: '#4ade80', color: '#0F1117', '&:hover': { filter: 'brightness(0.88)' } }}>
+                    <Button onClick={() => handleAnswer(true)} variant="contained" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: COLORS.green, color: COLORS.bgMain, '&:hover': { filter: 'brightness(0.88)' } }}>
                         Věděl/a jsem
                     </Button>
                 </DialogActions>

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useState } from 'react';
 import { Box, Stack, Typography, Paper, Button, Chip, IconButton } from '@mui/material';
 import { Layers, CheckSquare, Play, FileText } from 'lucide-react';
