@@ -9,7 +9,7 @@ import {
     ChevronLeft, Plus, ArrowRight, FileText, Layers, CheckSquare,
     Folder, X,
 } from 'lucide-react';
-import { COURSE_COLORS, modalSlideInAnim } from '../constants';
+import { COLORS, TOP_STRIPE_SX, CARD_HOVER_GLOW, SOFT_HOVER, modalSlideInAnim } from '../../styles';
 import { ColorSwatch, CourseCard, AddCourseModal, EditCourseModal, DeleteConfirmModal } from './CourseComponents';
 
 export const TopicCard = ({ topic, courseColor, stats = {}, onOpen }) => {
@@ -27,37 +27,42 @@ export const TopicCard = ({ topic, courseColor, stats = {}, onOpen }) => {
     const flashCount = stats.flashcard || 0;
     const testCount = stats.test || 0;
     const statItems = [
-        { Icon: FileText, val: topic.notes || 0, label: 'poznámek', col: '#4F9CF9' },
-        { Icon: Layers, val: flashCount, label: 'kartiček', col: '#4ade80' },
-        { Icon: CheckSquare, val: testCount, label: 'testů', col: '#c084fc' },
+        { Icon: FileText, val: topic.notes || 0, label: 'poznámek', col: COLORS.blue },
+        { Icon: Layers, val: flashCount, label: 'kartiček', col: COLORS.green },
+        { Icon: CheckSquare, val: testCount, label: 'testů', col: COLORS.purple },
     ];
     return (
         <Paper onMouseMove={move} onMouseLeave={() => setHStyle({})} elevation={0}
             sx={{
                 position: 'relative', borderRadius: 3, p: 2, cursor: 'pointer', overflow: 'hidden',
-                background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)',
-                transition: 'transform 0.25s cubic-bezier(0.23,1,0.32,1)', ...hStyle,
+                background: COLORS.glassBgLight, border: `1px solid ${COLORS.border}`,
+                transition: 'transform 0.25s cubic-bezier(0.23,1,0.32,1), background 0.2s', ...hStyle,
                 '&:hover .topic-hover-overlay': { opacity: 1 },
                 '&:hover .topic-hover-overlay .topic-open-btn': { transform: 'translateY(0)' },
             }}>
-            <Box sx={{ position: 'absolute', top: 0, left: 0, width: 3, bottom: 0, background: c, borderRadius: '12px 0 0 12px' }} />
-            <Box sx={{ pl: 1.5 }}>
+            <Box sx={TOP_STRIPE_SX(c)} />
+            <Box sx={{ pt: 0.5 }}>
                 <Typography sx={{ fontSize: 15, fontWeight: 700, color: 'white', mb: 1.25 }}>{topic.name}</Typography>
                 <Stack direction="row" gap={1.5} flexWrap="wrap">
                     {statItems.map((item, i) => (
                         <Stack key={i} direction="row" alignItems="center" gap={0.75}>
-                            <item.Icon size={12} style={{ color: item.val > 0 ? item.col : 'rgba(255,255,255,0.15)' }} />
-                            <Typography sx={{ fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>
-                                <Box component="strong" sx={{ color: item.val > 0 ? 'white' : 'rgba(255,255,255,0.25)' }}>{item.val}</Box> {item.label}
+                            <item.Icon size={12} sx={{ color: item.val > 0 ? item.col : COLORS.textDimmer }} />
+                            <Typography sx={{ fontSize: 12, color: COLORS.textSecondary }}>
+                                <Box component="strong" sx={{ color: item.val > 0 ? 'white' : COLORS.textDim }}>{item.val}</Box> {item.label}
                             </Typography>
                         </Stack>
                     ))}
                 </Stack>
             </Box>
             <Stack className="topic-hover-overlay" alignItems="center" justifyContent="center"
-                sx={{ position: 'absolute', inset: 0, opacity: 0, borderRadius: 3, zIndex: 10, background: 'rgba(10,12,20,0.85)', backdropFilter: 'blur(4px)', transition: 'opacity 0.2s' }}>
+                sx={{ 
+                    position: 'absolute', inset: 0, opacity: 0, borderRadius: 3, zIndex: 10, 
+                    background: COLORS.overlayDark, backdropFilter: 'blur(4px)', 
+                    transition: 'opacity 0.2s',
+                    ...CARD_HOVER_GLOW(c)
+                }}>
                 <Button className="topic-open-btn" variant="contained" onClick={() => onOpen(topic)} endIcon={<ArrowRight size={14} />}
-                    sx={{ borderRadius: 99, px: 2.5, py: 1, fontWeight: 600, fontSize: 13, textTransform: 'none', background: c, color: '#0F1117', transform: 'translateY(8px)', transition: 'all 0.25s', '&:hover': { background: c, filter: 'brightness(1.1)' } }}>
+                    sx={{ borderRadius: 99, px: 2.5, py: 1, fontWeight: 600, fontSize: 13, textTransform: 'none', background: c, color: '#0F1117', transform: 'translateY(8px)', transition: 'all 0.25s', '&:hover': { background: c, filter: 'brightness(1.1)' }, zIndex: 2 }}>
                     Otevřít
                 </Button>
             </Stack>
@@ -74,11 +79,11 @@ export const AddTopicModal = ({ courseColor, onSave, onClose }) => {
     };
     return (
         <Dialog open onClose={onClose} maxWidth="xs" fullWidth
-            slotProps={{ paper: { sx: { background: 'rgba(15,18,30,0.99)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, animation: `${modalSlideInAnim} 0.22s ease-out both` } } }}>
+            slotProps={{ paper: { sx: { background: COLORS.bgDialog, border: `1px solid ${COLORS.border}`, borderRadius: 3, animation: `${modalSlideInAnim} 0.22s ease-out both` } } }}>
             <DialogTitle sx={{ pb: 0 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" fontWeight={700} fontFamily="'Clash Display', sans-serif">Nové téma</Typography>
-                    <IconButton onClick={onClose} size="small" sx={{ color: 'rgba(255,255,255,0.4)' }}><X size={16} /></IconButton>
+                    <IconButton onClick={onClose} size="small" sx={{ color: COLORS.textDim }}><X size={16} /></IconButton>
                 </Stack>
             </DialogTitle>
             <DialogContent>
@@ -88,15 +93,15 @@ export const AddTopicModal = ({ courseColor, onSave, onClose }) => {
                         placeholder="např. Lineární rovnice"
                         sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
                     <Box>
-                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1.5, display: 'block' }}>Barva</Typography>
+                        <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1.5, display: 'block' }}>Barva</Typography>
                         <ColorSwatch value={color} onChange={setColor} />
                     </Box>
                 </Stack>
             </DialogContent>
             <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
-                <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)' }}>Zrušit</Button>
+                <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: COLORS.border, color: COLORS.textSecondary }}>Zrušit</Button>
                 <Button onClick={handleSave} disabled={!name.trim()} variant="contained"
-                    sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: name.trim() ? color : 'rgba(255,255,255,0.15)', color: '#0F1117', '&:hover': { filter: 'brightness(0.88)' }, '&.Mui-disabled': { opacity: 0.3 } }}>
+                    sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: name.trim() ? color : COLORS.bgTertiary, color: '#0F1117', '&:hover': { filter: 'brightness(0.88)' }, '&.Mui-disabled': { opacity: 0.3 } }}>
                     Vytvořit
                 </Button>
             </DialogActions>
@@ -161,7 +166,7 @@ export const CourseDetailView = ({ course, onBack, onOpenTopic }) => {
 
             {/* Course hero */}
             <Paper elevation={0} sx={{ position: 'relative', borderRadius: 4, p: 3, mb: 3, overflow: 'hidden', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: topBg }} />
+                <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: topBg, borderRadius: '16px 16px 0 0' }} />
                 <Box sx={{ position: 'absolute', top: -60, right: -40, width: 200, height: 200, borderRadius: '50%', background: course.color, opacity: 0.07, filter: 'blur(60px)', pointerEvents: 'none' }} />
                 <Stack direction="row" alignItems="flex-start" gap={2.5} flexWrap="wrap">
                     <Box sx={{ width: 60, height: 60, borderRadius: 4, background: `${course.color}18`, border: `1px solid ${course.color}28`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, flexShrink: 0, mt: 0.5 }}>

@@ -6,6 +6,7 @@ import { CardWizard, TestWizard } from './CardComponents';
 import { NoteEditor } from './NoteEditor';
 import { CardDetailModal } from './CardDetailModal';
 import { useStudyFlow } from '../StudyFlowContext';
+import { COLORS, TOP_STRIPE_SX } from '../../styles';
 
 const adaptCardForDetail = (card) => ({
     front: card.front || card.question || '',
@@ -88,18 +89,18 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
             {/* Breadcrumb */}
             <Stack direction="row" alignItems="center" gap={1} mb={3} flexWrap="wrap">
                 <Button onClick={onBack} size="small" startIcon={<ChevronLeft size={16} />}
-                    sx={{ borderRadius: 2, textTransform: 'none', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.08)', '&:hover': { background: 'rgba(255,255,255,0.04)' } }}>
+                    sx={{ borderRadius: 2, textTransform: 'none', color: COLORS.textSecondary, border: `1px solid ${COLORS.border}`, '&:hover': { background: COLORS.glassBgLight } }}>
                     Zpět
                 </Button>
-                <Typography color="text.secondary" fontSize={13}>/</Typography>
-                <Typography fontSize={13} color="text.secondary">{course.name}</Typography>
-                <Typography color="text.secondary" fontSize={13}>/</Typography>
+                <Typography color={COLORS.textDim} fontSize={13}>/</Typography>
+                <Typography fontSize={13} color={COLORS.textSecondary}>{course.name}</Typography>
+                <Typography color={COLORS.textDim} fontSize={13}>/</Typography>
                 <Typography fontSize={13} fontWeight={700}>{topic.name}</Typography>
             </Stack>
 
             {/* Topic header */}
-            <Paper elevation={0} sx={{ p: 3, mb: 3, borderRadius: 3, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', position: 'relative', overflow: 'hidden' }}>
-                <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: c }} />
+            <Paper elevation={0} sx={{ p: 3, mb: 3, borderRadius: 3, background: COLORS.glassBgLight, border: `1px solid ${COLORS.border}`, position: 'relative', overflow: 'hidden' }}>
+                <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: c, borderRadius: '12px 12px 0 0' }} />
                 <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
                     <Box>
                         <Typography variant="caption" sx={{ color: c, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Téma</Typography>
@@ -107,13 +108,13 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
                     </Box>
                     <Stack direction="row" gap={3}>
                         {[
-                            { val: topic.notes || 0, label: 'poznámek', col: '#4F9CF9' },
-                            { val: topicCards.length, label: 'kartiček', col: '#4ade80' },
-                            { val: topicTests.length, label: 'testů', col: '#c084fc' },
+                            { val: topic.notes || 0, label: 'poznámek', col: COLORS.blue },
+                            { val: topicCards.length, label: 'kartiček', col: COLORS.green },
+                            { val: topicTests.length, label: 'testů', col: COLORS.purple },
                         ].map((s, i) => (
                             <Box key={i} sx={{ textAlign: 'center' }}>
-                                <Typography fontSize={20} fontWeight={800} sx={{ color: s.val > 0 ? 'white' : 'rgba(255,255,255,0.25)' }}>{s.val}</Typography>
-                                <Typography fontSize={11} sx={{ color: s.val > 0 ? s.col : 'rgba(255,255,255,0.2)' }}>{s.label}</Typography>
+                                <Typography fontSize={20} fontWeight={800} sx={{ color: s.val > 0 ? 'white' : COLORS.textDim }}>{s.val}</Typography>
+                                <Typography fontSize={11} sx={{ color: s.val > 0 ? s.col : COLORS.textDimmer }}>{s.label}</Typography>
                             </Box>
                         ))}
                     </Stack>

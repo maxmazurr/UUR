@@ -9,7 +9,8 @@ import {
     MoreHorizontal, Trash2, Pencil, ArrowRight, FileText, Layers, CheckSquare,
     Folder, Plus, X,
 } from 'lucide-react';
-import { GLASS_PANEL, COURSE_COLORS, COURSE_ICONS, modalSlideInAnim } from '../constants';
+import { COLORS, TOP_STRIPE_SX, CARD_HOVER_GLOW, SOFT_HOVER, DIALOG_PAPER_SX, modalSlideInAnim } from '../../styles';
+import { COURSE_COLORS, COURSE_ICONS } from '../constants';
 
 function formatRelative(isoString) {
     const d = new Date(isoString);
@@ -27,8 +28,8 @@ export const ColorSwatch = ({ value, onChange }) => (
             <Box key={c} component="button" onClick={() => onChange(c)}
                 sx={{ width: 28, height: 28, borderRadius: '50%', background: c, border: 'none', cursor: 'pointer', outline: value === c ? '2px solid white' : '2px solid transparent', outlineOffset: 2, transition: 'all 0.15s', flexShrink: 0, '&:hover': { transform: 'scale(1.1)' } }} />
         ))}
-        <Box component="label" sx={{ width: 28, height: 28, borderRadius: '50%', cursor: 'pointer', position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.08)', border: '1.5px dashed rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.15s', '&:hover': { transform: 'scale(1.1)' } }} title="Vlastní barva">
-            <Typography sx={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1 }}>+</Typography>
+        <Box component="label" sx={{ width: 28, height: 28, borderRadius: '50%', cursor: 'pointer', position: 'relative', overflow: 'hidden', background: COLORS.glassBgLight, border: `1.5px dashed ${COLORS.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.15s', '&:hover': { transform: 'scale(1.1)' } }} title="Vlastní barva">
+            <Typography sx={{ fontSize: 13, color: COLORS.textDim, lineHeight: 1 }}>+</Typography>
             <Box component="input" type="color" value={value} onChange={e => onChange(e.target.value)}
                 sx={{ position: 'absolute', opacity: 0, inset: 0, width: '100%', height: '100%', cursor: 'pointer' }} />
         </Box>
@@ -36,17 +37,17 @@ export const ColorSwatch = ({ value, onChange }) => (
 );
 
 export const CourseModalPreview = ({ topBg, color, icon, name, desc }) => (
-    <Box sx={{ position: 'relative', borderRadius: 3, p: 2, overflow: 'hidden', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
+    <Box sx={{ position: 'relative', borderRadius: 3, p: 2, overflow: 'hidden', background: COLORS.glassBgLight, border: `1px solid ${COLORS.border}` }}>
         <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: topBg, borderRadius: '14px 14px 0 0' }} />
         <Box sx={{ position: 'absolute', top: -30, left: -10, width: 100, height: 100, borderRadius: '50%', background: color, opacity: 0.08, filter: 'blur(25px)', pointerEvents: 'none' }} />
         <Stack direction="row" alignItems="center" gap={1.5} mt={0.5}>
             <Box sx={{ width: 42, height: 42, borderRadius: '11px', background: `${color}18`, border: `1px solid ${color}28`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>{icon}</Box>
             <Box sx={{ minWidth: 0 }}>
                 <Typography sx={{ fontSize: 11, color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', mb: 0.25 }}>Kurz</Typography>
-                <Typography sx={{ fontSize: 16, fontWeight: 700, color: name ? 'white' : 'rgba(255,255,255,0.25)' }}>{name || 'Název kurzu'}</Typography>
+                <Typography sx={{ fontSize: 16, fontWeight: 700, color: name ? 'white' : COLORS.textDim }}>{name || 'Název kurzu'}</Typography>
             </Box>
         </Stack>
-        {desc && <Typography sx={{ fontSize: 12, color: 'rgba(255,255,255,0.38)', mt: 1, lineHeight: 1.5 }}>{desc}</Typography>}
+        {desc && <Typography sx={{ fontSize: 12, color: COLORS.textDim, mt: 1, lineHeight: 1.5 }}>{desc}</Typography>}
     </Box>
 );
 
@@ -54,7 +55,7 @@ export const IconGrid = ({ icons, selectedIcon, color, onSelect }) => (
     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 0.75 }}>
         {icons.map(ic => (
             <Box key={ic} component="button" onClick={() => onSelect(ic)}
-                sx={{ aspectRatio: '1', borderRadius: 2, fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', transition: 'all 0.15s', background: selectedIcon === ic ? `${color}22` : 'rgba(255,255,255,0.04)', outline: selectedIcon === ic ? `1.5px solid ${color}50` : '1.5px solid transparent', '&:hover': { transform: 'scale(1.1)' } }}>
+                sx={{ aspectRatio: '1', borderRadius: 2, fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', transition: 'all 0.15s', background: selectedIcon === ic ? `${color}22` : COLORS.glassBgLight, outline: selectedIcon === ic ? `1.5px solid ${color}50` : '1.5px solid transparent', '&:hover': { transform: 'scale(1.1)' } }}>
                 {ic}
             </Box>
         ))}
@@ -62,10 +63,10 @@ export const IconGrid = ({ icons, selectedIcon, color, onSelect }) => (
 );
 
 export const GradientToggle = ({ useGradient, setUseGradient, color }) => (
-    <Stack direction="row" gap={0.5} sx={{ p: 0.25, borderRadius: 2, background: 'rgba(255,255,255,0.05)' }}>
+    <Stack direction="row" gap={0.5} sx={{ p: 0.25, borderRadius: 2, background: COLORS.glassBgLight }}>
         {[{ val: false, label: 'Jednobarevná' }, { val: true, label: 'Gradient' }].map(opt => (
             <Button key={String(opt.val)} size="small" onClick={() => setUseGradient(opt.val)}
-                sx={{ px: 1.5, py: 0.25, borderRadius: 1.5, fontSize: 11, fontWeight: 600, textTransform: 'none', minWidth: 'auto', background: useGradient === opt.val ? `${color}25` : 'transparent', color: useGradient === opt.val ? color : 'rgba(255,255,255,0.35)', '&:hover': { background: `${color}15` } }}>
+                sx={{ px: 1.5, py: 0.25, borderRadius: 1.5, fontSize: 11, fontWeight: 600, textTransform: 'none', minWidth: 'auto', background: useGradient === opt.val ? `${color}25` : 'transparent', color: useGradient === opt.val ? color : COLORS.textDim, '&:hover': { background: `${color}15` } }}>
                 {opt.label}
             </Button>
         ))}
@@ -95,9 +96,9 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
     const totalFlash = tids.reduce((s, id) => s + (topicStats[id]?.flashcard || 0), 0);
     const totalTests = tids.reduce((s, id) => s + (topicStats[id]?.test || 0), 0);
     const stats = [
-        { Icon: FileText, val: totalNotes, label: 'poznámek', col: '#4F9CF9' },
-        { Icon: Layers, val: totalFlash, label: 'kartiček', col: '#4ade80' },
-        { Icon: CheckSquare, val: totalTests, label: 'testů', col: '#c084fc' },
+        { Icon: FileText, val: totalNotes, label: 'poznámek', col: COLORS.blue },
+        { Icon: Layers, val: totalFlash, label: 'kartiček', col: COLORS.green },
+        { Icon: CheckSquare, val: totalTests, label: 'testů', col: COLORS.purple },
     ];
 
     return (
@@ -108,9 +109,9 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
             elevation={0}
             sx={{
                 position: 'relative', borderRadius: 4, p: 2.5, cursor: 'pointer', overflow: 'hidden',
-                background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)',
+                background: COLORS.glassBgLight, border: `1px solid ${COLORS.border}`,
                 backdropFilter: 'blur(16px)',
-                transition: 'transform 0.3s cubic-bezier(0.23,1,0.32,1), box-shadow 0.3s',
+                transition: 'transform 0.3s cubic-bezier(0.23,1,0.32,1), box-shadow 0.3s, background 0.3s',
                 boxShadow: hStyle.transform ? '0 16px 48px rgba(0,0,0,0.35)' : '0 4px 16px rgba(0,0,0,0.2)',
                 ...hStyle,
                 '&:hover .course-menu-btn': { opacity: 1 },
@@ -118,10 +119,9 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
                 '&:hover .course-hover-overlay .course-open-btn': { transform: 'translateY(0)' },
             }}
         >
-            {/* Color top stripe */}
-            <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: topBg, borderRadius: '16px 16px 0 0' }} />
+            <Box sx={TOP_STRIPE_SX(course.color)} />
             {/* Subtle glow */}
-            <Box sx={{ position: 'absolute', top: -40, left: -20, width: 120, height: 120, borderRadius: '50%', background: course.color, opacity: 0.06, filter: 'blur(30px)', pointerEvents: 'none' }} />
+            <Box sx={{ position: 'absolute', top: -30, left: -20, width: 140, height: 140, borderRadius: '50%', background: course.color, opacity: 0.08, filter: 'blur(35px)', pointerEvents: 'none', zIndex: 0 }} />
 
             {/* Options menu */}
             <Box className="course-menu-btn" sx={{ position: 'absolute', top: 12, right: 12, zIndex: 20, opacity: 0, transition: 'opacity 0.15s' }}>
@@ -189,6 +189,14 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
                     position: 'absolute', inset: 0, opacity: 0, borderRadius: 4, zIndex: 10,
                     background: 'rgba(10,12,20,0.88)', backdropFilter: 'blur(4px)',
                     transition: 'opacity 0.2s',
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0, left: 0, right: 0, height: '60%',
+                        background: `radial-gradient(circle at 50% 0%, ${course.color}35, transparent 70%)`,
+                        opacity: 0.8,
+                        pointerEvents: 'none',
+                    }
                 }}
             >
                 <Button
@@ -201,6 +209,7 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
                         background: topBg, color: '#0F1117',
                         transform: 'translateY(12px)', transition: 'all 0.3s',
                         '&:hover': { background: topBg, filter: 'brightness(1.1)' },
+                        zIndex: 2
                     }}
                 >
                     Otevřít

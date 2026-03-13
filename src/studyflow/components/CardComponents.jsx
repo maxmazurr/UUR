@@ -160,7 +160,7 @@ export const CardWizard = ({ courses, onSave, onClose, editCard = null }) => {
             <Stack direction="row" gap={1}>
                 {[{ v: 'easy', l: 'Lehká', c: '#4ade80' }, { v: 'medium', l: 'Střední', c: '#fb923c' }, { v: 'hard', l: 'Těžká', c: '#f87171' }].map(d => (
                     <Chip key={d.v} label={d.l} onClick={() => setDifficulty(d.v)}
-                        sx={{ borderRadius: 2, fontWeight: 600, cursor: 'pointer', background: difficulty === d.v ? `${d.c}25` : 'rgba(255,255,255,0.04)', color: difficulty === d.v ? d.c : 'rgba(255,255,255,0.4)', border: '1px solid', borderColor: difficulty === d.v ? `${d.c}50` : 'transparent', '&:hover': { background: `${d.c}15` } }} />
+                        sx={{ borderRadius: 2, fontWeight: 600, cursor: 'pointer', background: difficulty === d.v ? `${d.c}25` : COLORS.glassBgLight, color: difficulty === d.v ? d.c : COLORS.textDim, border: '1px solid', borderColor: difficulty === d.v ? `${d.c}50` : 'transparent', '&:hover': { background: `${d.c}15` } }} />
                 ))}
             </Stack>
         </Stack>

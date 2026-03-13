@@ -83,6 +83,24 @@ export const SOFT_HOVER = {
     '&:hover': { background: 'rgba(255, 255, 255, 0.04)', borderColor: 'rgba(255, 255, 255, 0.12)' },
 };
 
+export const TOP_STRIPE_SX = (color) => ({
+    position: 'absolute', top: 0, left: 0, right: 0, height: 4, 
+    background: color, 
+    zIndex: 15,
+    boxShadow: `0 2px 12px ${color}60` 
+});
+
+export const CARD_HOVER_GLOW = (color) => ({
+    '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0, left: 0, right: 0, height: '60%',
+        background: `radial-gradient(circle at 50% 0%, ${color}35, transparent 70%)`,
+        opacity: 0.8,
+        pointerEvents: 'none',
+    }
+});
+
 // ─── SHARED KEYFRAMES ────────────────────────────────────────────────────────
 export const fadeInUpAnim = keyframes`
   from { opacity: 0; transform: translateY(-8px); }
