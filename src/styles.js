@@ -44,6 +44,60 @@ export const COLORS = {
     // Overlay
     overlay: 'rgba(15, 17, 23, 0.8)',
     overlayDark: 'rgba(10, 12, 20, 0.85)',
+    overlayLight: 'rgba(15, 17, 23, 0.6)',
+
+    // Actions
+    actionHover: 'rgba(255, 255, 255, 0.04)',
+    actionSelected: 'rgba(255, 255, 255, 0.08)',
+
+    // Alpha shades
+    white10: 'rgba(255, 255, 255, 0.1)',
+    white12: 'rgba(255, 255, 255, 0.12)',
+    white15: 'rgba(255, 255, 255, 0.15)',
+    white20: 'rgba(255, 255, 255, 0.2)',
+    white25: 'rgba(255, 255, 255, 0.25)',
+    white28: 'rgba(255, 255, 255, 0.28)',
+    white30: 'rgba(255, 255, 255, 0.3)',
+    white35: 'rgba(255, 255, 255, 0.35)',
+    white40: 'rgba(255, 255, 255, 0.4)',
+    white45: 'rgba(255, 255, 255, 0.45)',
+    white50: 'rgba(255, 255, 255, 0.5)',
+    white55: 'rgba(255, 255, 255, 0.55)',
+    white60: 'rgba(255, 255, 255, 0.6)',
+    white70: 'rgba(255, 255, 255, 0.7)',
+    white75: 'rgba(255, 255, 255, 0.75)',
+    white80: 'rgba(255, 255, 255, 0.8)',
+    white08: 'rgba(255, 255, 255, 0.08)',
+    white09: 'rgba(255, 255, 255, 0.09)',
+    white07: 'rgba(255, 255, 255, 0.07)',
+    white06: 'rgba(255, 255, 255, 0.06)',
+    white05: 'rgba(255, 255, 255, 0.05)',
+    white04: 'rgba(255, 255, 255, 0.04)',
+    white03: 'rgba(255, 255, 255, 0.03)',
+    white02: 'rgba(255, 255, 255, 0.02)',
+
+    // Brand Alphas
+    primary12: 'rgba(144, 85, 255, 0.12)',
+    primary08: 'rgba(144, 85, 255, 0.08)',
+    primary05: 'rgba(144, 85, 255, 0.05)',
+    accent1a: 'rgba(124, 111, 247, 0.1)',
+    accent08: 'rgba(124, 111, 247, 0.08)',
+    accent15: 'rgba(124, 111, 247, 0.15)',
+    blue08: 'rgba(79, 156, 249, 0.08)',
+    blue12: 'rgba(79, 156, 249, 0.12)',
+    blue1a: 'rgba(79, 156, 249, 0.1)',
+    blue20: 'rgba(79, 156, 249, 0.2)',
+    blue22: 'rgba(79, 156, 249, 0.22)',
+    green12: 'rgba(74, 222, 128, 0.12)',
+    green10: 'rgba(74, 222, 128, 0.1)',
+    green08: 'rgba(74, 222, 128, 0.08)',
+    green05: 'rgba(74, 222, 128, 0.05)',
+    green03: 'rgba(74, 222, 128, 0.03)',
+    red10: 'rgba(248, 113, 113, 0.1)',
+    red08: 'rgba(248, 113, 113, 0.08)',
+    red15: 'rgba(248, 113, 113, 0.15)',
+    red20: 'rgba(248, 113, 113, 0.2)',
+    purple12: 'rgba(192, 132, 252, 0.12)',
 };
 
 // ─── GLASS STYLES ────────────────────────────────────────────────────────────
@@ -101,6 +155,19 @@ export const CARD_HOVER_GLOW = (color) => ({
     }
 });
 
+export const GRADIENT_TEXT = (color1, color2) => ({
+    background: `linear-gradient(to right, ${color1}, ${color2})`,
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+});
+
+export const FLEX_CENTER = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+};
+
 // ─── SHARED KEYFRAMES ────────────────────────────────────────────────────────
 export const fadeInUpAnim = keyframes`
   from { opacity: 0; transform: translateY(-8px); }
@@ -115,4 +182,9 @@ export const modalSlideInAnim = keyframes`
 export const deadlineShimmerAnim = keyframes`
   0%, 100% { opacity: 0.2; }
   50% { opacity: 0.5; }
+`;
+
+export const bounceAnim = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 `;

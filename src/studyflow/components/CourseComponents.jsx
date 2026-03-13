@@ -128,7 +128,7 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
                 <IconButton
                     size="small"
                     onClick={e => { e.stopPropagation(); setMenuAnchor(e.currentTarget); }}
-                    sx={{ width: 28, height: 28, borderRadius: 2, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', color: 'rgba(255,255,255,0.7)', '&:hover': { background: 'rgba(0,0,0,0.65)' } }}
+                    sx={{ width: 28, height: 28, borderRadius: 2, background: COLORS.overlay || 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', color: COLORS.white70, '&:hover': { background: COLORS.overlayDark } }}
                 >
                     <MoreHorizontal size={14} />
                 </IconButton>
@@ -139,12 +139,12 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
                     onClick={e => e.stopPropagation()}
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    slotProps={{ paper: { sx: { background: 'rgba(18,22,36,0.98)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.4)', minWidth: 144 } } }}
+                    slotProps={{ paper: { sx: { ...DIALOG_PAPER_SX, minWidth: 144 } } }}
                 >
-                    <MenuItem onClick={e => { e.stopPropagation(); setMenuAnchor(null); onEdit(course); }} sx={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', gap: 1.25 }}>
+                    <MenuItem onClick={e => { e.stopPropagation(); setMenuAnchor(null); onEdit(course); }} sx={{ fontSize: 13, color: COLORS.white75, gap: 1.25 }}>
                         <Pencil size={13} /> Upravit
                     </MenuItem>
-                    <MenuItem onClick={e => { e.stopPropagation(); setMenuAnchor(null); onDelete(course.id); }} sx={{ fontSize: 13, color: '#f87171', gap: 1.25, '&:hover': { bgcolor: 'rgba(239,68,68,0.1)' } }}>
+                    <MenuItem onClick={e => { e.stopPropagation(); setMenuAnchor(null); onDelete(course.id); }} sx={{ fontSize: 13, color: COLORS.red, gap: 1.25, '&:hover': { bgcolor: COLORS.red10 } }}>
                         <Trash2 size={13} /> Smazat
                     </MenuItem>
                 </Menu>
@@ -159,7 +159,7 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
             <Typography variant="h6" sx={{ fontSize: 17, fontWeight: 700, mb: course.description ? 0.75 : 1.75, color: 'white', lineHeight: 1.25 }}>{course.name}</Typography>
 
             {course.description && (
-                <Typography sx={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', mb: 1.75, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <Typography sx={{ fontSize: 12, color: COLORS.white35, mb: 1.75, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {course.description}
                 </Typography>
             )}
@@ -167,17 +167,17 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
             <Stack gap={0.875} mb={2}>
                 {stats.map((item, i) => (
                     <Stack key={i} direction="row" alignItems="center" gap={1.25}>
-                        <item.Icon size={14} style={{ color: item.val > 0 ? item.col : 'rgba(255,255,255,0.15)' }} />
-                        <Typography sx={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
-                            <Box component="strong" sx={{ color: item.val > 0 ? 'white' : 'rgba(255,255,255,0.25)' }}>{item.val}</Box> {item.label}
+                        <item.Icon size={14} style={{ color: item.val > 0 ? item.col : COLORS.textDimmer }} />
+                        <Typography sx={{ fontSize: 13, color: COLORS.white50 }}>
+                            <Box component="strong" sx={{ color: item.val > 0 ? 'white' : COLORS.white25 }}>{item.val}</Box> {item.label}
                         </Typography>
                     </Stack>
                 ))}
             </Stack>
 
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ borderTop: '1px solid rgba(255,255,255,0.07)', pt: 1.5 }}>
-                <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.28)' }}>Naposledy otevřeno</Typography>
-                <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.28)' }}>{formatRelative(course.lastOpened)}</Typography>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ borderTop: `1px solid ${COLORS.white07}`, pt: 1.5 }}>
+                <Typography sx={{ fontSize: 11, color: COLORS.white28 }}>Naposledy otevřeno</Typography>
+                <Typography sx={{ fontSize: 11, color: COLORS.white28 }}>{formatRelative(course.lastOpened)}</Typography>
             </Stack>
 
             {/* Hover overlay */}
@@ -187,7 +187,7 @@ export const CourseCard = ({ course, onOpen, onEdit, onDelete, topicStats = {} }
                 justifyContent="center"
                 sx={{
                     position: 'absolute', inset: 0, opacity: 0, borderRadius: 4, zIndex: 10,
-                    background: 'rgba(10,12,20,0.88)', backdropFilter: 'blur(4px)',
+                    background: COLORS.overlayDark, backdropFilter: 'blur(4px)',
                     transition: 'opacity 0.2s',
                     '&::before': {
                         content: '""',
@@ -247,17 +247,17 @@ export const AddCourseModal = ({ onSave, onClose }) => {
 
     return (
         <Dialog open onClose={onClose} maxWidth="sm" fullWidth
-            slotProps={{ paper: { sx: { background: 'rgba(15,18,30,0.99)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, animation: `${modalSlideInAnim} 0.25s ease-out both`, maxHeight: '92vh' } } }}>
+            slotProps={{ paper: { sx: { ...DIALOG_PAPER_SX, maxHeight: '92vh' } } }}>
             <DialogTitle sx={{ pb: 0 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" fontWeight={700} fontFamily="'Clash Display', sans-serif">Nový kurz</Typography>
-                    <IconButton onClick={onClose} size="small" sx={{ color: 'rgba(255,255,255,0.4)' }}><X size={16} /></IconButton>
+                    <IconButton onClick={onClose} size="small" sx={{ color: COLORS.white40 }}><X size={16} /></IconButton>
                 </Stack>
             </DialogTitle>
             <DialogContent>
                 <Stack gap={2.5} sx={{ pt: 1 }}>
                     <Box>
-                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1, display: 'block' }}>Náhled</Typography>
+                        <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.white30, textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1, display: 'block' }}>Náhled</Typography>
                         <CourseModalPreview topBg={topBg} color={color} icon={icon} name={name} desc={desc} />
                     </Box>
                     <TextField autoFocus label="Název kurzu *" fullWidth size="small" value={name}
@@ -267,20 +267,20 @@ export const AddCourseModal = ({ onSave, onClose }) => {
                         onChange={e => setDesc(e.target.value)} placeholder="Krátký popis obsahu kurzu..."
                         sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
                     <Box>
-                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1.5, display: 'block' }}>Ikona</Typography>
+                        <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.white40, textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1.5, display: 'block' }}>Ikona</Typography>
                         <IconGrid icons={COURSE_ICONS} selectedIcon={icon} color={color} onSelect={setIcon} />
                     </Box>
                     <Box>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5}>
-                            <Typography variant="caption" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Barva</Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.white40, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Barva</Typography>
                             <GradientToggle useGradient={useGradient} setUseGradient={setUseGradient} color={color} />
                         </Stack>
                         {!useGradient ? (
                             <ColorSwatch value={color} onChange={setColor} />
                         ) : (
                             <Stack gap={1.5}>
-                                <Box><Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)', mb: 1, display: 'block' }}>Barva 1</Typography><ColorSwatch value={color} onChange={setColor} /></Box>
-                                <Box><Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)', mb: 1, display: 'block' }}>Barva 2</Typography><ColorSwatch value={color2} onChange={setColor2} /></Box>
+                                <Box><Typography variant="caption" sx={{ color: COLORS.white30, mb: 1, display: 'block' }}>Barva 1</Typography><ColorSwatch value={color} onChange={setColor} /></Box>
+                                <Box><Typography variant="caption" sx={{ color: COLORS.white30, mb: 1, display: 'block' }}>Barva 2</Typography><ColorSwatch value={color2} onChange={setColor2} /></Box>
                                 <Box sx={{ height: 10, borderRadius: 5, background: `linear-gradient(90deg, ${color}, ${color2})` }} />
                             </Stack>
                         )}
@@ -288,7 +288,7 @@ export const AddCourseModal = ({ onSave, onClose }) => {
                 </Stack>
             </DialogContent>
             <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
-                <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)' }}>Zrušit</Button>
+                <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: COLORS.white07, color: COLORS.white45 }}>Zrušit</Button>
                 <Button onClick={handleSave} disabled={!name.trim()} variant="contained"
                     sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: topBg, color: '#0F1117', '&:hover': { filter: 'brightness(0.88)' }, '&.Mui-disabled': { opacity: 0.3 } }}>
                     Vytvořit kurz
@@ -315,17 +315,17 @@ export const EditCourseModal = ({ course, onSave, onClose }) => {
 
     return (
         <Dialog open onClose={onClose} maxWidth="sm" fullWidth
-            slotProps={{ paper: { sx: { background: 'rgba(15,18,30,0.99)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, animation: `${modalSlideInAnim} 0.25s ease-out both`, maxHeight: '92vh' } } }}>
+            slotProps={{ paper: { sx: { ...DIALOG_PAPER_SX, maxHeight: '92vh' } } }}>
             <DialogTitle sx={{ pb: 0 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" fontWeight={700} fontFamily="'Clash Display', sans-serif">Upravit kurz</Typography>
-                    <IconButton onClick={onClose} size="small" sx={{ color: 'rgba(255,255,255,0.4)' }}><X size={16} /></IconButton>
+                    <IconButton onClick={onClose} size="small" sx={{ color: COLORS.white40 }}><X size={16} /></IconButton>
                 </Stack>
             </DialogTitle>
             <DialogContent>
                 <Stack gap={2.5} sx={{ pt: 1 }}>
                     <Box>
-                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1, display: 'block' }}>Náhled</Typography>
+                        <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.white30, textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1, display: 'block' }}>Náhled</Typography>
                         <CourseModalPreview topBg={topBg} color={color} icon={icon} name={name} desc={desc} />
                     </Box>
                     <TextField autoFocus label="Název kurzu *" fullWidth size="small" value={name}
@@ -335,20 +335,20 @@ export const EditCourseModal = ({ course, onSave, onClose }) => {
                         onChange={e => setDesc(e.target.value)} placeholder="Krátký popis obsahu kurzu..."
                         sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }} />
                     <Box>
-                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1.5, display: 'block' }}>Ikona</Typography>
+                        <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.white40, textTransform: 'uppercase', letterSpacing: '0.07em', mb: 1.5, display: 'block' }}>Ikona</Typography>
                         <IconGrid icons={COURSE_ICONS} selectedIcon={icon} color={color} onSelect={setIcon} />
                     </Box>
                     <Box>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5}>
-                            <Typography variant="caption" sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Barva</Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.white40, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Barva</Typography>
                             <GradientToggle useGradient={useGradient} setUseGradient={setUseGradient} color={color} />
                         </Stack>
                         {!useGradient ? (
                             <ColorSwatch value={color} onChange={setColor} />
                         ) : (
                             <Stack gap={1.5}>
-                                <Box><Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)', mb: 1, display: 'block' }}>Barva 1</Typography><ColorSwatch value={color} onChange={setColor} /></Box>
-                                <Box><Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.3)', mb: 1, display: 'block' }}>Barva 2</Typography><ColorSwatch value={color2} onChange={setColor2} /></Box>
+                                <Box><Typography variant="caption" sx={{ color: COLORS.white30, mb: 1, display: 'block' }}>Barva 1</Typography><ColorSwatch value={color} onChange={setColor} /></Box>
+                                <Box><Typography variant="caption" sx={{ color: COLORS.white30, mb: 1, display: 'block' }}>Barva 2</Typography><ColorSwatch value={color2} onChange={setColor2} /></Box>
                                 <Box sx={{ height: 10, borderRadius: 5, background: `linear-gradient(90deg, ${color}, ${color2})` }} />
                             </Stack>
                         )}
@@ -356,7 +356,7 @@ export const EditCourseModal = ({ course, onSave, onClose }) => {
                 </Stack>
             </DialogContent>
             <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
-                <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)' }}>Zrušit</Button>
+                <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: COLORS.white07, color: COLORS.white45 }}>Zrušit</Button>
                 <Button onClick={handleSave} disabled={!name.trim()} variant="contained"
                     sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: topBg, color: '#0F1117', '&:hover': { filter: 'brightness(0.88)' }, '&.Mui-disabled': { opacity: 0.3 } }}>
                     Uložit změny
@@ -368,17 +368,17 @@ export const EditCourseModal = ({ course, onSave, onClose }) => {
 
 export const DeleteConfirmModal = ({ name, onConfirm, onClose }) => (
     <Dialog open onClose={onClose} maxWidth="xs" fullWidth
-        slotProps={{ paper: { sx: { background: 'rgba(15,18,30,0.99)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 3, animation: `${modalSlideInAnim} 0.2s ease-out both`, textAlign: 'center', p: 3 } } }}>
-        <Box sx={{ width: 48, height: 48, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2, background: 'rgba(248,113,113,0.1)' }}>
-            <Trash2 size={22} color="#f87171" />
+        slotProps={{ paper: { sx: { ...DIALOG_PAPER_SX, border: `1px solid ${COLORS.red20}`, animation: `${modalSlideInAnim} 0.2s ease-out both`, textAlign: 'center', p: 3 } } }}>
+        <Box sx={{ width: 48, height: 48, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2, background: COLORS.red10 }}>
+            <Trash2 size={22} color={COLORS.red} />
         </Box>
         <Typography variant="h6" fontWeight={700} fontFamily="'Clash Display', sans-serif" mb={1}>Smazat kurz?</Typography>
-        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', mb: 3 }}>
+        <Typography variant="body2" sx={{ color: COLORS.white40, mb: 3 }}>
             Kurz <Box component="strong" sx={{ color: 'white' }}>„{name}"</Box> a všechny jeho témy budou trvale smazány.
         </Typography>
         <Stack direction="row" gap={1}>
-            <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.5)' }}>Zrušit</Button>
-            <Button onClick={onConfirm} variant="contained" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: '#f87171', color: '#0F1117', '&:hover': { background: '#ef4444' } }}>Smazat</Button>
+            <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: COLORS.white07, color: COLORS.white50 }}>Zrušit</Button>
+            <Button onClick={onConfirm} variant="contained" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: COLORS.red, color: '#0F1117', '&:hover': { background: '#ef4444' } }}>Smazat</Button>
         </Stack>
     </Dialog>
 );

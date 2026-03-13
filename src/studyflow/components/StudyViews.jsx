@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Box, Stack, Typography, Paper, Button, Chip, IconButton } from '@mui/material';
 import { Layers, CheckSquare, Play, FileText } from 'lucide-react';
 import { useStudyFlow } from '../StudyFlowContext';
+import { COLORS } from '../../styles';
 
 export const TestyView = ({ onOpenTopic, onStartZen }) => {
     const { cards } = useStudyFlow();
@@ -52,13 +53,13 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
                         <Typography variant="h5" fontWeight={800}>Testy</Typography>
                     </Stack>
                     <Typography variant="body2" color="text.secondary">
-                        {tests.length} testů celkem · Průměrná úspěšnost: <Box component="span" sx={{ color: avgSuccessOverall >= 70 ? '#4ade80' : avgSuccessOverall >= 40 ? '#fb923c' : '#f87171', fontWeight: 600 }}>{avgSuccessOverall}%</Box>
-                        {dueTodayCount > 0 && <> · <Box component="span" sx={{ color: '#f87171', fontWeight: 600 }}>{dueTodayCount} k opakování</Box></>}
+                        {tests.length} testů celkem · Průměrná úspěšnost: <Box component="span" sx={{ color: avgSuccessOverall >= 70 ? COLORS.green : avgSuccessOverall >= 40 ? COLORS.orange : COLORS.red, fontWeight: 600 }}>{avgSuccessOverall}%</Box>
+                        {dueTodayCount > 0 && <> · <Box component="span" sx={{ color: COLORS.red, fontWeight: 600 }}>{dueTodayCount} k opakování</Box></>}
                     </Typography>
                 </Box>
                 {dueTodayCount > 0 && (
                     <Button onClick={() => onStartZen?.(tests.filter(c => c.nextReview <= today))} variant="contained" startIcon={<Play size={15} />}
-                        sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: 'linear-gradient(135deg, #c084fc, #9055FF)', '&:hover': { filter: 'brightness(0.88)' } }}>
+                        sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.primary})`, '&:hover': { filter: 'brightness(0.88)' } }}>
                         Spustit testy na dnes ({dueTodayCount})
                     </Button>
                 )}
@@ -66,9 +67,9 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
 
             {/* Multi-selection Bar */}
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3} gap={2} flexWrap="wrap"
-                sx={{ p: 2, borderRadius: 3, background: 'rgba(124,111,247,0.05)', border: '1px solid rgba(124,111,247,0.1)' }}>
+                sx={{ p: 2, borderRadius: 3, background: COLORS.accent08, border: `1px solid ${COLORS.accent1a}` }}>
                 <Box>
-                    <Typography variant="subtitle2" fontWeight={800} sx={{ color: '#c084fc' }}>Hromadné akce</Typography>
+                    <Typography variant="subtitle2" fontWeight={800} sx={{ color: COLORS.purple }}>Hromadné akce</Typography>
                     <Typography variant="caption" color="text.secondary">Vybráno témat: {selectedTopics.length}</Typography>
                 </Box>
                 <Stack direction="row" gap={1}>
@@ -77,7 +78,7 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
                         onClick={() => startSelected(false)}
                         variant="contained" 
                         size="small"
-                        sx={{ borderRadius: 2.5, textTransform: 'none', fontSize: 13, background: 'rgba(255,255,255,0.05)', color: 'white', '&:hover': { background: 'rgba(255,255,255,0.1)' } }}
+                        sx={{ borderRadius: 2.5, textTransform: 'none', fontSize: 13, background: COLORS.white05, color: 'white', '&:hover': { background: COLORS.white10 } }}
                     >
                         Spustit vybrané
                     </Button>
@@ -87,7 +88,7 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
                         variant="contained" 
                         size="small"
                         startIcon={<Play size={14} />}
-                        sx={{ borderRadius: 2.5, textTransform: 'none', fontSize: 13, background: 'linear-gradient(135deg, #c084fc, #9055FF)', fontWeight: 700 }}
+                        sx={{ borderRadius: 2.5, textTransform: 'none', fontSize: 13, background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.primary})`, fontWeight: 700 }}
                     >
                         Zamíchat a začít
                     </Button>
@@ -95,8 +96,8 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
             </Stack>
 
             {rows.length === 0 ? (
-                <Paper elevation={0} sx={{ p: 6, borderRadius: 3, border: '1px dashed rgba(255,255,255,0.08)', textAlign: 'center' }}>
-                    <CheckSquare size={40} color="rgba(255,255,255,0.1)" style={{ margin: '0 auto 16px' }} />
+                <Paper elevation={0} sx={{ p: 6, borderRadius: 3, border: `1px dashed ${COLORS.white08}`, textAlign: 'center' }}>
+                    <CheckSquare size={40} color={COLORS.white10} style={{ margin: '0 auto 16px' }} />
                     <Typography variant="h6" fontWeight={700} mb={1}>Žádné testy</Typography>
                     <Typography variant="body2" color="text.secondary">Testy vytvoříte přes Moje kurzy — vyberte kurz, téma, a přidejte test.</Typography>
                 </Paper>
@@ -107,10 +108,10 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
                             onClick={() => handleToggleSelect(r.topicId)}
                             sx={{ 
                                 p: 2.5, borderRadius: 2.5, 
-                                background: selectedTopics.includes(r.topicId) ? 'rgba(144,85,255,0.08)' : 'rgba(255,255,255,0.02)', 
+                                background: selectedTopics.includes(r.topicId) ? COLORS.primary08 : COLORS.white02, 
                                 border: '1px solid',
-                                borderColor: selectedTopics.includes(r.topicId) ? 'rgba(144,85,255,0.4)' : 'rgba(255,255,255,0.07)', 
-                                '&:hover': { background: 'rgba(255,255,255,0.04)', transform: 'translateY(-2px)' }, 
+                                borderColor: selectedTopics.includes(r.topicId) ? `${COLORS.primary}66` : COLORS.white07, 
+                                '&:hover': { background: COLORS.white04, transform: 'translateY(-2px)' }, 
                                 transition: 'all 0.2s', cursor: 'pointer',
                                 position: 'relative', overflow: 'hidden'
                             }}>
@@ -120,8 +121,8 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
                                     <Typography fontWeight={700} fontSize={14}>{r.topicName}</Typography>
                                     <Stack direction="row" gap={1} alignItems="center">
                                         <Typography variant="caption" color="text.secondary">{r.courseName}</Typography>
-                                        <Box sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.2)' }} />
-                                        <Typography variant="caption" color="rgba(255,255,255,0.3)">
+                                        <Box sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: COLORS.white20 }} />
+                                        <Typography variant="caption" color={COLORS.white30}>
                                             Naposledy: {r.lastReviewed ? new Date(r.lastReviewed).toLocaleDateString() : 'Nikdy'}
                                         </Typography>
                                     </Stack>
@@ -132,24 +133,24 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
                                         <Typography variant="caption" color="text.secondary">testů</Typography>
                                     </Box>
                                     <Box sx={{ textAlign: 'center' }}>
-                                        <Typography fontWeight={800} fontSize={18} sx={{ color: r.avgSuccess >= 70 ? '#4ade80' : r.avgSuccess >= 40 ? '#fb923c' : '#f87171' }}>{r.avgSuccess}%</Typography>
+                                        <Typography fontWeight={800} fontSize={18} sx={{ color: r.avgSuccess >= 70 ? COLORS.green : r.avgSuccess >= 40 ? COLORS.orange : COLORS.red }}>{r.avgSuccess}%</Typography>
                                         <Typography variant="caption" color="text.secondary">úspěšnost</Typography>
                                     </Box>
                                     {r.due > 0 && (
-                                        <Chip label={`${r.due} k opak.`} size="small" sx={{ borderRadius: 2, height: 24, fontWeight: 700, background: 'rgba(248,113,113,0.12)', color: '#f87171' }} />
+                                        <Chip label={`${r.due} k opak.`} size="small" sx={{ borderRadius: 2, height: 24, fontWeight: 700, background: COLORS.red10, color: COLORS.red }} />
                                     )}
                                     <Stack direction="row" gap={0.5}>
                                         <IconButton 
                                             size="small"
                                             onClick={(e) => { e.stopPropagation(); onOpenTopic?.(r.courseId, r.topicId); }}
-                                            sx={{ color: 'rgba(255,255,255,0.3)', '&:hover': { color: 'white', background: 'rgba(255,255,255,0.05)' } }}
+                                            sx={{ color: COLORS.white30, '&:hover': { color: 'white', background: COLORS.white05 } }}
                                         >
                                             <FileText size={16} />
                                         </IconButton>
                                         <IconButton 
                                             size="small"
                                             onClick={(e) => { e.stopPropagation(); onStartZen?.(r.cards); }}
-                                            sx={{ color: '#c084fc', background: 'rgba(192,132,252,0.1)', '&:hover': { background: '#c084fc', color: 'white' } }}
+                                            sx={{ color: COLORS.purple, background: COLORS.purple12, '&:hover': { background: COLORS.purple, color: 'white' } }}
                                         >
                                             <Play size={16} fill="currentColor" />
                                         </IconButton>
@@ -198,13 +199,13 @@ export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
                         <Typography variant="h5" fontWeight={800}>Kartičky</Typography>
                     </Stack>
                     <Typography variant="body2" color="text.secondary">
-                        {flashcards.length} kartiček celkem · Průměrná úspěšnost: <Box component="span" sx={{ color: avgSuccess >= 70 ? '#4ade80' : avgSuccess >= 40 ? '#fb923c' : '#f87171', fontWeight: 600 }}>{avgSuccess}%</Box>
-                        {dueToday > 0 && <> · <Box component="span" sx={{ color: '#f87171', fontWeight: 600 }}>{dueToday} k opakování</Box></>}
+                        {flashcards.length} kartiček celkem · Průměrná úspěšnost: <Box component="span" sx={{ color: avgSuccess >= 70 ? COLORS.green : avgSuccess >= 40 ? COLORS.orange : COLORS.red, fontWeight: 600 }}>{avgSuccess}%</Box>
+                        {dueToday > 0 && <> · <Box component="span" sx={{ color: COLORS.red, fontWeight: 600 }}>{dueToday} k opakování</Box></>}
                     </Typography>
                 </Box>
                 {dueToday > 0 && (
                     <Button onClick={() => onStartZen?.(flashcards.filter(c => c.nextReview <= today))} variant="contained" startIcon={<Play size={15} />}
-                        sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: 'linear-gradient(135deg, #7C6FF7, #4F9CF9)', '&:hover': { filter: 'brightness(0.88)' } }}>
+                        sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.blue})`, '&:hover': { filter: 'brightness(0.88)' } }}>
                         Začít opakování ({dueToday})
                     </Button>
                 )}
@@ -213,12 +214,12 @@ export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
             {/* Summary stats */}
             <Stack direction="row" gap={2} mb={3} mt={2} flexWrap="wrap">
                 {[
-                    { label: 'Celkem', val: flashcards.length, col: '#4F9CF9' },
-                    { label: 'K opakování', val: dueToday, col: '#f87171' },
-                    { label: 'Úspěšnost', val: `${avgSuccess}%`, col: avgSuccess >= 70 ? '#4ade80' : '#fb923c' },
-                    { label: 'Témat', val: rows.length, col: '#c084fc' },
+                    { label: 'Celkem', val: flashcards.length, col: COLORS.blue },
+                    { label: 'K opakování', val: dueToday, col: COLORS.red },
+                    { label: 'Úspěšnost', val: `${avgSuccess}%`, col: avgSuccess >= 70 ? COLORS.green : COLORS.orange },
+                    { label: 'Témat', val: rows.length, col: COLORS.purple },
                 ].map((s, i) => (
-                    <Paper key={i} elevation={0} sx={{ flex: 1, minWidth: 100, p: 2, borderRadius: 2.5, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', textAlign: 'center' }}>
+                    <Paper key={i} elevation={0} sx={{ flex: 1, minWidth: 100, p: 2, borderRadius: 2.5, background: COLORS.white02, border: `1px solid ${COLORS.white07}`, textAlign: 'center' }}>
                         <Typography fontSize={22} fontWeight={800} sx={{ color: s.col }}>{s.val}</Typography>
                         <Typography variant="caption" color="text.secondary">{s.label}</Typography>
                     </Paper>
@@ -229,18 +230,18 @@ export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
             {courses.length > 1 && (
                 <Stack direction="row" gap={1} mb={3} flexWrap="wrap">
                     <Chip label="Vše" size="small" onClick={() => setFilterCourse('all')}
-                        sx={{ borderRadius: 2, fontWeight: 600, cursor: 'pointer', background: filterCourse === 'all' ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)', color: filterCourse === 'all' ? 'white' : 'rgba(255,255,255,0.4)' }} />
+                        sx={{ borderRadius: 2, fontWeight: 600, cursor: 'pointer', background: filterCourse === 'all' ? COLORS.white12 : COLORS.white04, color: filterCourse === 'all' ? 'white' : COLORS.white40 }} />
                     {courses.map(c => (
                         <Chip key={c.id} label={c.name} size="small" onClick={() => setFilterCourse(c.id)}
-                            sx={{ borderRadius: 2, fontWeight: 600, cursor: 'pointer', background: filterCourse === c.id ? `${c.color}25` : 'rgba(255,255,255,0.04)', color: filterCourse === c.id ? c.color : 'rgba(255,255,255,0.4)' }} />
+                            sx={{ borderRadius: 2, fontWeight: 600, cursor: 'pointer', background: filterCourse === c.id ? `${c.color}25` : COLORS.white04, color: filterCourse === c.id ? c.color : COLORS.white40 }} />
                     ))}
                 </Stack>
             )}
 
             {/* Table by topic */}
             {rows.length === 0 ? (
-                <Paper elevation={0} sx={{ p: 6, borderRadius: 3, border: '1px dashed rgba(255,255,255,0.08)', textAlign: 'center' }}>
-                    <Layers size={40} color="rgba(255,255,255,0.1)" style={{ margin: '0 auto 16px' }} />
+                <Paper elevation={0} sx={{ p: 6, borderRadius: 3, border: `1px dashed ${COLORS.white08}`, textAlign: 'center' }}>
+                    <Layers size={40} color={COLORS.white10} style={{ margin: '0 auto 16px' }} />
                     <Typography variant="h6" fontWeight={700} mb={1}>Žádné kartičky</Typography>
                     <Typography variant="body2" color="text.secondary">Kartičky vytvoříte přes Moje kurzy — vyberte kurz, téma, a přidejte kartičku.</Typography>
                 </Paper>
@@ -248,7 +249,7 @@ export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
                 <Stack gap={1.5}>
                     {rows.map((r, i) => (
                         <Paper key={i} elevation={0} onClick={() => onStartZen?.(r.cards)}
-                            sx={{ p: 2.5, borderRadius: 2.5, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', cursor: 'pointer', transition: 'all 0.2s', '&:hover': { background: 'rgba(255,255,255,0.04)', borderColor: '#4ade8050', transform: 'translateY(-2px)' } }}>
+                            sx={{ p: 2.5, borderRadius: 2.5, background: COLORS.white02, border: `1px solid ${COLORS.white07}`, cursor: 'pointer', transition: 'all 0.2s', '&:hover': { background: COLORS.white04, borderColor: `${COLORS.green}50`, transform: 'translateY(-2px)' } }}>
                             <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
                                 <Box sx={{ width: 6, height: 36, borderRadius: 1, background: r.courseColor, flexShrink: 0 }} />
                                 <Box sx={{ flex: 1, minWidth: 120 }}>
@@ -261,11 +262,11 @@ export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
                                         <Typography variant="caption" color="text.secondary">kartiček</Typography>
                                     </Box>
                                     <Box sx={{ textAlign: 'center', minWidth: 50 }}>
-                                        <Typography fontWeight={800} fontSize={18} sx={{ color: r.avgSuccess >= 70 ? '#4ade80' : r.avgSuccess >= 40 ? '#fb923c' : '#f87171' }}>{r.avgSuccess}%</Typography>
+                                        <Typography fontWeight={800} fontSize={18} sx={{ color: r.avgSuccess >= 70 ? COLORS.green : r.avgSuccess >= 40 ? COLORS.orange : COLORS.red }}>{r.avgSuccess}%</Typography>
                                         <Typography variant="caption" color="text.secondary">úspěšnost</Typography>
                                     </Box>
                                     {r.due > 0 && (
-                                        <Chip label={`${r.due} k opak.`} size="small" sx={{ borderRadius: 2, height: 24, fontWeight: 700, background: 'rgba(248,113,113,0.12)', color: '#f87171' }} />
+                                        <Chip label={`${r.due} k opak.`} size="small" sx={{ borderRadius: 2, height: 24, fontWeight: 700, background: COLORS.red10, color: COLORS.red }} />
                                     )}
                                     <Button 
                                         size="small"
@@ -274,7 +275,7 @@ export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
                                     >
                                         Poznámky
                                     </Button>
-                                    <Box sx={{ width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(74,222,128,0.1)', color: '#4ade80', border: '1px solid rgba(74,222,128,0.3)' }}>
+                                    <Box sx={{ width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: COLORS.green10, color: COLORS.green, border: `1px solid ${COLORS.green}4d` }}>
                                         <Play size={16} fill="currentColor" />
                                     </Box>
                                 </Stack>

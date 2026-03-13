@@ -16,11 +16,11 @@ import {
 } from '@mui/material';
 
 import {
-    orbFloat1Anim, orbFloat2Anim, orbFloat3Anim, deadlineShimmerAnim,
+    orbFloat1Anim, orbFloat2Anim, orbFloat3Anim,
     GLASS_PANEL, HEAT_COLORS,
     DEMO_COURSES, DEMO_CARDS, DEMO_EVENTS,
 } from '../studyflow/constants';
-import { COLORS, HIDE_SCROLLBAR } from '../styles';
+import { COLORS, HIDE_SCROLLBAR, fadeInUpAnim, deadlineShimmerAnim } from "../styles";
 import { FadeUp, HoloCard, NavItem, NotifItem, TreeItem, ContinueCard, CardRow, WeakCard } from '../studyflow/components/Sidebar';
 import { TopicView } from '../studyflow/components/TopicView';
 import { PoznamkyView, AddTopicModal } from '../studyflow/components/TopicComponents';
@@ -339,7 +339,7 @@ function StudyFlowContent() {
     }, [activeNav, openTopic, handleMainScroll]);
 
     return (
-        <Stack direction="row" sx={{ height: '100vh', overflow: 'hidden', position: 'relative', bgcolor: '#0F1117', color: '#F0F2F8', fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" }}>
+        <Stack direction="row" sx={{ height: '100vh', overflow: 'hidden', position: 'relative', bgcolor: COLORS.bgPrimary, color: COLORS.textPrimary, fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif" }}>
 
 
             {/* ═══════════════ SIDEBAR & LAYOUT ═══════════════ */}
@@ -349,9 +349,9 @@ function StudyFlowContent() {
             <Stack sx={{ flex: 1, height: '100vh', position: 'relative', overflow: 'hidden', transition: 'all 0.3s' }}>
                 <Box sx={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
                     <Box ref={parallaxOrbRef} sx={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, willChange: 'transform', transition: 'transform 0.1s ease-out' }}>
-                        <Box ref={orbRef1} sx={{ position: 'absolute', borderRadius: '50%', filter: 'blur(180px)', opacity: 0.55, mixBlendMode: 'screen', pointerEvents: 'none', width: '65vw', height: '65vw', background: 'rgba(144, 85, 255, 0.4)', top: '-15%', left: '-10%', willChange: 'transform', animation: `${orbFloat1Anim} 20s ease-in-out infinite alternate` }} />
-                        <Box ref={orbRef2} sx={{ position: 'absolute', borderRadius: '50%', filter: 'blur(180px)', pointerEvents: 'none', width: '60vw', height: '60vw', background: 'rgba(19, 226, 218, 0.3)', bottom: '-20%', right: '-15%', willChange: 'transform', animation: `${orbFloat2Anim} 24s ease-in-out infinite alternate-reverse`, opacity: 0.45, mixBlendMode: 'screen' }} />
-                        <Box ref={orbRef3} sx={{ position: 'absolute', borderRadius: '50%', filter: 'blur(180px)', opacity: 0.55, mixBlendMode: 'screen', pointerEvents: 'none', width: '50vw', height: '50vw', background: 'rgba(124, 111, 247, 0.15)', top: '30%', left: '30%', willChange: 'transform', animation: `${orbFloat3Anim} 28s linear infinite` }} />
+                        <Box ref={orbRef1} sx={{ position: 'absolute', borderRadius: '50%', filter: 'blur(180px)', opacity: 0.55, mixBlendMode: 'screen', pointerEvents: 'none', width: '65vw', height: '65vw', background: `${COLORS.primary}66`, top: '-15%', left: '-10%', willChange: 'transform', animation: `${orbFloat1Anim} 20s ease-in-out infinite alternate` }} />
+                        <Box ref={orbRef2} sx={{ position: 'absolute', borderRadius: '50%', filter: 'blur(180px)', pointerEvents: 'none', width: '60vw', height: '60vw', background: `${COLORS.secondary}4d`, bottom: '-20%', right: '-15%', willChange: 'transform', animation: `${orbFloat2Anim} 24s ease-in-out infinite alternate-reverse`, opacity: 0.45, mixBlendMode: 'screen' }} />
+                        <Box ref={orbRef3} sx={{ position: 'absolute', borderRadius: '50%', filter: 'blur(180px)', opacity: 0.55, mixBlendMode: 'screen', pointerEvents: 'none', width: '50vw', height: '50vw', background: `${COLORS.accent}26`, top: '30%', left: '30%', willChange: 'transform', animation: `${orbFloat3Anim} 28s linear infinite` }} />
                     </Box>
                 </Box>
 

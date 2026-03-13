@@ -164,21 +164,21 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
                                             <Typography fontWeight={600} mb={0.5}>{card.front}</Typography>
                                             <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{card.back}</Typography>
                                             <Stack direction="row" alignItems="center" gap={1.5} mt={1.5}>
-                                                <LinearProgress variant="determinate" value={card.successRate || 0} sx={{ flex: 1, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.06)', '& .MuiLinearProgress-bar': { borderRadius: 3, background: (card.successRate || 0) >= 70 ? '#4ade80' : (card.successRate || 0) >= 40 ? '#fb923c' : '#f87171' } }} />
+                                                <LinearProgress variant="determinate" value={card.successRate || 0} sx={{ flex: 1, height: 5, borderRadius: 3, background: COLORS.white06, '& .MuiLinearProgress-bar': { borderRadius: 3, background: (card.successRate || 0) >= 70 ? COLORS.green : (card.successRate || 0) >= 40 ? COLORS.orange : COLORS.red } }} />
                                                 <Typography variant="caption" color="text.secondary" fontWeight={600}>{card.successRate || 0}%</Typography>
                                             </Stack>
                                         </Box>
                                         <Stack direction="row" gap={0.25}>
-                                            <IconButton onClick={() => setDetailCard(card)} size="small" sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#4F9CF9', background: 'rgba(79,156,249,0.08)' } }}>
+                                            <IconButton onClick={() => setDetailCard(card)} size="small" sx={{ color: COLORS.white20, '&:hover': { color: COLORS.blue, background: COLORS.blue08 } }}>
                                                 <Eye size={14} />
                                             </IconButton>
-                                            <IconButton onClick={() => setEditingCard(card)} size="small" sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#9055FF', background: 'rgba(144,85,255,0.08)' } }}>
+                                            <IconButton onClick={() => setEditingCard(card)} size="small" sx={{ color: COLORS.white20, '&:hover': { color: COLORS.primary, background: COLORS.primary08 } }}>
                                                 <Pencil size={14} />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDuplicateCard(card)} size="small" sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.06)' } }}>
+                                            <IconButton onClick={() => handleDuplicateCard(card)} size="small" sx={{ color: COLORS.white20, '&:hover': { color: COLORS.white60, background: COLORS.white06 } }}>
                                                 <Copy size={14} />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDeleteCard(card.id)} size="small" sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#f87171', background: 'rgba(248,113,113,0.08)' } }}>
+                                            <IconButton onClick={() => handleDeleteCard(card.id)} size="small" sx={{ color: COLORS.white20, '&:hover': { color: COLORS.red, background: COLORS.red08 } }}>
                                                 <Trash2 size={14} />
                                             </IconButton>
                                         </Stack>
@@ -230,21 +230,21 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
                                                 ))}
                                             </Stack>
                                             <Stack direction="row" alignItems="center" gap={1.5} mt={1.5}>
-                                                <LinearProgress variant="determinate" value={card.successRate || 0} sx={{ flex: 1, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.06)', '& .MuiLinearProgress-bar': { borderRadius: 3, background: (card.successRate || 0) >= 70 ? '#4ade80' : (card.successRate || 0) >= 40 ? '#fb923c' : '#f87171' } }} />
+                                                <LinearProgress variant="determinate" value={card.successRate || 0} sx={{ flex: 1, height: 5, borderRadius: 3, background: COLORS.white06, '& .MuiLinearProgress-bar': { borderRadius: 3, background: (card.successRate || 0) >= 70 ? COLORS.green : (card.successRate || 0) >= 40 ? COLORS.orange : COLORS.red } }} />
                                                 <Typography variant="caption" color="text.secondary" fontWeight={600}>{card.successRate || 0}%</Typography>
                                             </Stack>
                                         </Box>
                                         <Stack direction="row" gap={0.25}>
-                                            <IconButton onClick={() => setDetailCard(card)} size="small" sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#4F9CF9', background: 'rgba(79,156,249,0.08)' } }}>
+                                            <IconButton onClick={() => setDetailCard(card)} size="small" sx={{ color: COLORS.white20, '&:hover': { color: COLORS.blue, background: COLORS.blue08 } }}>
                                                 <Eye size={14} />
                                             </IconButton>
-                                            <IconButton onClick={() => setEditingCard(card)} size="small" sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#9055FF', background: 'rgba(144,85,255,0.08)' } }}>
+                                            <IconButton onClick={() => setEditingCard(card)} size="small" sx={{ color: COLORS.white20, '&:hover': { color: COLORS.primary, background: COLORS.primary08 } }}>
                                                 <Pencil size={14} />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDuplicateCard(card)} size="small" sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.06)' } }}>
+                                            <IconButton onClick={() => handleDuplicateCard(card)} size="small" sx={{ color: COLORS.white20, '&:hover': { color: COLORS.white60, background: COLORS.white06 } }}>
                                                 <Copy size={14} />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDeleteCard(card.id)} size="small" sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#f87171', background: 'rgba(248,113,113,0.08)' } }}>
+                                            <IconButton onClick={() => handleDeleteCard(card.id)} size="small" sx={{ color: COLORS.white20, '&:hover': { color: COLORS.red, background: COLORS.red08 } }}>
                                                 <Trash2 size={14} />
                                             </IconButton>
                                         </Stack>
