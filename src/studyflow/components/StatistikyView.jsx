@@ -7,6 +7,8 @@ import {
 } from 'recharts';
 import { CHART_TOOLTIP_STYLE } from '../constants';
 import { useStudyFlow } from '../StudyFlowContext';
+import { today as getToday } from '../utils/date';
+import { SectionHeader } from './SharedUI';
 
 const srColor = (rate) => rate >= 70 ? '#4ade80' : rate >= 40 ? '#fb923c' : '#f87171';
 
@@ -17,7 +19,7 @@ export const StatistikyView = () => {
         dueToday, dueTomorrow, dueWeek,
         avgSuccess, courseProgress, weakCards,
     } = useMemo(() => {
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const todayStr = getToday();
         const d1 = new Date(); d1.setDate(d1.getDate() + 1);
         const tomorrowStr = d1.toISOString().slice(0, 10);
         const d7 = new Date(); d7.setDate(d7.getDate() + 7);
@@ -93,10 +95,12 @@ export const StatistikyView = () => {
     return (
         <Box sx={{ maxWidth: 1140, mx: 'auto' }}>
             {/* Header */}
-            <Stack mb={3}>
-                <Typography variant="h5" fontWeight={800}>Statistiky</Typography>
-                <Typography variant="body2" color="text.secondary">Přehled tvého studia a pokroku</Typography>
-            </Stack>
+            <SectionHeader 
+                title="Statistiky" 
+                subtitle="Přehled tvého studia a pokroku" 
+                icon={TrendingUp}
+                color={COLORS.primary}
+            />
 
             {/* Stat boxes */}
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2,1fr)', sm: 'repeat(4,1fr)' }, gap: 2, mb: 3 }}>

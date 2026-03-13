@@ -6,10 +6,11 @@ import {
 import { X } from 'lucide-react';
 import { useStudyFlow } from '../StudyFlowContext';
 import { DIALOG_PAPER_SX, COLORS } from '../../styles';
+import { today as getToday, calcNextReview } from '../utils/date';
 
 export const ZenMode = ({ onClose, specificCards = null }) => {
     const { cards, setCards } = useStudyFlow();
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getToday();
     const dueCards = useMemo(() => {
         if (specificCards) return specificCards;
         return cards.filter(c => c.nextReview <= today);
@@ -26,11 +27,8 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
         // SM-2 simplified: adjust next review
         setCards(prev => prev.map(c => {
             if (c.id !== current.id) return c;
-            const newSuccess = Math.min(100, Math.max(0, (c.successRate || 0) + (correct ? 12 : -15)));
-            const daysUntilNext = correct ? Math.max(1, Math.round((c.successRate || 50) / 15)) : 1;
-            const next = new Date();
-            next.setDate(next.getDate() + daysUntilNext);
-            return { ...c, successRate: newSuccess, totalReviews: (c.totalReviews || 0) + 1, lastReviewed: today, nextReview: next.toISOString().slice(0, 10) };
+            const { successRate: newSuccess, nextReview } = calcNextReview(c.successRate || 0, correct);
+            return { ...c, successRate: newSuccess, totalReviews: (c.totalReviews || 0) + 1, lastReviewed: today, nextReview };
         }));
         if (idx + 1 >= dueCards.length) {
             setFinished(true);

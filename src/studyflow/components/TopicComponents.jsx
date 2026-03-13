@@ -9,8 +9,9 @@ import {
     ChevronLeft, Plus, ArrowRight, FileText, Layers, CheckSquare,
     Folder, X,
 } from 'lucide-react';
-import { COLORS, TOP_STRIPE_SX, CARD_HOVER_GLOW, SOFT_HOVER, modalSlideInAnim } from '../../styles';
+import { COLORS, TOP_STRIPE_SX, CARD_HOVER_GLOW, SOFT_HOVER, modalSlideInAnim, DIALOG_PAPER_SX } from '../../styles';
 import { ColorSwatch, CourseCard, AddCourseModal, EditCourseModal, DeleteConfirmModal } from './CourseComponents';
+import { today as getToday } from '../utils/date';
 
 export const TopicCard = ({ topic, courseColor, stats = {}, onOpen }) => {
     const [hStyle, setHStyle] = useState({});
@@ -75,7 +76,7 @@ export const AddTopicModal = ({ courseColor, onSave, onClose }) => {
     const [color, setColor] = useState(courseColor);
     const handleSave = () => {
         if (!name.trim()) return;
-        onSave({ id: `${Date.now()}`, name: name.trim(), color, notes: 0, cards: 0, createdAt: new Date().toISOString().slice(0, 10) });
+        onSave({ id: `${Date.now()}`, name: name.trim(), color, notes: 0, cards: 0, createdAt: getToday() });
     };
     return (
         <Dialog open onClose={onClose} maxWidth="xs" fullWidth

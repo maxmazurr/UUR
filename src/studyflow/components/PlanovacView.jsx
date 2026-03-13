@@ -7,6 +7,8 @@ import {
 import { Calendar, ChevronLeft, ChevronRight, Plus, CheckSquare, Trash2, Clock } from 'lucide-react';
 import { EVENT_TYPE_CONFIG, DAY_LABELS } from '../constants';
 import { SOFT_HOVER, COLORS, DIALOG_PAPER_SX, GLASS_PANEL } from '../../styles';
+import { today as getToday } from '../utils/date';
+import { SectionHeader } from './SharedUI';
 
 const PANEL_SX = { ...GLASS_PANEL, borderRadius: 3 };
 
@@ -27,7 +29,7 @@ export const AddEventDialog = ({
     const initialType = typeOptions.includes(defaultType) ? defaultType : typeOptions[0];
     const [title, setTitle] = useState('');
     const [type, setType] = useState(initialType);
-    const [date, setDate] = useState(defaultDate || new Date().toISOString().slice(0, 10));
+    const [date, setDate] = useState(defaultDate || getToday());
     const [courseId, setCourseId] = useState('');
     const isTodoOnly = typeOptions.length === 1 && typeOptions[0] === 'todo';
 
@@ -37,7 +39,7 @@ export const AddEventDialog = ({
             id: `evt-${Date.now()}`,
             type,
             title: title.trim(),
-            date: isTodoOnly ? (defaultDate || new Date().toISOString().slice(0, 10)) : date,
+            date: isTodoOnly ? (defaultDate || getToday()) : date,
             courseId: courseId || null,
             done: false,
             createdAt: new Date().toISOString(),
@@ -80,7 +82,7 @@ export const AddEventDialog = ({
                     ) : (
                         <Box sx={{ px: 1.5, py: 1.25, borderRadius: 2, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                             <Typography fontSize={12} color="text.secondary">Dnes</Typography>
-                            <Typography fontSize={14} fontWeight={700}>{formatDate(defaultDate || new Date().toISOString().slice(0, 10), { day: 'numeric', month: 'long' })}</Typography>
+                            <Typography fontSize={14} fontWeight={700}>{formatDate(defaultDate || getToday(), { day: 'numeric', month: 'long' })}</Typography>
                         </Box>
                     )}
                     {!isTodoOnly && (
@@ -109,7 +111,7 @@ import { useStudyFlow } from '../StudyFlowContext';
 
 export const PlanovacView = () => {
     const { events, setEvents, courses } = useStudyFlow();
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getToday();
     const [showAddEvent, setShowAddEvent] = useState(false);
     const [showAddTodo, setShowAddTodo] = useState(false);
     const [selectedDate, setSelectedDate] = useState(today);
@@ -162,22 +164,24 @@ export const PlanovacView = () => {
     return (
         <Box sx={{ maxWidth: 1140, mx: 'auto' }}>
             {/* Header */}
-            <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ md: 'center' }} mb={3} gap={2}>
-                <Box>
-                    <Typography variant="h5" fontWeight={800}>Plánovač</Typography>
-                    <Typography variant="body2" color="text.secondary">Přehled termínů a rychlé to‑do na dnes</Typography>
-                </Box>
-                <Stack direction="row" gap={1.5} flexWrap="wrap">
-                    <Button onClick={() => setShowAddEvent(true)} variant="outlined" startIcon={<Plus size={16} />}
-                        sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 700, borderColor: 'rgba(144,85,255,0.35)', color: '#9055FF', '&:hover': { borderColor: '#9055FF', background: 'rgba(144,85,255,0.08)' } }}>
-                        Nový termín
-                    </Button>
-                    <Button onClick={() => setShowAddTodo(true)} variant="outlined" startIcon={<Plus size={16} />}
-                        sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 700, borderColor: 'rgba(74,222,128,0.35)', color: '#4ade80', '&:hover': { borderColor: '#4ade80', background: 'rgba(74,222,128,0.08)' } }}>
-                        Nový úkol
-                    </Button>
-                </Stack>
-            </Stack>
+            <SectionHeader 
+                title="Plánovač" 
+                subtitle="Přehled termínů a rychlé to‑do na dnes"
+                icon={Calendar}
+                color={COLORS.primary}
+                action={
+                    <Stack direction="row" gap={1.5} flexWrap="wrap">
+                        <Button onClick={() => setShowAddEvent(true)} variant="outlined" startIcon={<Plus size={16} />}
+                            sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 700, borderColor: 'rgba(144,85,255,0.35)', color: '#9055FF', '&:hover': { borderColor: '#9055FF', background: 'rgba(144,85,255,0.08)' } }}>
+                            Nový termín
+                        </Button>
+                        <Button onClick={() => setShowAddTodo(true)} variant="outlined" startIcon={<Plus size={16} />}
+                            sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 700, borderColor: 'rgba(74,222,128,0.35)', color: '#4ade80', '&:hover': { borderColor: '#4ade80', background: 'rgba(74,222,128,0.08)' } }}>
+                            Nový úkol
+                        </Button>
+                    </Stack>
+                }
+            />
 
             {/* Summary */}
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2, mb: 3 }}>

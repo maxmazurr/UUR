@@ -144,6 +144,28 @@ export const TOP_STRIPE_SX = (color) => ({
     boxShadow: `0 2px 12px ${color}60` 
 });
 
+export const GLASS_CARD_SX = {
+    ...GLASS,
+    borderRadius: 3,
+    transition: 'all 0.2s ease-in-out',
+    '&:hover': {
+        borderColor: COLORS.borderLight,
+        background: 'rgba(255, 255, 255, 0.05)',
+        transform: 'translateY(-2px)'
+    }
+};
+
+export const GHOST_BUTTON_SX = {
+    borderRadius: 2,
+    textTransform: 'none',
+    fontWeight: 700,
+    color: COLORS.textSecondary,
+    '&:hover': {
+        background: COLORS.white04,
+        color: COLORS.textPrimary
+    }
+};
+
 export const CARD_HOVER_GLOW = (color) => ({
     '&::before': {
         content: '""',

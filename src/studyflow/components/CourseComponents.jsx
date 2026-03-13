@@ -11,16 +11,9 @@ import {
 } from 'lucide-react';
 import { COLORS, TOP_STRIPE_SX, CARD_HOVER_GLOW, SOFT_HOVER, DIALOG_PAPER_SX, modalSlideInAnim } from '../../styles';
 import { COURSE_COLORS, COURSE_ICONS } from '../constants';
+import { today as getToday, formatRelative } from '../utils/date';
 
-function formatRelative(isoString) {
-    const d = new Date(isoString);
-    const now = new Date();
-    const diff = Math.floor((now - d) / 86400000);
-    if (diff === 0) return 'Dnes';
-    if (diff === 1) return 'Včera';
-    if (diff < 7) return `Před ${diff} dny`;
-    return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short' });
-}
+
 
 export const ColorSwatch = ({ value, onChange }) => (
     <Stack direction="row" gap={0.75} flexWrap="wrap">
@@ -239,7 +232,7 @@ export const AddCourseModal = ({ onSave, onClose }) => {
             color,
             color2: useGradient ? color2 : null,
             useGradient,
-            createdAt: new Date().toISOString().slice(0, 10),
+            createdAt: getToday(),
             lastOpened: new Date().toISOString(),
             notes: 0, cards: 0, tests: 0,
         });

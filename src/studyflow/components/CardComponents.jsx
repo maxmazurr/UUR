@@ -8,6 +8,7 @@ import {
 import { X, Copy, Plus } from 'lucide-react';
 import { DIFF_COLORS, DIFF_LABELS } from '../constants';
 import { DIALOG_PAPER_SX, COLORS } from '../../styles';
+import { today as getToday } from '../utils/date';
 
 const AI_PROMPT_TEMPLATE = `Vytvoř 10 flashcard kartiček ve formátu JSON na téma [TÉMA].
 Vrať pouze JSON pole bez dalšího textu, bez markdown bloků:
@@ -105,8 +106,8 @@ export const CardWizard = ({ courses, onSave, onClose, editCard = null }) => {
             courseId, courseName: course?.name || '', courseColor: course?.color || '#7C6FF7',
             topicId, topicName: topic?.name || '',
             successRate: 0, totalReviews: 0, lastReviewed: null,
-            nextReview: new Date().toISOString().slice(0, 10),
-            createdAt: new Date().toISOString().slice(0, 10),
+            nextReview: getToday(),
+            createdAt: getToday(),
         };
         if (type === 'ai') {
             const cards = aiParsed.map((c, i) => ({
@@ -322,7 +323,7 @@ export const TestWizard = ({ courseId, courseName, courseColor, topicId, topicNa
             onSave({ ...editCard, question: question.trim(), options, difficulty });
             return;
         }
-        const base = { courseId, courseName, courseColor, topicId, topicName, type: 'test', successRate: 0, totalReviews: 0, lastReviewed: null, nextReview: new Date().toISOString().slice(0, 10), createdAt: new Date().toISOString().slice(0, 10) };
+        const base = { courseId, courseName, courseColor, topicId, topicName, type: 'test', successRate: 0, totalReviews: 0, lastReviewed: null, nextReview: getToday(), createdAt: getToday() };
         if (mode === 'ai' && aiParsed) {
             onSave(aiParsed.map((c, i) => ({ ...base, id: `${Date.now()}_${i}`, question: c.question, options: c.options, difficulty: c.difficulty || 'medium' })));
         } else {

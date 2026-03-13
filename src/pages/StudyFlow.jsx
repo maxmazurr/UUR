@@ -21,8 +21,10 @@ import {
     DEMO_COURSES, DEMO_CARDS, DEMO_EVENTS,
 } from '../studyflow/constants';
 import { COLORS, HIDE_SCROLLBAR, fadeInUpAnim, deadlineShimmerAnim } from "../styles";
-import { FadeUp, HoloCard, NavItem, NotifItem, TreeItem, ContinueCard, CardRow, WeakCard } from '../studyflow/components/Sidebar';
+import { HoloCard, NavItem, NotifItem, TreeItem, ContinueCard } from '../studyflow/components/Sidebar';
+import { FadeUp, CardRow, WeakCard } from '../studyflow/components/SharedUI';
 import { TopicView } from '../studyflow/components/TopicView';
+import { today as getToday } from '../studyflow/utils/date';
 import { PoznamkyView, AddTopicModal } from '../studyflow/components/TopicComponents';
 import { KartičkyView, TestyView } from '../studyflow/components/StudyViews';
 import { StatistikyView } from '../studyflow/components/StatistikyView';
@@ -136,7 +138,7 @@ function StudyFlowContent() {
     }, []);
 
     const allSearchItems = useMemo(() => {
-        const todayStr = new Date().toISOString().slice(0, 10);
+        const todayStr = getToday();
         const items = [];
         courses.forEach(c => {
             items.push({ type: 'courses', label: c.name, subtitle: c.description || '' });
@@ -551,7 +553,7 @@ function StudyFlowContent() {
                                                 Blížící se zkoušky
                                             </Typography>
                                             <Stack sx={{ gap: 1.25 }}>
-                                                {events.filter(e => e.type === 'exam' && !e.done && e.date >= new Date().toISOString().slice(0, 10))
+                                                {events.filter(e => e.type === 'exam' && !e.done && e.date >= getToday())
                                                     .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4).map(exam => {
                                                         const daysLeft = Math.max(0, Math.ceil((new Date(exam.date) - new Date()) / 86400000));
                                                         const color = daysLeft <= 2 ? '#F87171' : daysLeft <= 7 ? '#FB923C' : '#4ADE80';
@@ -578,7 +580,7 @@ function StudyFlowContent() {
                                                             </Stack>
                                                         );
                                                     })}
-                                                {events.filter(e => e.type === 'exam' && !e.done && e.date >= new Date().toISOString().slice(0, 10)).length === 0 && (
+                                                {events.filter(e => e.type === 'exam' && !e.done && e.date >= getToday()).length === 0 && (
                                                     <Typography sx={{ textAlign: 'center', py: 2, color: 'var(--text-muted)', fontSize: '0.75rem' }}>Žádné nadcházející zkoušky</Typography>
                                                 )}
                                             </Stack>
@@ -595,7 +597,7 @@ function StudyFlowContent() {
                                                 Deadliny
                                             </Typography>
                                             <Stack sx={{ gap: 1.5 }}>
-                                                {events.filter(e => e.type === 'deadline' && !e.done && e.date >= new Date().toISOString().slice(0, 10))
+                                                {events.filter(e => e.type === 'deadline' && !e.done && e.date >= getToday())
                                                     .sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4).map(dl => {
                                                         const daysLeft = Math.max(0, Math.ceil((new Date(dl.date) - new Date()) / 86400000));
                                                         const color = daysLeft <= 3 ? '#F87171' : daysLeft <= 10 ? '#FB923C' : '#4ADE80';
@@ -640,7 +642,7 @@ function StudyFlowContent() {
                                                             </Box>
                                                         );
                                                     })}
-                                                {events.filter(e => e.type === 'deadline' && !e.done && e.date >= new Date().toISOString().slice(0, 10)).length === 0 && (
+                                                {events.filter(e => e.type === 'deadline' && !e.done && e.date >= getToday()).length === 0 && (
                                                     <Typography sx={{ textAlign: 'center', py: 2, color: 'var(--text-muted)', fontSize: '0.75rem' }}>Žádné deadliny</Typography>
                                                 )}
                                             </Stack>

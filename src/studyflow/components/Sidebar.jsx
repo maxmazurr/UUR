@@ -4,27 +4,9 @@ import { ChevronRight, FileText, ArrowRight, PenTool, Layers, Eye, CheckSquare, 
 import { useOnScreen } from '../hooks';
 import { COURSE_COLORS, modalSlideInAnim } from '../constants';
 import { COLORS, DIALOG_PAPER_SX } from '../../styles';
+import { FadeUp, CardRow, WeakCard, FastAction } from './SharedUI';
 
-export const FadeUp = ({ children, delay = 0, className, style, sx: sxProp = {} }) => {
-    const ref = useRef(null);
-    const isVisible = useOnScreen(ref);
-    return (
-        <Box
-            ref={ref}
-            className={className}
-            sx={{
-                transition: 'all 0.7s ease-out',
-                transitionDelay: `${delay}ms`,
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? 'translateY(0)' : 'translateY(32px)',
-                ...style,
-                ...sxProp,
-            }}
-        >
-            {children}
-        </Box>
-    );
-};
+
 
 export const HoloCard = ({ item }) => {
     const ref = useRef(null);
@@ -426,61 +408,4 @@ export const ContinueCard = ({ color, course, topic, progress, cards, tests, tim
     </Paper>
 );
 
-export const CardRow = ({ title, color, delay, completed, onToggle, onDetail }) => (
-    <FadeUp delay={delay}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" onClick={() => onDetail?.(title)}
-            sx={{
-                borderRadius: 3, px: 1.75, py: 1.5, cursor: 'pointer', transition: 'all 0.2s',
-                background: completed ? COLORS.green03 : COLORS.bgSecondary,
-                border: '1px solid', borderColor: completed ? COLORS.green12 : COLORS.white05,
-                borderLeftWidth: 2, borderLeftColor: completed ? COLORS.green : 'transparent',
-                '&:hover': { transform: 'scale(1.005)' }, '&:active': { transform: 'scale(0.98)' },
-                '&:hover .cardrow-actions': { opacity: 1 },
-                '&:hover .cardrow-title': completed ? {} : { color: 'white' },
-            }}>
-            <Stack direction="row" alignItems="center" gap={1.5} minWidth={0}>
-                <Box sx={{ width: 24, height: 24, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.2s', background: completed ? COLORS.green10 : `${color}12` }}>
-                    {completed ? <CheckSquare size={12} sx={{ color: COLORS.green }} /> : <Layers size={12} sx={{ color }} />}
-                </Box>
-                <Typography className="cardrow-title" sx={{ fontSize: 13, fontWeight: 500, transition: 'color 0.2s', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: completed ? COLORS.white35 : '#C8CDD8', textDecoration: completed ? 'line-through' : 'none' }}>{title}</Typography>
-            </Stack>
-            <Stack direction="row" gap={1} className="cardrow-actions" sx={{ opacity: completed ? 1 : 0, transition: 'opacity 0.2s' }}>
-                <Button size="small" startIcon={<Eye size={12} />} onClick={(e) => { e.stopPropagation(); onDetail?.(title); }}
-                    sx={{ fontSize: 11, fontWeight: 500, textTransform: 'none', borderRadius: 2, px: 1.25, py: 0.75, flexShrink: 0, bgcolor: COLORS.accent08, color: COLORS.accent, '&:hover': { bgcolor: COLORS.accent15 } }}>
-                    Detail
-                </Button>
-                <Button size="small" onClick={(e) => { e.stopPropagation(); onToggle?.(title); }}
-                    sx={{ fontSize: 11, fontWeight: 500, textTransform: 'none', borderRadius: 2, px: 1.5, py: 0.75, flexShrink: 0, bgcolor: completed ? COLORS.green08 : COLORS.actionHover, color: completed ? COLORS.green : COLORS.textSecondary, '&:hover': { bgcolor: completed ? COLORS.green15 || 'rgba(74,222,128,0.15)' : COLORS.white08 } }}>
-                    {completed ? '✓ Hotovo' : 'Zopakovat'}
-                </Button>
-            </Stack>
-        </Stack>
-    </FadeUp>
-);
 
-export const WeakCard = ({ title, value }) => (
-    <Stack gap={1} sx={{ p: 1.25, borderRadius: 3, transition: 'all 0.2s', cursor: 'pointer', '&:hover': { bgcolor: COLORS.white02 }, '&:hover .weak-title': { color: 'white' } }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography className="weak-title" sx={{ fontSize: 13, fontWeight: 500, color: COLORS.white80, transition: 'color 0.2s', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</Typography>
-            <Typography sx={{ fontSize: 12, fontFamily: 'monospace', fontWeight: 700, ml: 1, flexShrink: 0, color: value <= 30 ? COLORS.red : COLORS.orange }}>{value}%</Typography>
-        </Stack>
-        <LinearProgress variant="determinate" value={value}
-            sx={{ height: 8, borderRadius: 99, bgcolor: COLORS.bgPrimary, '& .MuiLinearProgress-bar': { borderRadius: 99, background: `linear-gradient(90deg, ${COLORS.red}, ${COLORS.orange})`, boxShadow: `0 0 10px ${COLORS.red}4d` } }} />
-    </Stack>
-);
-
-export const FastAction = ({ icon, text }) => (
-    <Box component="button"
-        sx={{
-            border: `1px solid ${COLORS.white05}`, borderRadius: 3, p: 2, display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', gap: 1.25, cursor: 'pointer', position: 'relative',
-            overflow: 'hidden', width: '100%', minHeight: 90, background: COLORS.bgSecondary,
-            transition: 'all 0.25s ease',
-            '&:hover': { transform: 'scale(1.03)', background: COLORS.bgTertiary },
-            '&:hover svg': { transform: 'scale(1.1)', transition: 'transform 0.25s ease' },
-            '&:hover .fast-text': { color: 'white' },
-        }}>
-        <Box sx={{ position: 'relative', zIndex: 1 }}>{icon}</Box>
-        <Typography className="fast-text" sx={{ fontSize: 11, fontWeight: 500, color: COLORS.white55, transition: 'color 0.2s', position: 'relative', zIndex: 1 }}>{text}</Typography>
-    </Box>
-);

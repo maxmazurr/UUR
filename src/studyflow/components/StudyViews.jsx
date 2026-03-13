@@ -4,11 +4,13 @@ import { Box, Stack, Typography, Paper, Button, Chip, IconButton } from '@mui/ma
 import { Layers, CheckSquare, Play, FileText } from 'lucide-react';
 import { useStudyFlow } from '../StudyFlowContext';
 import { COLORS } from '../../styles';
+import { today as getToday } from '../utils/date';
+import { SectionHeader } from './SharedUI';
 
 export const TestyView = ({ onOpenTopic, onStartZen }) => {
     const { cards } = useStudyFlow();
     const [selectedTopics, setSelectedTopics] = useState([]); // Array of topicIds
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getToday();
     const tests = cards.filter(c => c.type === 'test');
     const dueTodayCount = tests.filter(c => c.nextReview <= today).length;
     const avgSuccessOverall = tests.length > 0 ? Math.round(tests.reduce((s, c) => s + (c.successRate || 0), 0) / tests.length) : 0;
@@ -45,29 +47,24 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
 
     return (
         <Box sx={{ maxWidth: 1140, mx: 'auto' }}>
-            {/* Header / Stats */}
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={3} gap={2} flexWrap="wrap">
-                <Box>
-                    <Stack direction="row" alignItems="center" gap={1.5} mb={0.5}>
-                        <CheckSquare size={22} color="#c084fc" />
-                        <Typography variant="h5" fontWeight={800}>Testy</Typography>
-                    </Stack>
-                    <Typography variant="body2" color="text.secondary">
-                        {tests.length} testů celkem · Průměrná úspěšnost: <Box component="span" sx={{ color: avgSuccessOverall >= 70 ? COLORS.green : avgSuccessOverall >= 40 ? COLORS.orange : COLORS.red, fontWeight: 600 }}>{avgSuccessOverall}%</Box>
-                        {dueTodayCount > 0 && <> · <Box component="span" sx={{ color: COLORS.red, fontWeight: 600 }}>{dueTodayCount} k opakování</Box></>}
-                    </Typography>
-                </Box>
-                {dueTodayCount > 0 && (
-                    <Button onClick={() => onStartZen?.(tests.filter(c => c.nextReview <= today))} variant="contained" startIcon={<Play size={15} />}
-                        sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.primary})`, '&:hover': { filter: 'brightness(0.88)' } }}>
-                        Spustit testy na dnes ({dueTodayCount})
-                    </Button>
-                )}
-            </Stack>
+            <SectionHeader 
+                title="Testy" 
+                subtitle={`ABCD otázky (${tests.length} celkem, průměrná úspěšnost ${avgSuccessOverall}%)`}
+                icon={CheckSquare}
+                color={COLORS.purple}
+                action={
+                    dueTodayCount > 0 && (
+                        <Button onClick={() => onStartZen(tests.filter(c => c.nextReview <= today))} variant="contained" startIcon={<Play size={16} />}
+                            sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 700, bgcolor: COLORS.purple, '&:hover': { bgcolor: '#A855F7' } }}>
+                            Procvičit dnes ({dueTodayCount})
+                        </Button>
+                    )
+                }
+            />
 
             {/* Multi-selection Bar */}
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3} gap={2} flexWrap="wrap"
-                sx={{ p: 2, borderRadius: 3, background: COLORS.accent08, border: `1px solid ${COLORS.accent1a}` }}>
+                sx={{ p: 2, borderRadius: 3, background: COLORS.white02, border: `1px solid ${COLORS.white08}` }}>
                 <Box>
                     <Typography variant="subtitle2" fontWeight={800} sx={{ color: COLORS.purple }}>Hromadné akce</Typography>
                     <Typography variant="caption" color="text.secondary">Vybráno témat: {selectedTopics.length}</Typography>
@@ -107,7 +104,7 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
                         <Paper key={i} elevation={0} 
                             onClick={() => handleToggleSelect(r.topicId)}
                             sx={{ 
-                                p: 2.5, borderRadius: 2.5, 
+                                p: 2.5, borderRadius: 3, 
                                 background: selectedTopics.includes(r.topicId) ? COLORS.primary08 : COLORS.white02, 
                                 border: '1px solid',
                                 borderColor: selectedTopics.includes(r.topicId) ? `${COLORS.primary}66` : COLORS.white07, 
@@ -158,7 +155,7 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
                                 </Stack>
                             </Stack>
                             {selectedTopics.includes(r.topicId) && (
-                                <Box sx={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: '0 30px 30px 0', borderColor: 'transparent #9055FF transparent transparent', opacity: 0.8 }} />
+                                <Box sx={{ position: 'absolute', top: 0, right: 0, width: 0, height: 0, borderStyle: 'solid', borderWidth: '0 30px 30px 0', borderColor: `transparent ${COLORS.primary} transparent transparent`, opacity: 0.8 }} />
                             )}
                         </Paper>
                     ))}
@@ -171,7 +168,7 @@ export const TestyView = ({ onOpenTopic, onStartZen }) => {
 export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
     const { cards, courses } = useStudyFlow();
     const [filterCourse, setFilterCourse] = useState('all');
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getToday();
     const flashcards = cards.filter(c => c.type === 'flashcard');
     const dueToday = flashcards.filter(c => c.nextReview <= today).length;
     const avgSuccess = flashcards.length > 0 ? Math.round(flashcards.reduce((s, c) => s + (c.successRate || 0), 0) / flashcards.length) : 0;
@@ -191,25 +188,20 @@ export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
 
     return (
         <Box sx={{ maxWidth: 1140, mx: 'auto' }}>
-            {/* Header */}
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1} gap={2} flexWrap="wrap">
-                <Box>
-                    <Stack direction="row" alignItems="center" gap={1.5} mb={0.5}>
-                        <Layers size={22} color="#4ade80" />
-                        <Typography variant="h5" fontWeight={800}>Kartičky</Typography>
-                    </Stack>
-                    <Typography variant="body2" color="text.secondary">
-                        {flashcards.length} kartiček celkem · Průměrná úspěšnost: <Box component="span" sx={{ color: avgSuccess >= 70 ? COLORS.green : avgSuccess >= 40 ? COLORS.orange : COLORS.red, fontWeight: 600 }}>{avgSuccess}%</Box>
-                        {dueToday > 0 && <> · <Box component="span" sx={{ color: COLORS.red, fontWeight: 600 }}>{dueToday} k opakování</Box></>}
-                    </Typography>
-                </Box>
-                {dueToday > 0 && (
-                    <Button onClick={() => onStartZen?.(flashcards.filter(c => c.nextReview <= today))} variant="contained" startIcon={<Play size={15} />}
-                        sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 700, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.blue})`, '&:hover': { filter: 'brightness(0.88)' } }}>
-                        Začít opakování ({dueToday})
-                    </Button>
-                )}
-            </Stack>
+            <SectionHeader 
+                title="Kartičky" 
+                subtitle={`Zopakuj si to nejdůležitější (${flashcards.length} celkem, průměrná úspěšnost ${avgSuccess}%)`}
+                icon={Layers}
+                color={COLORS.blue}
+                action={
+                    dueToday > 0 && (
+                        <Button onClick={() => onStartZen(flashcards.filter(c => c.nextReview <= today))} variant="contained" startIcon={<Play size={16} />}
+                            sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 700, bgcolor: COLORS.blue, '&:hover': { bgcolor: '#4385D9' } }}>
+                            Zopakovat dnes ({dueToday})
+                        </Button>
+                    )
+                }
+            />
 
             {/* Summary stats */}
             <Stack direction="row" gap={2} mb={3} mt={2} flexWrap="wrap">
@@ -249,7 +241,7 @@ export const KartičkyView = ({ onOpenTopic, onStartZen }) => {
                 <Stack gap={1.5}>
                     {rows.map((r, i) => (
                         <Paper key={i} elevation={0} onClick={() => onStartZen?.(r.cards)}
-                            sx={{ p: 2.5, borderRadius: 2.5, background: COLORS.white02, border: `1px solid ${COLORS.white07}`, cursor: 'pointer', transition: 'all 0.2s', '&:hover': { background: COLORS.white04, borderColor: `${COLORS.green}50`, transform: 'translateY(-2px)' } }}>
+                            sx={{ p: 2.5, borderRadius: 3, background: COLORS.white02, border: `1px solid ${COLORS.white07}`, cursor: 'pointer', transition: 'all 0.2s', '&:hover': { background: COLORS.white04, borderColor: `${COLORS.green}50`, transform: 'translateY(-2px)' } }}>
                             <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
                                 <Box sx={{ width: 6, height: 36, borderRadius: 1, background: r.courseColor, flexShrink: 0 }} />
                                 <Box sx={{ flex: 1, minWidth: 120 }}>

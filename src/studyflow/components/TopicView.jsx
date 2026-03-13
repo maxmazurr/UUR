@@ -7,6 +7,7 @@ import { NoteEditor } from './NoteEditor';
 import { CardDetailModal } from './CardDetailModal';
 import { useStudyFlow } from '../StudyFlowContext';
 import { COLORS, TOP_STRIPE_SX } from '../../styles';
+import { today as getToday } from '../utils/date';
 
 const adaptCardForDetail = (card) => ({
     front: card.front || card.question || '',
@@ -35,7 +36,7 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
 
     const topicCards = cards.filter(c => c.topicId === topic.id && c.type === 'flashcard');
     const topicTests = cards.filter(c => c.topicId === topic.id && c.type === 'test');
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getToday();
     const c = topic.color || course.color;
 
     const backlinks = useMemo(() => getBacklinks(topic.id), [topic.id, getBacklinks]);
