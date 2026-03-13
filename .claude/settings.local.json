@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \":*)",
+      "Bash(npm run build)",
+      "Bash(npm run dev)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(exit 0)",
+      "Bash(npm run lint)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:mui-tiptap.github.io)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npx eslint src/pages/StudyFlow.jsx)",
+      "Bash(npx vite build)",
+      "Bash(npm install @tiptap/extension-table-row @tiptap/extension-table-header @tiptap/extension-table-cell @tiptap/extension-highlight)",
+      "Bash(npm install recharts)",
+      "Bash(npm list --depth=0)",
+      "Bash(wc -l assets/*.js)",
+      "Bash(/tmp/verification_report.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(cd \"C:\\\\Users\\\\mgrom\\\\Desktop\\\\UUR1.0\" && npm run lint 2>&1 | grep -v \"^$\")"
+    ]
+  }
+}

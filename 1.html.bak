@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lapis - Premium Dashboard</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body { margin: 0; padding: 0; background-color: #0F1117; color: #fff; overflow-x: hidden; }
+    #root { width: 100vw; min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- ИКОНКИ ---
+    const Icon = ({ name, size = 24, className = '', style = {} }) => {
+      const iconRef = useRef(null);
+      useEffect(() => {
+        if (iconRef.current && window.lucide) {
+          const kebabName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+          iconRef.current.innerHTML = `<i data-lucide="${kebabName}"></i>`;
+          window.lucide.createIcons({ root: iconRef.current });
+          const svg = iconRef.current.querySelector('svg');
+          if (svg) {
+            svg.setAttribute('width', size);
+            svg.setAttribute('height', size);
+            if (className) svg.setAttribute('class', svg.getAttribute('class') + ' ' + className);
+          }
+        }
+      }, [name, size, className]);
+      return <span ref={iconRef} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: size, height: size, ...style }} />;
+    };
+
+    const ArrowRight = (p) => <Icon name="ArrowRight" {...p} />;
+    const ArrowDown = (p) => <Icon name="ArrowDown" {...p} />;
+    const Flame = (p) => <Icon name="Flame" {...p} />;
+    const BookOpen = (p) => <Icon name="BookOpen" {...p} />;
+    const CheckCircle = (p) => <Icon name="CheckCircle" {...p} />;
+    const Calendar = (p) => <Icon name="Calendar" {...p} />;
+    const FileText = (p) => <Icon name="FileText" {...p} />;
+    const PenTool = (p) => <Icon name="PenTool" {...p} />;
+    const Folder = (p) => <Icon name="Folder" {...p} />;
+    const Play = (p) => <Icon name="Play" {...p} />;
+    const MoreHorizontal = (p) => <Icon name="MoreHorizontal" {...p} />;
+    const Layers = (p) => <Icon name="Layers" {...p} />;
+    const Search = (p) => <Icon name="Search" {...p} />;
+    const Command = (p) => <Icon name="Command" {...p} />;
+    const Sparkles = (p) => <Icon name="Sparkles" {...p} />;
+    const Bell = (p) => <Icon name="Bell" {...p} />;
+    const Zap = (p) => <Icon name="Zap" {...p} />;
+    const Trophy = (p) => <Icon name="Trophy" {...p} />;
+
+    // --- ХУКИ И УТИЛИТЫ ---
+
+// Хук для отслеживания появления элемента в зоне видимости (Scroll Animations)
+function useOnScreen(ref, rootMargin = '0px') {
+  const [isIntersecting, setIntersecting] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIntersecting(true);
+          // Отключаем наблюдение после первого появления (чтобы анимация не повторялась)
+          observer.disconnect();
+        }
+      },
+      { rootMargin, threshold: 0.1 }
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => observer.disconnect();
+  }, [ref, rootMargin]);
+  return isIntersecting;
+}
+
+// Компонент для анимированного счета чисел
+const CountUp = ({ end, duration = 2000, suffix = "" }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isVisible = useOnScreen(ref);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      // easeOutQuart
+      const easeProgress = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.floor(easeProgress * end));
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }, [end, duration, isVisible]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+};
+
+// Компонент-обертка для анимации появления (Fade/Slide in)
+const Reveal = ({ children, delay = 0, direction = 'up', className = '' }) => {
+  const ref = useRef(null);
+  const isVisible = useOnScreen(ref);
+  
+  let translateClass = '';
+  switch (direction) {
+    case 'up': translateClass = 'translate-y-12'; break;
+    case 'down': translateClass = '-translate-y-12'; break;
+    case 'left': translateClass = '-translate-x-12'; break;
+    case 'right': translateClass = 'translate-x-12'; break;
+    case 'none': translateClass = 'translate-y-0 scale-95'; break;
+    default: translateClass = 'translate-y-12';
+  }
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ease-out ${
+        isVisible ? 'opacity-100 translate-x-0 translate-y-0 scale-100' : `opacity-0 ${translateClass}`
+      } ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// Компонент-кнопка с эффектом подсветки границ (Spotlight)
+const SpotlightButton = ({ children, className = '', glowColor = 'rgba(124, 111, 247, 0.6)' }) => {
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+  };
+
+  return (
+    <button
+      className={`spotlight-btn relative w-full h-full p-6 rounded-2xl flex flex-col items-center justify-center gap-4 transition-all group glass-card hover-target ${className}`}
+      onMouseMove={handleMouseMove}
+      style={{ '--glow-color': glowColor }}
+    >
+      {children}
+    </button>
+  );
+};
+
+// ─── MAGNETIC BUTTON ──────────────────────────────────────────────────────────
+const MagneticBtn = ({ children, className = '', style = {}, onClick, strength = 0.35 }) => {
+  const ref = useRef(null);
+  const handleMove = (e) => {
+    const rect = ref.current.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) * strength;
+    const dy = (e.clientY - cy) * strength;
+    ref.current.style.transform = `translate(${dx}px, ${dy}px) scale(1.04)`;
+  };
+  const handleLeave = () => {
+    ref.current.style.transform = 'translate(0,0) scale(1)';
+  };
+  return (
+    <button ref={ref} className={className} style={{ ...style, transition: 'transform 0.4s cubic-bezier(0.23,1,0.32,1)', willChange: 'transform' }}
+      onMouseMove={handleMove} onMouseLeave={handleLeave} onClick={onClick}>
+      {children}
+    </button>
+  );
+};
+
+// ─── PARTICLE SYSTEM ──────────────────────────────────────────────────────────
+const Particles = ({ colors }) => {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    const particles = Array.from({ length: 40 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 0.5,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      alpha: Math.random() * 0.6 + 0.2,
+      color: Math.random() > 0.5 ? `rgb(${colors.c1})` : `rgb(${colors.c2})`,
+    }));
+
+    let raf;
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+      });
+      raf = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => cancelAnimationFrame(raf);
+  }, [colors.c1, colors.c2]);
+
+  return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} />;
+};
+
+// ─── HOLOGRAPHIC CARD ─────────────────────────────────────────────────────────
+const HoloCard = ({ item }) => {
+  const ref = useRef(null);
+  const [style, setStyle] = useState({});
+  const move = (e) => {
+    const r = ref.current.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    setStyle({
+      background: `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.06) 0%, transparent 60%)`,
+      transform: `perspective(800px) rotateY(${(x - 0.5) * 14}deg) rotateX(${(0.5 - y) * 14}deg) translateY(-6px) scale(1.02)`,
+    });
+  };
+  const leave = () => setStyle({});
+
+  return (
+    <div ref={ref}
+      onMouseMove={move} onMouseLeave={leave}
+      className="group flex-shrink-0"
+      style={{
+        width: '100%', height: '100%',
+        padding: 24, borderRadius: 24, cursor: 'pointer',
+        background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)',
+        backdropFilter: 'blur(16px)', position: 'relative', overflow: 'hidden',
+        transition: 'transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s',
+        boxShadow: style.transform ? '0 20px 60px rgba(0,0,0,0.4)' : '0 4px 20px rgba(0,0,0,0.2)',
+        display: 'flex', flexDirection: 'column',
+        ...style,
+      }}
+    >
+      <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+        {item.icon}
+      </div>
+      <div style={{ fontSize: 13, color: item.clr, fontWeight: 500, marginBottom: 4 }}>Složka</div>
+      <h3 style={{ fontSize: 20, fontWeight: 600, marginBottom: 20, fontFamily: 'Clash Display' }} className="text-white">{item.title}</h3>
+      
+      <div className="flex flex-col gap-2.5 mb-6">
+        {[
+          { Icon: FileText, val: item.notes, label: 'poznámek' },
+          { Icon: PenTool, val: item.tests, label: 'testů' },
+          { Icon: Layers, val: item.cards, label: 'kartiček' },
+        ].map(({ Icon, val, label }, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>
+            <Icon size={16} style={{ color: 'rgba(255,255,255,0.3)' }} />
+            <span><strong style={{ color: 'white' }}>{val}</strong> {label}</span>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-auto border-t border-white/10 pt-4 flex justify-between items-center text-sm text-gray-500">
+        <span>Naposledy otevřeno</span><span>{item.date}</span>
+      </div>
+
+      <div className="absolute inset-0 bg-[#0F1117]/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 rounded-3xl z-10">
+        <button className="bg-white text-black px-6 py-2.5 rounded-full font-medium flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+          Otevřít <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- ГЛАВНЫЙ КОМПОНЕНТ APP ---
+
+function PremiumDashboard() {
+  const [scrollY, setScrollY] = useState(0);
+  const [colors, setColors] = useState({ c1: '144, 85, 255', c2: '19, 226, 218' }); 
+  
+  // Стейт для интерактивного 3D мокапа
+  const [heroMouse, setHeroMouse] = useState({ x: 0, y: 0 });
+
+  // Стейт для интерактивного списка задач
+  const [tasks, setTasks] = useState([
+    { id: 1, title: "Opakovat 20 kartiček z Biologie", icon: <Layers className="w-5 h-5 text-[#7C6FF7]" />, completed: false },
+    { id: 2, title: "Napsat test: Derivace (Matematika)", icon: <PenTool className="w-5 h-5 text-green-400" />, completed: false },
+    { id: 3, title: "Přečíst nové poznámky z Historie", icon: <FileText className="w-5 h-5 text-yellow-400" />, completed: false },
+  ]);
+  const [isUserInteractingTasks, setIsUserInteractingTasks] = useState(false);
+
+  // Отслеживание позиции мыши для 3D эффекта
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Расчет для 3D наклона (от -0.5 до 0.5)
+      const x = (e.clientX / window.innerWidth) - 0.5;
+      const y = (e.clientY / window.innerHeight) - 0.5;
+      setHeroMouse({ x, y });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  // Автоматическая анимация задач (демонстрация для лендинга)
+  useEffect(() => {
+    if (isUserInteractingTasks) return;
+    let isActive = true;
+
+    const runTasksDemo = async () => {
+      await new Promise(r => setTimeout(r, 3000)); 
+      if (!isActive) return;
+
+      while (isActive) {
+        setTasks(prev => prev.map(task =>
+          task.id === 1 ? { ...task, completed: true } : task
+        ));
+
+        await new Promise(r => setTimeout(r, 500));
+        if (!isActive) return;
+
+        setTasks(prev => {
+          const incomplete = prev.filter(t => !t.completed);
+          const complete = prev.filter(t => t.completed);
+          return [...incomplete, ...complete];
+        });
+
+        await new Promise(r => setTimeout(r, 4000));
+        if (!isActive) return;
+
+        setTasks(prev => {
+          const t1 = { ...prev.find(t => t.id === 1), completed: false };
+          const t2 = { ...prev.find(t => t.id === 2), completed: false };
+          const t3 = { ...prev.find(t => t.id === 3), completed: false };
+          return [t1, t2, t3];
+        });
+
+        await new Promise(r => setTimeout(r, 6000));
+      }
+    };
+
+    runTasksDemo();
+    return () => { isActive = false; };
+  }, [isUserInteractingTasks]);
+
+  // Функция для отметки задачи
+  const toggleTask = (id) => {
+    setIsUserInteractingTasks(true); 
+
+    setTasks(prev => prev.map(task => 
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+
+    setTimeout(() => {
+      setTasks(prev => {
+        const incomplete = prev.filter(t => !t.completed);
+        const complete = prev.filter(t => t.completed);
+        return [...incomplete, ...complete];
+      });
+    }, 500);
+  };
+
+  // Генерируем данные для heatmap
+  const heatmapData = React.useMemo(() => {
+    return Array.from({ length: 14 }).map(() => {
+      return Array.from({ length: 7 }).map(() => {
+        const intensity = Math.random();
+        if (intensity > 0.8) return '1';
+        if (intensity > 0.5) return '0.6';
+        if (intensity > 0.3) return '0.3';
+        return '0';
+      });
+    });
+  }, []);
+
+  // Плавный параллакс-скролл и расчет цветов градиента
+  useEffect(() => {
+    const colorPairs = [
+      { c1: [144, 85, 255], c2: [19, 226, 218] },    
+      { c1: [214, 255, 127], c2: [0, 179, 204] },    
+      { c1: [64, 37, 101],  c2: [48, 190, 150] },    
+      { c1: [203, 94, 238], c2: [75, 225, 236] },    
+      { c1: [115, 125, 254], c2: [255, 202, 201] },  
+      { c1: [237, 123, 132], c2: [144, 85, 255] }    
+    ];
+
+    const interpolate = (start, end, factor) => Math.round(start + (end - start) * factor);
+
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScroll = window.scrollY;
+          setScrollY(currentScroll);
+
+          const maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
+          let progress = currentScroll / maxScroll;
+          progress = Math.max(0, Math.min(1, progress));
+
+          const numSegments = colorPairs.length - 1;
+          let segment = Math.floor(progress * numSegments);
+          if (segment >= numSegments) segment = numSegments - 1;
+          const localProgress = (progress * numSegments) - segment;
+
+          const c1 = `${interpolate(colorPairs[segment].c1[0], colorPairs[segment+1].c1[0], localProgress)}, ${interpolate(colorPairs[segment].c1[1], colorPairs[segment+1].c1[1], localProgress)}, ${interpolate(colorPairs[segment].c1[2], colorPairs[segment+1].c1[2], localProgress)}`;
+          const c2 = `${interpolate(colorPairs[segment].c2[0], colorPairs[segment+1].c2[0], localProgress)}, ${interpolate(colorPairs[segment].c2[1], colorPairs[segment+1].c2[1], localProgress)}, ${interpolate(colorPairs[segment].c2[2], colorPairs[segment+1].c2[2], localProgress)}`;
+
+          setColors({ c1, c2 });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); 
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Подключаем шрифты
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href = 'https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=cabinet-grotesk@800,500,700,400&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+
+    const link2 = document.createElement('link');
+    link2.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap';
+    link2.rel = 'stylesheet';
+    document.head.appendChild(link2);
+  }, []);
+
+  return (
+    <div 
+      className="relative min-h-screen text-white overflow-x-hidden" 
+      style={{ 
+        backgroundColor: '#0F1117', 
+        fontFamily: "'DM Sans', sans-serif",
+        '--orb-color-1-rgb': colors.c1,
+        '--orb-color-2-rgb': colors.c2,
+        '--orb-color-1': `rgb(${colors.c1})`,
+        '--orb-color-2': `rgb(${colors.c2})`
+      }}
+    >
+      {/* Слой зернистости (Noise Grain) */}
+      <div className="bg-noise"></div>
+
+      {/* Стили для шрифтов и кастомных анимаций */}
+      <style>{`
+        h1, h2, h3, .font-heading { font-family: 'Clash Display', sans-serif; }
+        
+        /* Subtle Noise Grain (Глобальный, легкий) */
+        .bg-noise {
+          position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+          opacity: 0.04; mix-blend-mode: overlay;
+        }
+        
+        @keyframes float1 { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-12px) rotate(-1deg); } }
+        @keyframes float2 { 0%,100% { transform: translateY(0) rotate(3deg); } 50% { transform: translateY(-18px) rotate(4deg); } }
+
+        .mesh-gradient { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+        .parallax-wrapper { position: absolute; width: 100%; height: 100%; top: 0; left: 0; will-change: transform; transition: transform 0.1s ease-out; }
+        
+        /* Увеличенное размытие и размеры сфер для сверхплавных градиентов */
+        .orb { position: absolute; border-radius: 50%; filter: blur(180px); opacity: 0.55; mix-blend-mode: screen; }
+        .orb-1 { width: 65vw; height: 65vw; background: var(--orb-color-1); top: -15%; left: -10%; animation: float 20s ease-in-out infinite alternate; }
+        .orb-2 { width: 60vw; height: 60vw; background: var(--orb-color-2); bottom: -20%; right: -15%; animation: float 24s ease-in-out infinite alternate-reverse; opacity: 0.45; }
+        .orb-3 { width: 50vw; height: 50vw; background: rgba(255, 255, 255, 0.08); top: 30%; left: 30%; animation: float 28s linear infinite; }
+        
+        @keyframes float {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(10vw, -10vh) scale(1.1); }
+          66% { transform: translate(-10vw, 5vh) scale(0.9); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+
+        .glass-card {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-button {
+          background: linear-gradient(135deg, var(--orb-color-1) 0%, var(--orb-color-2) 100%);
+          position: relative;
+          overflow: hidden;
+        }
+        .glass-button::before {
+          content: ''; position: absolute; inset: -2px; border-radius: inherit;
+          background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0));
+          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+        }
+        .pulse-glow { animation: pulseGlow 3s ease-in-out infinite alternate; }
+        @keyframes pulseGlow {
+          from { box-shadow: 0 0 20px rgba(var(--orb-color-1-rgb), 0.3), 0 0 40px rgba(var(--orb-color-1-rgb), 0.1); }
+          to { box-shadow: 0 0 30px rgba(var(--orb-color-1-rgb), 0.6), 0 0 60px rgba(var(--orb-color-2-rgb), 0.3); }
+        }
+
+        .card-3d-1 { animation: float3d1 6s ease-in-out infinite; }
+        .card-3d-2 { animation: float3d2 7s ease-in-out infinite 1s; }
+        @keyframes float3d1 { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(-1deg) scale(1.02); } }
+        @keyframes float3d2 { 0%, 100% { transform: translateY(0) rotate(3deg); } 50% { transform: translateY(-15px) rotate(4deg) scale(1.02); } }
+
+        /* Обновленный мокап (Mouse Tracking 3D) */
+        .lapis-mockup {
+          transform-style: preserve-3d;
+          transition: box-shadow 0.3s ease;
+        }
+        
+        .heatmap-cell { opacity: 0; animation: fadeInCell 0.5s forwards; }
+        @keyframes fadeInCell { to { opacity: 1; } }
+
+        @keyframes streakPulse {
+          0%, 100% { transform: scale(1) rotate(-5deg); filter: drop-shadow(0 0 5px rgba(var(--orb-color-1-rgb),0.5)); }
+          50% { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0 0 15px rgba(var(--orb-color-1-rgb),0.8)); }
+        }
+        .flame-active {
+          color: var(--orb-color-1);
+          animation: streakPulse 2s ease-in-out infinite;
+        }
+
+        .spotlight-btn::after {
+          content: "";
+          position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+          background: radial-gradient(300px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--glow-color, var(--orb-color-1)), transparent 40%);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+          opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+        }
+        .spotlight-btn:hover::after { opacity: 1; }
+
+        /* Strikethrough Task Animation */
+        .strikethrough-animate {
+          position: relative; display: inline-block;
+        }
+        .strikethrough-animate::after {
+          content: ''; position: absolute; left: 0; top: 50%; height: 1.5px;
+          background-color: currentColor;
+          animation: strike 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @keyframes strike {
+          0% { width: 0; opacity: 0; }
+          10% { opacity: 1; }
+          100% { width: 100%; opacity: 1; }
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
+
+      {/* Анимированный фон (Mesh Gradient) с применением параллакса */}
+      <div className="mesh-gradient">
+        <div className="parallax-wrapper" style={{ transform: `translateY(${scrollY * 0.4}px)` }}>
+          <div className="orb orb-1"></div>
+        </div>
+        <div className="parallax-wrapper" style={{ transform: `translateY(${scrollY * 0.2}px)` }}>
+          <div className="orb orb-2"></div>
+        </div>
+        <div className="parallax-wrapper" style={{ transform: `translateY(${scrollY * 0.6}px)` }}>
+          <div className="orb orb-3"></div>
+        </div>
+      </div>
+
+      {/* Основной контент */}
+      <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-24">
+
+        {/* --- СЕКЦИЯ 1: HERO (ПРЕЗЕНТАЦИЯ LAPIS) --- */}
+        <section className="min-h-screen flex flex-col justify-center relative pt-8 pb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-full">
+            
+            {/* Левая часть (Бренд и типографика) */}
+            <div className="flex flex-col items-start z-20">
+              <Reveal delay={400}>
+                <h1 className="text-5xl md:text-7xl font-semibold mb-6 leading-tight font-heading">
+                  Studuj chytřeji s <br/>
+                  <span 
+                    className="text-transparent bg-clip-text" 
+                    style={{ backgroundImage: 'linear-gradient(to right, var(--orb-color-1), var(--orb-color-2))', filter: 'drop-shadow(0 0 20px rgba(var(--orb-color-1-rgb), 0.4))' }}
+                  >
+                    Lapis
+                  </span>
+                </h1>
+              </Reveal>
+              
+              <Reveal delay={500}>
+                <p className="text-xl md:text-2xl text-gray-400 mb-10 font-light max-w-lg">
+                  Tvůj prémiový prostor pro efektivní učení, tvorbu kartiček a sledování pokroku. Vše na jednom místě.
+                </p>
+              </Reveal>
+
+              <Reveal delay={600} className="flex flex-wrap gap-4 w-full">
+                <MagneticBtn style={{
+                  background: 'linear-gradient(135deg, var(--orb-color-1), var(--orb-color-2))',
+                  border: 'none', borderRadius: 100, padding: '16px 32px',
+                  fontSize: 18, fontWeight: 500, color: 'white', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  animation: 'pulseGlow 3s ease-in-out infinite alternate',
+                }}>
+                  Vyzkoušet Lapis <ArrowRight size={18} />
+                </MagneticBtn>
+                <MagneticBtn style={{
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 100, padding: '16px 32px', fontSize: 18, fontWeight: 500,
+                  color: 'rgba(255,255,255,0.8)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
+                  backdropFilter: 'blur(12px)',
+                }}>
+                  <Play size={16} /> Jak to funguje
+                </MagneticBtn>
+              </Reveal>
+            </div>
+
+            {/* Правая часть (Интерактивный 3D Mockup продукта с трекингом мыши) */}
+            <div className="relative w-full h-[500px] hidden lg:flex items-center justify-center z-30">
+              <Reveal delay={400} direction="none" className="w-full h-full flex items-center justify-center relative">
+                
+                {/* Окно приложения с инлайн-стилем для 3D слежения */}
+                <div 
+                  className="lapis-mockup relative w-full max-w-[500px] aspect-[4/3] glass-card rounded-2xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden bg-[#0F1117]/70 backdrop-blur-2xl"
+                  style={{
+                    transform: `perspective(1200px) rotateY(${heroMouse.x * 18 - 10}deg) rotateX(${-heroMouse.y * 18 + 3}deg)`,
+                    boxShadow: `0 30px 80px rgba(var(--orb-color-1-rgb),${0.15 + Math.abs(heroMouse.x) * 0.15}), 0 0 0 1px rgba(255,255,255,0.08)`,
+                  }}
+                >
+                  <Particles colors={colors} />
+                  
+                  {/* Шапка окна (macOS style) */}
+                  <div className="h-10 border-b border-white/10 bg-white/5 flex items-center px-4 gap-2 relative z-10">
+                    <div className="w-3 h-3 rounded-full bg-red-500/80 shadow-[0_0_5px_rgba(239,68,68,0.5)]"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/80 shadow-[0_0_5px_rgba(234,179,8,0.5)]"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500/80 shadow-[0_0_5px_rgba(34,197,94,0.5)]"></div>
+                    <div className="ml-auto flex items-center gap-2 text-xs text-gray-400 font-medium">
+                      <BookOpen className="w-3 h-3" style={{ color: 'var(--orb-color-1)' }} /> Lapis Workspace
+                    </div>
+                  </div>
+                  
+                  {/* Тело приложения (Скелетон-мокап) */}
+                  <div className="flex h-[calc(100%-2.5rem)] relative z-10">
+                    {/* Боковое меню */}
+                    <div className="w-1/4 border-r border-white/10 bg-white/5 p-4 flex flex-col gap-3">
+                      <div className="h-6 w-full rounded flex items-center px-2 border-l-2" style={{ background: 'linear-gradient(to right, rgba(var(--orb-color-1-rgb), 0.2), transparent)', borderColor: 'var(--orb-color-1)' }}></div>
+                      <div className="h-5 w-3/4 bg-white/5 rounded mt-2"></div>
+                      <div className="h-5 w-full bg-white/5 rounded"></div>
+                      <div className="h-5 w-2/3 bg-white/5 rounded"></div>
+                    </div>
+                    
+                    {/* Основной контент */}
+                    <div className="flex-1 p-5 flex flex-col gap-4 relative overflow-hidden">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex flex-col gap-2">
+                          <div className="h-4 w-24 bg-white/20 rounded"></div>
+                          <div className="h-8 w-40 bg-white/10 rounded"></div>
+                        </div>
+                        <div className="h-10 w-10 rounded-full border flex items-center justify-center text-lg" style={{ backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.2)', borderColor: 'rgba(var(--orb-color-1-rgb), 0.5)', boxShadow: '0 0 15px rgba(var(--orb-color-1-rgb), 0.3)' }}>👨‍🎓</div>
+                      </div>
+                      
+                      {/* Сетка карточек */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="h-20 glass-card rounded-xl p-3 border border-white/10 flex flex-col justify-between hover:bg-white/5 transition-colors">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--orb-color-1)' }}></div>
+                            <div className="h-3 w-1/2 bg-white/30 rounded"></div>
+                          </div>
+                          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mt-2">
+                            <div className="h-full w-2/3" style={{ backgroundColor: 'var(--orb-color-1)' }}></div>
+                          </div>
+                        </div>
+                        <div className="h-20 glass-card rounded-xl p-3 border border-white/10 flex flex-col justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--orb-color-2)' }}></div>
+                            <div className="h-3 w-2/3 bg-white/30 rounded"></div>
+                          </div>
+                          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mt-2">
+                            <div className="h-full w-1/3" style={{ backgroundColor: 'var(--orb-color-2)' }}></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* График активности */}
+                      <div className="flex-1 glass-card rounded-xl border border-white/10 p-4 flex items-end gap-3 justify-between mt-2">
+                        {[30, 60, 40, 85, 50, 75, 45].map((h, i) => (
+                          <div key={i} className="flex-1 rounded-t-sm opacity-80" style={{ height: `${h}%`, backgroundImage: 'linear-gradient(to top, var(--orb-color-1), var(--orb-color-2))' }}></div>
+                        ))}
+                      </div>
+                      
+                      {/* Мягкое внутреннее свечение мокапа */}
+                      <div className="absolute -top-10 -right-10 w-32 h-32 blur-3xl rounded-full" style={{ backgroundColor: 'rgba(var(--orb-color-2-rgb), 0.2)' }}></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Левитирующие бэйджики вокруг мокапа */}
+                <div style={{ position: 'absolute', right: -20, top: 60, animation: 'float2 7s ease-in-out infinite' }}>
+                  <div className="glass-card" style={{ background: 'rgba(10,11,16,0.9)', padding: '10px 16px', borderRadius: 14, display: 'flex', alignItems: 'center', gap: 10, border: '1px solid rgba(var(--orb-color-1-rgb),0.3)', boxShadow: '0 10px 30px rgba(var(--orb-color-1-rgb),0.2)', backdropFilter: 'blur(24px)' }}>
+                    <CheckCircle size={16} style={{ color: 'var(--orb-color-1)' }} />
+                    <span style={{ fontSize: 12, fontWeight: 600 }}>Smart Repetition</span>
+                  </div>
+                </div>
+                <div style={{ position: 'absolute', left: -30, bottom: 80, animation: 'float1 6s ease-in-out infinite' }}>
+                  <div className="glass-card" style={{ background: 'rgba(10,11,16,0.9)', padding: '10px 16px', borderRadius: 14, display: 'flex', alignItems: 'center', gap: 10, border: '1px solid rgba(var(--orb-color-2-rgb),0.3)', boxShadow: '0 10px 30px rgba(var(--orb-color-2-rgb),0.2)', backdropFilter: 'blur(24px)' }}>
+                    <Zap size={16} style={{ color: 'var(--orb-color-2)' }} />
+                    <span style={{ fontSize: 12, fontWeight: 600 }}>Chytrý asistent</span>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        {/* --- СЕКЦИЯ 1.5: БЫСТРЫЙ ПОИСК (STATIC SHOWCASE) --- */}
+        <section className="relative z-50 pt-24 pb-[450px] px-4">
+          <Reveal delay={200} direction="up" className="max-w-3xl mx-auto relative">
+            
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-gray-400 mb-4 hover-target cursor-default">
+                <Search className="w-3.5 h-3.5" /> Bleskové hledání
+              </div>
+              <h2 className="text-4xl md:text-5xl font-heading mb-4">Chytré vyhledávání</h2>
+              <p className="text-gray-400 text-lg">Najdi jakoukoliv kartičku, poznámku nebo kurz rychlostí blesku. <br className="hidden md:block"/> Stačí zmáčknout <kbd className="font-mono bg-white/10 px-2 py-0.5 rounded text-sm text-white">⌘K</kbd> a začít psát.</p>
+            </div>
+            
+            {/* Поисковая строка (Статичный мокап) */}
+            <div className="relative z-20 hover-target cursor-text" style={{ filter: 'drop-shadow(0 0 40px rgba(var(--orb-color-1-rgb), 0.2))' }}>
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6" style={{ color: 'var(--orb-color-1)' }} />
+              <div className="w-full glass-card border bg-[#0F1117]/90 rounded-2xl py-6 pl-16 pr-20 text-xl text-white shadow-2xl flex items-center" style={{ borderColor: 'rgba(var(--orb-color-1-rgb), 0.5)' }}>
+                <span>bio</span>
+                <span className="w-[2px] h-6 ml-1 animate-pulse" style={{ backgroundColor: 'var(--orb-color-1)' }}></span>
+              </div>
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-1 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-400 font-mono">
+                <Command className="w-3.5 h-3.5" /> K
+              </div>
+            </div>
+
+            {/* Выпадающее окно с результатами (Всегда открыто для презентации) */}
+            <div className="absolute top-[calc(100%+16px)] left-0 right-0 glass-card bg-[#0F1117]/95 rounded-2xl border border-white/10 overflow-hidden shadow-2xl z-10">
+              <div className="p-4">
+                <div className="flex flex-col gap-5">
+                  
+                  {/* Группа 1: Папки и Темы */}
+                  <div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">Složky a Témata</div>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 cursor-default hover-target group">
+                        <Folder className="w-5 h-5" style={{ color: 'var(--orb-color-1)' }} />
+                        <div className="font-medium text-white">
+                          <span className="px-1 rounded" style={{ color: 'var(--orb-color-1)', backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</span>logie 101
+                        </div>
+                        <div className="ml-auto text-xs text-gray-400 border border-white/10 px-2 py-1 rounded">Kurz</div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-default transition-colors hover-target group">
+                        <Folder className="w-5 h-5 text-gray-400 transition-colors" />
+                        <div className="font-medium text-white">
+                          <span className="px-1 rounded" style={{ color: 'var(--orb-color-1)', backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</span>logie — Ekologie
+                        </div>
+                        <div className="ml-auto text-xs text-gray-400 border border-white/10 px-2 py-1 rounded">Složka</div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-default transition-colors hover-target group">
+                        <Folder className="w-5 h-5 text-gray-400 transition-colors" />
+                        <div className="font-medium text-white">
+                          <span className="px-1 rounded" style={{ color: 'var(--orb-color-1)', backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</span>logie — Vizualizace
+                        </div>
+                        <div className="ml-auto text-xs text-gray-400 border border-white/10 px-2 py-1 rounded">Složka</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Группа 2: Карточки, Тесты и Заметки */}
+                  <div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">Materiály</div>
+                    <div className="flex flex-col gap-1">
+                      {/* Карточка */}
+                      <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-default transition-colors hover-target group">
+                        <Layers className="w-5 h-5" style={{ color: 'var(--orb-color-2)' }} />
+                        <div className="font-medium text-white">
+                          Definice: <span className="px-1 rounded" style={{ color: 'var(--orb-color-2)', backgroundColor: 'rgba(var(--orb-color-2-rgb), 0.2)' }}>bio</span>sféra
+                        </div>
+                        <div className="ml-auto flex flex-col items-end">
+                          <span className="text-xs text-white">Věda o životě</span>
+                          <span className="text-[10px] text-gray-500">Kartička</span>
+                        </div>
+                      </div>
+                      {/* Тест */}
+                      <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-default transition-colors hover-target group">
+                        <PenTool className="w-5 h-5 text-yellow-400" />
+                        <div className="font-medium text-white">
+                          Závěrečný test: <span className="text-yellow-400 bg-yellow-400/20 px-1 rounded">Bio</span>logie buněk
+                        </div>
+                        <div className="ml-auto text-xs text-gray-400 border border-white/10 px-2 py-1 rounded">Test</div>
+                      </div>
+                      {/* Заметка */}
+                      <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-default transition-colors hover-target group">
+                        <FileText className="w-5 h-5 text-green-400" />
+                        <div className="font-medium text-white">
+                          Poznámky k zápočtu (<span className="text-green-400 bg-green-400/20 px-1 rounded">bio</span>logie)
+                        </div>
+                        <div className="ml-auto text-xs text-gray-400 border border-white/10 px-2 py-1 rounded">Poznámka</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
+        {/* --- СЕКЦИЯ 2: STREAK / АКТИВНОСТЬ --- */}
+        <section className="py-20 relative z-10">
+          <Reveal direction="left">
+            <h2 className="text-3xl font-heading mb-10 flex items-center gap-3">
+              <Flame className="flame-active" /> Tvoje aktivita
+            </h2>
+          </Reveal>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Левая колонка: Heatmap и базовая статистика (Занимает 2/3) */}
+            <div className="lg:col-span-2 glass-card rounded-3xl p-8 flex flex-col justify-between hover-target">
+              
+              {/* Heatmap с разметкой и центрированием */}
+              <div className="w-full overflow-x-auto hide-scrollbar mb-6">
+                <div className="flex flex-col items-center min-w-max mx-auto">
+                  
+                  <div className="flex gap-3">
+                    {/* Левые подписи (Дни недели) */}
+                    <div className="flex flex-col gap-2 text-[10px] text-gray-500 font-medium text-right mt-6">
+                      <div className="h-4 leading-4">Po</div>
+                      <div className="h-4 leading-4"></div>
+                      <div className="h-4 leading-4">St</div>
+                      <div className="h-4 leading-4"></div>
+                      <div className="h-4 leading-4">Pá</div>
+                      <div className="h-4 leading-4"></div>
+                      <div className="h-4 leading-4">Ne</div>
+                    </div>
+
+                    {/* Сетка и верхние подписи (Месяцы) */}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex justify-between text-[10px] text-gray-500 font-medium px-1">
+                        <span>Lis</span>
+                        <span>Pro</span>
+                        <span>Led</span>
+                      </div>
+                      <div className="flex gap-2">
+                        {heatmapData.map((col, colIndex) => (
+                          <div key={colIndex} className="flex flex-col gap-2">
+                            {col.map((bg, rowIndex) => {
+                              const delay = (colIndex * 7 + rowIndex) * 10; // Stagger effect
+                              return (
+                                <div 
+                                  key={rowIndex} 
+                                  className="w-4 h-4 rounded-sm heatmap-cell transition-colors duration-300"
+                                  style={{ 
+                                    backgroundColor: bg === '0' ? 'rgba(255,255,255,0.05)' : `rgba(var(--orb-color-1-rgb), ${bg})`, 
+                                    animationDelay: `${delay}ms` 
+                                  }}
+                                ></div>
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Легенда (Меньше / Больше) */}
+                  <div className="flex items-center gap-2 text-[10px] text-gray-500 self-end mt-4 mr-1">
+                    <span>Méně</span>
+                    <div className="flex gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-white/5"></div>
+                      <div className="w-3 h-3 rounded-sm transition-colors duration-300" style={{ backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.3)' }}></div>
+                      <div className="w-3 h-3 rounded-sm transition-colors duration-300" style={{ backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.6)' }}></div>
+                      <div className="w-3 h-3 rounded-sm transition-colors duration-300" style={{ backgroundColor: 'rgba(var(--orb-color-1-rgb), 1)' }}></div>
+                    </div>
+                    <span>Více</span>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Stats Row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-white/10 mt-auto">
+                <div className="flex flex-col">
+                  <span className="text-gray-400 text-sm mb-1">Streak</span>
+                  <span className="text-4xl font-heading font-semibold text-white">
+                    <CountUp end={32} /> <span className="text-lg font-normal text-gray-500">dní v řadě</span>
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-400 text-sm mb-1">Kartičky</span>
+                  <span className="text-4xl font-heading font-semibold text-white">
+                    <CountUp end={248} /> <span className="text-lg font-normal text-gray-500">karet</span>
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-400 text-sm mb-1">Testy</span>
+                  <span className="text-4xl font-heading font-semibold text-white">
+                    <CountUp end={14} /> <span className="text-lg font-normal text-gray-500">dokončeno</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Правая колонка: Příští události (Занимает 1/3) */}
+            <Reveal delay={200} direction="up" className="h-full">
+              <div className="glass-card rounded-3xl p-8 h-full flex flex-col relative overflow-hidden group hover-target">
+                {/* Эффект свечения на фоне карточки */}
+                <div className="absolute -top-10 -right-10 w-48 h-48 blur-3xl rounded-full transition-all opacity-10 group-hover:opacity-20" style={{ backgroundColor: 'var(--orb-color-1)' }}></div>
+
+                <h3 className="text-lg font-medium text-white mb-6 flex items-center gap-2 relative z-10">
+                  <Calendar className="w-5 h-5" style={{ color: 'var(--orb-color-1)' }} /> Příští události
+                </h3>
+
+                <div className="flex flex-col gap-2 relative z-10">
+                  
+                  {/* Событие 1: Завтра */}
+                  <div className="flex gap-4 p-3 -mx-3 rounded-xl hover:bg-white/5 transition-colors group/item cursor-pointer border-l-2 border-transparent hover:border-red-500">
+                    <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                      <PenTool className="w-5 h-5 text-red-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="font-medium text-white text-sm">Závěrečný test</h4>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-red-400 bg-red-400/10 px-2 py-0.5 rounded">Zítra</span>
+                      </div>
+                      <p className="text-xs text-gray-400">Biologie buněk</p>
+                    </div>
+                  </div>
+
+                  {/* Событие 2: Через 3 дня */}
+                  <div className="flex gap-4 p-3 -mx-3 rounded-xl hover:bg-white/5 transition-colors group/item cursor-pointer border-l-2 border-transparent hover:border-yellow-500">
+                    <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
+                      <FileText className="w-5 h-5 text-yellow-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="font-medium text-white text-sm">Odevzdání eseje</h4>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded">Za 3 dny</span>
+                      </div>
+                      <p className="text-xs text-gray-400">Historie Evropy</p>
+                    </div>
+                  </div>
+
+                  {/* Событие 3: На следующей неделе */}
+                  <div className="flex gap-4 p-3 -mx-3 rounded-xl hover:bg-white/5 transition-colors group/item cursor-pointer border-l-2 border-transparent hover:border-[#4DB8FF]">
+                    <div className="w-10 h-10 rounded-lg bg-[#4DB8FF]/10 flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-5 h-5 text-[#4DB8FF]" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="font-medium text-white text-sm">Ústní zkoušení</h4>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#4DB8FF] bg-[#4DB8FF]/10 px-2 py-0.5 rounded">Příští týden</span>
+                      </div>
+                      <p className="text-xs text-gray-400">Angličtina B2</p>
+                    </div>
+                  </div>
+
+                </div>
+
+                <button className="w-full mt-auto pt-6 text-gray-400 hover:text-white text-sm font-medium transition-colors relative z-10 flex justify-center items-center gap-2">
+                  Otevřít kalendář <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </Reveal>
+
+          </div>
+        </section>
+
+        {/* --- СЕКЦИЯ 3: ПРОДОЛЖИТЬ С ТОГО МЕСТА --- */}
+        <section className="py-20">
+          <Reveal delay={100} direction="up">
+            <h2 className="text-3xl font-heading mb-10">Pokračuj tam, kde jsi skončil</h2>
+          </Reveal>
+
+          <div className="flex gap-6 overflow-x-auto hide-scrollbar py-10 -my-10 px-6 -mx-6 md:px-4 md:-mx-4">
+            {[
+              { title: "Matematika", clr: "#60a5fa", notes: 12, tests: 2, cards: 145, date: "Dnes, 09:41", icon: <Folder className="text-blue-400" />, delay: 0 },
+              { title: "Angličtina B2", clr: "#c084fc", notes: 5, tests: 1, cards: 320, date: "Včera", icon: <Folder className="text-purple-400" />, delay: 100 },
+              { title: "Fyzika", clr: "#4ade80", notes: 8, tests: 4, cards: 85, date: "Před 2 dny", icon: <Folder className="text-green-400" />, delay: 200 },
+              { title: "Dějepis", clr: "#facc15", notes: 24, tests: 0, cards: 410, date: "Před 3 dny", icon: <Folder className="text-yellow-400" />, delay: 300 },
+            ].map((item, idx) => (
+              <Reveal key={idx} delay={item.delay} className="w-[85vw] md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] flex-shrink-0">
+                <HoloCard item={item} />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        {/* Два столбца для секций 4 и 5 (Десктоп) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 py-20">
+          
+          {/* --- СЕКЦИЯ 4: КАРТОЧКИ К ПОВТОРЕНИЮ --- */}
+          <section>
+            <Reveal direction="right">
+              <h2 className="text-3xl font-heading mb-8 flex items-center justify-between">
+                Na dnes
+                <span className="text-sm font-normal bg-white/5 px-3 py-1 rounded-full" style={{ color: 'var(--orb-color-1)' }}>{tasks.filter(t => !t.completed).length} úkoly</span>
+              </h2>
+            </Reveal>
+
+            <div className="flex flex-col gap-3 relative">
+              {tasks.map((task, idx) => (
+                <div 
+                  key={task.id} 
+                  onClick={() => toggleTask(task.id)}
+                  style={{ animationDelay: `${idx * 100}ms` }}
+                  className={`glass-card p-4 rounded-xl flex items-center gap-4 group transition-all duration-500 cursor-pointer border-l-2 animate-fade-in-up fill-mode-both hover-target
+                    ${task.completed 
+                      ? 'opacity-40 grayscale border-l-transparent bg-transparent scale-[0.98]' 
+                      : 'hover:bg-white/5 border-l-transparent hover:border-l-[#7C6FF7] scale-100 hover:scale-[1.01]'
+                    }
+                  `}
+                >
+                  <div className={`p-3 rounded-lg transition-colors duration-300 ${task.completed ? 'bg-transparent' : 'bg-white/5 group-hover:bg-white/10'}`}>
+                    {task.icon}
+                  </div>
+                  
+                  <div className={`font-medium transition-colors duration-300 ${task.completed ? 'text-gray-500' : 'text-white'}`}>
+                    <span className={task.completed ? 'strikethrough-animate' : ''}>
+                      {task.title}
+                    </span>
+                  </div>
+                  
+                  <div className="ml-auto flex items-center justify-center">
+                    <CheckCircle className={`w-6 h-6 transition-all duration-500 ${
+                      task.completed 
+                        ? 'text-green-500 opacity-100 scale-110' 
+                        : 'text-gray-500 opacity-0 group-hover:opacity-100 group-hover:text-green-400 scale-100'
+                    }`} />
+                  </div>
+                </div>
+              ))}
+              
+              <Reveal delay={400} direction="up">
+                <button className="w-full mt-2 py-4 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-2 hover-target">
+                  Přidat vlastní úkol +
+                </button>
+              </Reveal>
+            </div>
+          </section>
+
+          {/* --- СЕКЦИЯ 5: БЫСТРЫЕ ДЕЙСТВИЯ --- */}
+          <section>
+            <Reveal direction="left">
+              <h2 className="text-3xl font-heading mb-8">Rychlé akce</h2>
+            </Reveal>
+            
+            <div className="grid grid-cols-2 gap-4 h-[calc(100%-4rem)]">
+              {/* Верхняя левая */}
+              <Reveal delay={100} direction="left" className="h-full">
+                <SpotlightButton glowColor="rgba(124, 111, 247, 0.8)" className="hover:bg-[#7C6FF7]/5">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#7C6FF7]/20 transition-all">
+                    <FileText className="text-gray-300 group-hover:text-[#7C6FF7]" />
+                  </div>
+                  <span className="font-medium">+ Nová poznámka</span>
+                </SpotlightButton>
+              </Reveal>
+
+              {/* Верхняя правая */}
+              <Reveal delay={200} direction="right" className="h-full">
+                <SpotlightButton glowColor="rgba(77, 184, 255, 0.8)" className="hover:bg-[#4DB8FF]/5">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#4DB8FF]/20 transition-all">
+                    <BookOpen className="text-gray-300 group-hover:text-[#4DB8FF]" />
+                  </div>
+                  <span className="font-medium">+ Nová kartička</span>
+                </SpotlightButton>
+              </Reveal>
+
+              {/* Нижняя левая */}
+              <Reveal delay={300} direction="up" className="h-full">
+                <SpotlightButton glowColor="rgba(34, 197, 94, 0.8)" className="hover:bg-green-500/5">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-green-500/20 transition-all">
+                    <PenTool className="text-gray-300 group-hover:text-green-400" />
+                  </div>
+                  <span className="font-medium">+ Nový test</span>
+                </SpotlightButton>
+              </Reveal>
+
+              {/* Нижняя правая */}
+              <Reveal delay={400} direction="up" className="h-full">
+                <SpotlightButton glowColor="rgba(255, 255, 255, 0.6)" className="hover:bg-white/5">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 transition-all">
+                    <Folder className="text-gray-300 group-hover:text-white" />
+                  </div>
+                  <span className="font-medium">Procházet kurzy</span>
+                </SpotlightButton>
+              </Reveal>
+            </div>
+          </section>
+
+        </div>
+        
+        {/* Footer */}
+        <footer className="mt-10 pt-8 pb-12 flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-gray-500 hover-target cursor-default">
+          <div className="flex items-center gap-3">
+            <div className="relative flex items-center justify-center w-3 h-3">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </div>
+            <span className="font-medium text-gray-400">All systems operational</span>
+          </div>
+          <div className="flex gap-8">
+            <a href="#" className="hover:text-white transition-colors hover-target">Podpora</a>
+            <a href="#" className="hover:text-white transition-colors hover-target">Twitter (X)</a>
+            <a href="#" className="hover:text-white transition-colors hover-target">Discord</a>
+          </div>
+          <div className="font-medium">Lapis v.1.0.42</div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<PremiumDashboard />);
+  </script>
+</body>
+</html>

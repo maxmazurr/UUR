@@ -1,0 +1,9 @@
+/* index.css
+ * Tailwind утилиты + подключение шрифтов
+ * Цвета/тема/компоненты — в src/theme.jsx (GlobalStyles + createTheme)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,700,400&display=swap');
+
+@import "tailwindcss";
