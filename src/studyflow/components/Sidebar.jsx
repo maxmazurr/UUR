@@ -3,6 +3,7 @@ import { Box, Stack, Typography, Chip, Paper, Button, LinearProgress, Menu, Menu
 import { ChevronRight, FileText, ArrowRight, PenTool, Layers, Eye, CheckSquare, Plus, Pencil, Trash2, X, GripVertical, FolderPlus } from 'lucide-react';
 import { useOnScreen } from '../hooks';
 import { COURSE_COLORS, modalSlideInAnim } from '../constants';
+import { COLORS, DIALOG_PAPER_SX } from '../../styles';
 
 export const FadeUp = ({ children, delay = 0, className, style, sx: sxProp = {} }) => {
     const ref = useRef(null);
@@ -106,12 +107,12 @@ export const NavItem = ({ icon, label, badge, active, open, onClick }) => (
             '&:hover .nav-icon': active ? {} : { color: 'rgba(255,255,255,0.8)' },
             '&:hover .nav-label': { color: 'white' },
         }}>
-        {active && <Box sx={{ position: 'absolute', left: 0, width: '3px', height: '55%', bgcolor: '#9055FF', borderRadius: '0 3px 3px 0', boxShadow: '0 0 10px rgba(144,85,255,0.7)' }} />}
-        <Box className="nav-icon" sx={{ p: 0.5, borderRadius: 1.5, transition: 'color 0.15s', color: active ? '#9055FF' : 'rgba(255,255,255,0.3)' }}>{icon}</Box>
+        {active && <Box sx={{ position: 'absolute', left: 0, width: '3px', height: '55%', bgcolor: COLORS.primary, borderRadius: '0 3px 3px 0', boxShadow: '0 0 10px rgba(144,85,255,0.7)' }} />}
+        <Box className="nav-icon" sx={{ p: 0.5, borderRadius: 1.5, transition: 'color 0.15s', color: active ? COLORS.primary : 'rgba(255,255,255,0.3)' }}>{icon}</Box>
         {open && (
             <>
                 <Typography className="nav-label truncate" sx={{ fontSize: 13, fontWeight: 500, transition: 'color 0.15s', color: active ? 'white' : 'rgba(255,255,255,0.5)', flex: 1 }}>{label}</Typography>
-                {badge && <Chip label={badge} size="small" sx={{ height: 17, fontSize: 9, fontWeight: 700, bgcolor: 'rgba(248,113,113,0.15)', color: '#F87171', border: '1px solid rgba(248,113,113,0.25)' }} />}
+                {badge && <Chip label={badge} size="small" sx={{ height: 17, fontSize: 9, fontWeight: 700, bgcolor: 'rgba(248,113,113,0.15)', color: COLORS.red, border: '1px solid rgba(248,113,113,0.25)' }} />}
             </>
         )}
     </Box>
@@ -133,7 +134,7 @@ const RenameDialog = ({ open, name, onSave, onClose }) => {
     const [value, setValue] = useState(name);
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth
-            slotProps={{ paper: { sx: { background: 'rgba(15,18,30,0.99)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, animation: `${modalSlideInAnim} 0.2s ease-out both` } } }}>
+            slotProps={{ paper: { sx: { ...DIALOG_PAPER_SX, animation: `${modalSlideInAnim} 0.2s ease-out both` } } }}>
             <DialogTitle sx={{ pb: 0 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" fontWeight={700} fontFamily="'Clash Display', sans-serif">Přejmenovat</Typography>
@@ -149,7 +150,7 @@ const RenameDialog = ({ open, name, onSave, onClose }) => {
             <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
                 <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)' }}>Zrušit</Button>
                 <Button onClick={() => value.trim() && onSave(value.trim())} disabled={!value.trim()} variant="contained"
-                    sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: '#7C6FF7', color: '#fff', '&:hover': { background: '#6C5CE7' }, '&.Mui-disabled': { opacity: 0.3 } }}>
+                    sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: COLORS.accent, color: '#fff', '&:hover': { background: '#6C5CE7' }, '&.Mui-disabled': { opacity: 0.3 } }}>
                     Uložit
                 </Button>
             </DialogActions>
@@ -160,9 +161,9 @@ const RenameDialog = ({ open, name, onSave, onClose }) => {
 // ─── Delete confirmation for topics ───
 const DeleteTopicDialog = ({ open, name, onConfirm, onClose }) => (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth
-        slotProps={{ paper: { sx: { background: 'rgba(15,18,30,0.99)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 3, animation: `${modalSlideInAnim} 0.2s ease-out both`, textAlign: 'center', p: 3 } } }}>
+        slotProps={{ paper: { sx: { ...DIALOG_PAPER_SX, border: `1px solid rgba(248,113,113,0.2)`, animation: `${modalSlideInAnim} 0.2s ease-out both`, textAlign: 'center', p: 3 } } }}>
         <Box sx={{ width: 48, height: 48, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2, background: 'rgba(248,113,113,0.1)' }}>
-            <Trash2 size={22} color="#f87171" />
+            <Trash2 size={22} color={COLORS.red} />
         </Box>
         <Typography variant="h6" fontWeight={700} fontFamily="'Clash Display', sans-serif" mb={1}>Smazat téma?</Typography>
         <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', mb: 3 }}>
@@ -170,7 +171,7 @@ const DeleteTopicDialog = ({ open, name, onConfirm, onClose }) => (
         </Typography>
         <Stack direction="row" gap={1}>
             <Button onClick={onClose} variant="outlined" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', borderColor: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.5)' }}>Zrušit</Button>
-            <Button onClick={onConfirm} variant="contained" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: '#f87171', color: '#0F1117', '&:hover': { background: '#ef4444' } }}>Smazat</Button>
+            <Button onClick={onConfirm} variant="contained" sx={{ flex: 1, borderRadius: 2, textTransform: 'none', fontWeight: 700, background: COLORS.red, color: '#0F1117', '&:hover': { background: '#ef4444' } }}>Smazat</Button>
         </Stack>
     </Dialog>
 );
@@ -284,9 +285,9 @@ export const TreeItem = ({
                 <Typography className="tree-title truncate" sx={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.5)', transition: 'color 0.15s', flex: 1 }}>{title}</Typography>
                 {total > 0 && (
                     <Stack direction="row" gap={0.5} flexShrink={0}>
-                        {totalNotes > 0 && <Chip label={totalNotes} size="small" sx={{ height: 16, fontSize: 8, fontFamily: 'monospace', fontWeight: 700, bgcolor: 'rgba(79,156,249,0.12)', color: '#4F9CF9', '& .MuiChip-label': { px: 0.5 } }} />}
+                        {totalNotes > 0 && <Chip label={totalNotes} size="small" sx={{ height: 16, fontSize: 8, fontFamily: 'monospace', fontWeight: 700, bgcolor: 'rgba(79,156,249,0.12)', color: COLORS.blue, '& .MuiChip-label': { px: 0.5 } }} />}
                         {totalFlash > 0 && <Chip label={totalFlash} size="small" sx={{ height: 16, fontSize: 8, fontFamily: 'monospace', fontWeight: 700, bgcolor: `${color}15`, color, '& .MuiChip-label': { px: 0.5 } }} />}
-                        {totalTests > 0 && <Chip label={totalTests} size="small" sx={{ height: 16, fontSize: 8, fontFamily: 'monospace', fontWeight: 700, bgcolor: 'rgba(192,132,252,0.12)', color: '#c084fc', '& .MuiChip-label': { px: 0.5 } }} />}
+                        {totalTests > 0 && <Chip label={totalTests} size="small" sx={{ height: 16, fontSize: 8, fontFamily: 'monospace', fontWeight: 700, bgcolor: 'rgba(192,132,252,0.12)', color: COLORS.purple, '& .MuiChip-label': { px: 0.5 } }} />}
                     </Stack>
                 )}
             </Stack>
@@ -300,15 +301,15 @@ export const TreeItem = ({
                 slotProps={{ paper: { sx: { background: 'rgba(18,22,36,0.98)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.5)', minWidth: 170 } } }}
             >
                 <MenuItem onClick={() => { closeCourseMenu(); onAddTopic?.(); }} sx={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', gap: 1.25 }}>
-                    <ListItemIcon sx={{ minWidth: 'auto!important', color: '#4ade80' }}><FolderPlus size={14} /></ListItemIcon>
+                    <ListItemIcon sx={{ minWidth: 'auto!important', color: COLORS.green }}><FolderPlus size={14} /></ListItemIcon>
                     <ListItemText primaryTypographyProps={{ fontSize: 13 }}>Nové téma</ListItemText>
                 </MenuItem>
                 <MenuItem onClick={() => { closeCourseMenu(); setRenameOpen(true); }} sx={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', gap: 1.25 }}>
-                    <ListItemIcon sx={{ minWidth: 'auto!important', color: '#7C6FF7' }}><Pencil size={14} /></ListItemIcon>
+                    <ListItemIcon sx={{ minWidth: 'auto!important', color: COLORS.accent }}><Pencil size={14} /></ListItemIcon>
                     <ListItemText primaryTypographyProps={{ fontSize: 13 }}>Přejmenovat</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => { closeCourseMenu(); setDeleteOpen(true); }} sx={{ fontSize: 13, color: '#f87171', gap: 1.25, '&:hover': { bgcolor: 'rgba(239,68,68,0.1)' } }}>
-                    <ListItemIcon sx={{ minWidth: 'auto!important', color: '#f87171' }}><Trash2 size={14} /></ListItemIcon>
+                <MenuItem onClick={() => { closeCourseMenu(); setDeleteOpen(true); }} sx={{ fontSize: 13, color: COLORS.red, gap: 1.25, '&:hover': { bgcolor: 'rgba(239,68,68,0.1)' } }}>
+                    <ListItemIcon sx={{ minWidth: 'auto!important', color: COLORS.red }}><Trash2 size={14} /></ListItemIcon>
                     <ListItemText primaryTypographyProps={{ fontSize: 13 }}>Smazat kurz</ListItemText>
                 </MenuItem>
             </Menu>
@@ -341,9 +342,9 @@ export const TreeItem = ({
                                 <FileText size={11} style={{ flexShrink: 0 }} />
                                 <Typography className="truncate" sx={{ fontSize: 12, flex: 1, color: 'inherit', ml: 0.5 }}>{t.name}</Typography>
                                 <Stack direction="row" gap={0.25} flexShrink={0}>
-                                    {(t.notes || 0) > 0 && <Chip label={t.notes} size="small" sx={{ height: 14, fontSize: 8, fontFamily: 'monospace', bgcolor: 'rgba(79,156,249,0.1)', color: '#4F9CF9', '& .MuiChip-label': { px: 0.5 } }} />}
-                                    {(s.flashcard || 0) > 0 && <Chip label={s.flashcard} size="small" sx={{ height: 14, fontSize: 8, fontFamily: 'monospace', bgcolor: 'rgba(74,222,128,0.1)', color: '#4ade80', '& .MuiChip-label': { px: 0.5 } }} />}
-                                    {(s.test || 0) > 0 && <Chip label={s.test} size="small" sx={{ height: 14, fontSize: 8, fontFamily: 'monospace', bgcolor: 'rgba(192,132,252,0.1)', color: '#c084fc', '& .MuiChip-label': { px: 0.5 } }} />}
+                                    {(t.notes || 0) > 0 && <Chip label={t.notes} size="small" sx={{ height: 14, fontSize: 8, fontFamily: 'monospace', bgcolor: 'rgba(79,156,249,0.1)', color: COLORS.blue, '& .MuiChip-label': { px: 0.5 } }} />}
+                                    {(s.flashcard || 0) > 0 && <Chip label={s.flashcard} size="small" sx={{ height: 14, fontSize: 8, fontFamily: 'monospace', bgcolor: 'rgba(74,222,128,0.1)', color: COLORS.green, '& .MuiChip-label': { px: 0.5 } }} />}
+                                    {(s.test || 0) > 0 && <Chip label={s.test} size="small" sx={{ height: 14, fontSize: 8, fontFamily: 'monospace', bgcolor: 'rgba(192,132,252,0.1)', color: COLORS.purple, '& .MuiChip-label': { px: 0.5 } }} />}
                                 </Stack>
                             </Stack>
                         );
@@ -360,11 +361,11 @@ export const TreeItem = ({
                 slotProps={{ paper: { sx: { background: 'rgba(18,22,36,0.98)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.5)', minWidth: 160 } } }}
             >
                 <MenuItem onClick={() => { closeTopicMenu(); setTopicRenameOpen(true); }} sx={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', gap: 1.25 }}>
-                    <ListItemIcon sx={{ minWidth: 'auto!important', color: '#7C6FF7' }}><Pencil size={14} /></ListItemIcon>
+                    <ListItemIcon sx={{ minWidth: 'auto!important', color: COLORS.accent }}><Pencil size={14} /></ListItemIcon>
                     <ListItemText primaryTypographyProps={{ fontSize: 13 }}>Přejmenovat</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => { closeTopicMenu(); setTopicDeleteOpen(true); }} sx={{ fontSize: 13, color: '#f87171', gap: 1.25, '&:hover': { bgcolor: 'rgba(239,68,68,0.1)' } }}>
-                    <ListItemIcon sx={{ minWidth: 'auto!important', color: '#f87171' }}><Trash2 size={14} /></ListItemIcon>
+                <MenuItem onClick={() => { closeTopicMenu(); setTopicDeleteOpen(true); }} sx={{ fontSize: 13, color: COLORS.red, gap: 1.25, '&:hover': { bgcolor: 'rgba(239,68,68,0.1)' } }}>
+                    <ListItemIcon sx={{ minWidth: 'auto!important', color: COLORS.red }}><Trash2 size={14} /></ListItemIcon>
                     <ListItemText primaryTypographyProps={{ fontSize: 13 }}>Smazat téma</ListItemText>
                 </MenuItem>
             </Menu>

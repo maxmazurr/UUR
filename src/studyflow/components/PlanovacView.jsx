@@ -6,18 +6,9 @@ import {
 } from '@mui/material';
 import { Calendar, ChevronLeft, ChevronRight, Plus, CheckSquare, Trash2, Clock } from 'lucide-react';
 import { EVENT_TYPE_CONFIG, DAY_LABELS } from '../constants';
+import { SOFT_HOVER, COLORS, DIALOG_PAPER_SX, GLASS_PANEL } from '../../styles';
 
-const PANEL_SX = {
-    borderRadius: 3,
-    background: 'rgba(22,27,39,0.55)',
-    border: '1px solid rgba(255,255,255,0.06)',
-    backdropFilter: 'blur(24px)',
-};
-
-const SOFT_HOVER = {
-    transition: 'all 0.2s',
-    '&:hover': { background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.12)' },
-};
+const PANEL_SX = { ...GLASS_PANEL, borderRadius: 3 };
 
 const toDate = (dateStr) => new Date(`${dateStr}T00:00:00`);
 const formatDate = (dateStr, options) => toDate(dateStr).toLocaleDateString('cs', options);
@@ -59,7 +50,7 @@ export const AddEventDialog = ({
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth
-            slotProps={{ paper: { sx: { background: '#1a1b23', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3 } } }}>
+            slotProps={{ paper: { sx: DIALOG_PAPER_SX } }}>
             <DialogTitle>{dialogTitle}</DialogTitle>
             <DialogContent>
                 <Stack gap={2.5} sx={{ mt: 1 }}>

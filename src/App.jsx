@@ -7,6 +7,7 @@ import {
   Calendar, FileText, PenTool, Folder, Play,
   Layers, Search
 } from 'lucide-react';
+import { GLASS, HIDE_SCROLLBAR, COLORS, fadeInUpAnim } from './styles';
 
 // ─── KEYFRAMES (emotion) ───────────────────────────────────────────────────────
 const floatAnim = keyframes`
@@ -33,29 +34,13 @@ const fadeInCellAnim = keyframes`
   from { opacity: 0; }
   to { opacity: 1; }
 `;
-const fadeInUpAnim = keyframes`
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
-`;
 const strikeAnim = keyframes`
   0%   { width: 0; opacity: 0; }
   10%  { opacity: 1; }
   100% { width: 100%; opacity: 1; }
 `;
 
-// ─── SHARED STYLES ─────────────────────────────────────────────────────────────
-const GLASS = {
-  background: 'rgba(255, 255, 255, 0.03)',
-  backdropFilter: 'blur(16px)',
-  WebkitBackdropFilter: 'blur(16px)',
-  border: '1px solid rgba(255, 255, 255, 0.08)',
-  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
-};
-
-const HIDE_SCROLLBAR_SX = {
-  scrollbarWidth: 'none',
-  '&::-webkit-scrollbar': { display: 'none' },
-};
+// ─── SHARED STYLES (imported from styles.js) ────────────────────────────────
 
 // ─── HOOKS ────────────────────────────────────────────────────────────────────
 function useOnScreen(ref, rootMargin = '0px') {
@@ -158,7 +143,7 @@ const SpotlightButton = ({ children, sx = {}, glowColor = 'rgba(124, 111, 247, 0
   );
 };
 
-const MagneticBtn = ({ children, className = '', style = {}, onClick, strength = 0.35 }) => {
+const MagneticBtn = ({ children, className = '', sx: sxProp = {}, onClick, strength = 0.35 }) => {
   const ref = useRef(null);
   const handleMove = (e) => {
     if (!ref.current) return;
@@ -174,16 +159,17 @@ const MagneticBtn = ({ children, className = '', style = {}, onClick, strength =
     ref.current.style.transform = 'translate(0,0) scale(1)';
   };
   return (
-    <button
+    <Box
+      component="button"
       ref={ref}
       className={className}
-      style={{ ...style, transition: 'transform 0.4s cubic-bezier(0.23,1,0.32,1)', willChange: 'transform' }}
+      sx={{ transition: 'transform 0.4s cubic-bezier(0.23,1,0.32,1)', willChange: 'transform', ...sxProp }}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
       onClick={onClick}
     >
       {children}
-    </button>
+    </Box>
   );
 };
 
@@ -234,7 +220,7 @@ const HoloCard = ({ item }) => {
         ].map(({ Icon, val, label }, i) => (
           <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.25, fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>
             <Icon size={16} style={{ color: 'rgba(255,255,255,0.3)' }} />
-            <span><strong style={{ color: 'white' }}>{val}</strong> {label}</span>
+            <Typography component="span"><Typography component="strong" sx={{ color: 'white' }}>{val}</Typography> {label}</Typography>
           </Box>
         ))}
       </Box>
@@ -270,9 +256,9 @@ function App() {
   const parallaxRef2 = useRef(null);
   const parallaxRef3 = useRef(null);
   const [tasks, setTasks] = useState([
-    { id: 1, title: "Opakovat 20 kartiček z Biologie", icon: <Layers size={20} style={{ color: '#7C6FF7' }} />, completed: false },
-    { id: 2, title: "Napsat test: Derivace (Matematika)", icon: <PenTool size={20} style={{ color: '#4ade80' }} />, completed: false },
-    { id: 3, title: "Přečíst nové poznámky z Historie", icon: <FileText size={20} style={{ color: '#facc15' }} />, completed: false },
+    { id: 1, title: "Opakovat 20 kartiček z Biologie", icon: <Layers size={20} style={{ color: COLORS.accent }} />, completed: false },
+    { id: 2, title: "Napsat test: Derivace (Matematika)", icon: <PenTool size={20} style={{ color: COLORS.green }} />, completed: false },
+    { id: 3, title: "Přečíst nové poznámky z Historie", icon: <FileText size={20} style={{ color: COLORS.yellow }} />, completed: false },
   ]);
   const [isUserInteractingTasks, setIsUserInteractingTasks] = useState(false);
   const heatmapRef = useRef(null);
@@ -407,7 +393,7 @@ function App() {
       ref={rootRef}
       sx={{
         position: 'relative', minHeight: '100vh', color: 'white', overflowX: 'hidden',
-        backgroundColor: '#0F1117',
+        backgroundColor: COLORS.bgPrimary,
         fontFamily: "'DM Sans', sans-serif",
         '--font-body': "'DM Sans', sans-serif",
         '--font-heading': "'Cabinet Grotesk', sans-serif",
@@ -444,11 +430,12 @@ function App() {
               <Reveal delay={400}>
                 <Typography component="h1" sx={{ fontSize: { xs: '1.875rem', sm: '3rem', md: '4.5rem' }, fontWeight: 600, mb: { xs: 2, sm: 3 }, lineHeight: 1.2, fontFamily: 'var(--font-heading)' }}>
                   Studuj chytřeji s <br />
-                  <span
-                    style={{ color: 'transparent', WebkitBackgroundClip: 'text', backgroundClip: 'text', backgroundImage: 'linear-gradient(to right, var(--orb-color-1), var(--orb-color-2))', filter: 'drop-shadow(0 0 20px rgba(var(--orb-color-1-rgb), 0.4))' }}
+                  <Box
+                    component="span"
+                    sx={{ color: 'transparent', WebkitBackgroundClip: 'text', backgroundClip: 'text', backgroundImage: 'linear-gradient(to right, var(--orb-color-1), var(--orb-color-2))', filter: 'drop-shadow(0 0 20px rgba(var(--orb-color-1-rgb), 0.4))' }}
                   >
                     Lapis
-                  </span>
+                  </Box>
                 </Typography>
               </Reveal>
 
@@ -460,22 +447,22 @@ function App() {
 
               <Reveal delay={600} direction="up" sx={{ width: '100%' }}>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 2, width: '100%' }}>
-                  <MagneticBtn style={{
+                  <MagneticBtn sx={{
                     background: 'linear-gradient(135deg, var(--orb-color-1), var(--orb-color-2))',
-                    border: 'none', borderRadius: 100, padding: 'clamp(12px,2vw,16px) clamp(20px,4vw,32px)',
+                    border: 'none', borderRadius: 100, p: 'clamp(12px,2vw,16px) clamp(20px,4vw,32px)',
                     fontSize: 'clamp(15px,2vw,18px)', fontWeight: 500, color: 'white', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', gap: 10,
+                    display: 'flex', alignItems: 'center', gap: 1.25,
                     animation: `${pulseGlowAnim} 3s ease-in-out infinite alternate`,
                   }}>
                     Vyzkoušet Lapis <ArrowRight size={18} />
                   </MagneticBtn>
                   <MagneticBtn
                     onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-                    style={{
-                      background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)',
-                      borderRadius: 100, padding: 'clamp(12px,2vw,16px) clamp(20px,4vw,32px)',
+                    sx={{
+                      background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.12)`,
+                      borderRadius: 100, p: 'clamp(12px,2vw,16px) clamp(20px,4vw,32px)',
                       fontSize: 'clamp(15px,2vw,18px)', fontWeight: 500,
-                      color: 'rgba(255,255,255,0.8)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
+                      color: 'rgba(255,255,255,0.8)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 1.25,
                       backdropFilter: 'blur(12px)',
                     }}
                   >
@@ -526,21 +513,21 @@ function App() {
                       <Box className="hover-target group" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, borderRadius: '12px', bgcolor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.05)', cursor: 'default' }}>
                         <Folder size={20} style={{ color: 'var(--orb-color-1)' }} />
                         <Typography sx={{ fontWeight: 500, color: 'white' }}>
-                          <span style={{ padding: '0 4px', borderRadius: '4px', color: 'var(--orb-color-1)', backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</span>logie 101
+                          <Box component="span" sx={{ px: 0.5, borderRadius: '4px', color: 'var(--orb-color-1)', bgcolor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</Box>logie 101
                         </Typography>
                         <Box sx={{ ml: 'auto', fontSize: '0.75rem', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', px: 1, py: 0.5, borderRadius: '4px' }}>Kurz</Box>
                       </Box>
                       <Box className="hover-target group" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, borderRadius: '12px', cursor: 'default', transition: 'background-color 0.2s', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>
                         <Folder size={20} style={{ color: '#9ca3af', transition: 'color 0.2s' }} />
                         <Typography sx={{ fontWeight: 500, color: 'white' }}>
-                          <span style={{ padding: '0 4px', borderRadius: '4px', color: 'var(--orb-color-1)', backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</span>logie — Ekologie
+                          <Box component="span" sx={{ px: 0.5, borderRadius: '4px', color: 'var(--orb-color-1)', bgcolor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</Box>logie — Ekologie
                         </Typography>
                         <Box sx={{ ml: 'auto', fontSize: '0.75rem', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', px: 1, py: 0.5, borderRadius: '4px' }}>Složka</Box>
                       </Box>
                       <Box className="hover-target group" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, borderRadius: '12px', cursor: 'default', transition: 'background-color 0.2s', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>
                         <Folder size={20} style={{ color: '#9ca3af', transition: 'color 0.2s' }} />
                         <Typography sx={{ fontWeight: 500, color: 'white' }}>
-                          <span style={{ padding: '0 4px', borderRadius: '4px', color: 'var(--orb-color-1)', backgroundColor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</span>logie — Vizualizace
+                          <Box component="span" sx={{ px: 0.5, borderRadius: '4px', color: 'var(--orb-color-1)', bgcolor: 'rgba(var(--orb-color-1-rgb), 0.2)' }}>Bio</Box>logie — Vizualizace
                         </Typography>
                         <Box sx={{ ml: 'auto', fontSize: '0.75rem', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', px: 1, py: 0.5, borderRadius: '4px' }}>Složka</Box>
                       </Box>
@@ -553,7 +540,7 @@ function App() {
                       <Box className="hover-target group" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, borderRadius: '12px', cursor: 'default', transition: 'background-color 0.2s', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>
                         <Layers size={20} style={{ color: 'var(--orb-color-2)' }} />
                         <Typography sx={{ fontWeight: 500, color: 'white' }}>
-                          Definice: <span style={{ padding: '0 4px', borderRadius: '4px', color: 'var(--orb-color-2)', backgroundColor: 'rgba(var(--orb-color-2-rgb), 0.2)' }}>bio</span>sféra
+                          Definice: <Box component="span" sx={{ px: 0.5, borderRadius: '4px', color: 'var(--orb-color-2)', bgcolor: 'rgba(var(--orb-color-2-rgb), 0.2)' }}>bio</Box>sféra
                         </Typography>
                         <Box sx={{ ml: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                           <Typography sx={{ fontSize: '0.75rem', color: 'white' }}>Věda o životě</Typography>
@@ -563,14 +550,14 @@ function App() {
                       <Box className="hover-target group" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, borderRadius: '12px', cursor: 'default', transition: 'background-color 0.2s', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>
                         <PenTool size={20} style={{ color: '#facc15' }} />
                         <Typography sx={{ fontWeight: 500, color: 'white' }}>
-                          Závěrečný test: <span style={{ color: '#facc15', backgroundColor: 'rgba(250,204,21,0.2)', padding: '0 4px', borderRadius: '4px' }}>Bio</span>logie buněk
+                          Závěrečný test: <Box component="span" sx={{ color: COLORS.yellow, bgcolor: 'rgba(250,204,21,0.2)', px: 0.5, borderRadius: '4px' }}>Bio</Box>logie buněk
                         </Typography>
                         <Box sx={{ ml: 'auto', fontSize: '0.75rem', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', px: 1, py: 0.5, borderRadius: '4px' }}>Test</Box>
                       </Box>
                       <Box className="hover-target group" sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, borderRadius: '12px', cursor: 'default', transition: 'background-color 0.2s', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }}>
                         <FileText size={20} style={{ color: '#4ade80' }} />
                         <Typography sx={{ fontWeight: 500, color: 'white' }}>
-                          Poznámky k zápočtu (<span style={{ color: '#4ade80', backgroundColor: 'rgba(74,222,128,0.2)', padding: '0 4px', borderRadius: '4px' }}>bio</span>logie)
+                          Poznámky k zápočtu (<Box component="span" sx={{ color: COLORS.green, bgcolor: 'rgba(74,222,128,0.2)', px: 0.5, borderRadius: '4px' }}>bio</Box>logie)
                         </Typography>
                         <Box sx={{ ml: 'auto', fontSize: '0.75rem', color: '#9ca3af', border: '1px solid rgba(255,255,255,0.1)', px: 1, py: 0.5, borderRadius: '4px' }}>Poznámka</Box>
                       </Box>
@@ -596,7 +583,7 @@ function App() {
 
             <Box className="hover-target" sx={{ gridColumn: { lg: 'span 2' }, borderRadius: { xs: '16px', sm: '24px' }, p: { xs: 2, sm: 4 }, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', ...GLASS }}>
 
-              <Box ref={heatmapRef} sx={{ width: '100%', overflowX: 'auto', mb: 3, ...HIDE_SCROLLBAR_SX }}>
+              <Box ref={heatmapRef} sx={{ width: '100%', overflowX: 'auto', mb: 3, ...HIDE_SCROLLBAR }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 'max-content', mx: 'auto' }}>
 
                   <Box sx={{ display: 'flex', gap: 1.5 }}>
@@ -690,7 +677,7 @@ function App() {
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, position: 'relative', zIndex: 10 }}>
                   <Box className="group/item" sx={{ display: 'flex', gap: 2, p: 1.5, mx: -1.5, borderRadius: '12px', transition: 'colors 0.3s', cursor: 'pointer', borderLeft: '2px solid transparent', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', borderColor: '#ef4444' } }}>
                     <Box sx={{ width: 40, height: 40, borderRadius: '8px', bgcolor: 'rgba(239,68,68,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <PenTool size={20} style={{ color: '#f87171' }} />
+                      <PenTool size={20} style={{ color: COLORS.red }} />
                     </Box>
                     <Box sx={{ flex: 1 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.25 }}>
@@ -703,12 +690,12 @@ function App() {
 
                   <Box className="group/item" sx={{ display: 'flex', gap: 2, p: 1.5, mx: -1.5, borderRadius: '12px', transition: 'colors 0.3s', cursor: 'pointer', borderLeft: '2px solid transparent', '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', borderColor: '#eab308' } }}>
                     <Box sx={{ width: 40, height: 40, borderRadius: '8px', bgcolor: 'rgba(234,179,8,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <FileText size={20} style={{ color: '#facc15' }} />
+                      <FileText size={20} style={{ color: COLORS.yellow }} />
                     </Box>
                     <Box sx={{ flex: 1 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.25 }}>
                         <Typography component="h4" sx={{ fontWeight: 500, color: 'white', fontSize: '0.875rem' }}>Odevzdání eseje</Typography>
-                        <Typography sx={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#facc15', bgcolor: 'rgba(250,204,21,0.1)', px: 1, py: 0.25, borderRadius: '4px' }}>Za 3 dny</Typography>
+                        <Typography sx={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: COLORS.yellow, bgcolor: 'rgba(250,204,21,0.1)', px: 1, py: 0.25, borderRadius: '4px' }}>Za 3 dny</Typography>
                       </Box>
                       <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af' }}>Historie Evropy</Typography>
                     </Box>
@@ -743,12 +730,12 @@ function App() {
             <Typography component="h2" sx={{ fontSize: { xs: '1.5rem', sm: '1.875rem' }, fontFamily: 'var(--font-heading)', mb: { xs: 3, sm: 5 } }}>Pokračuj tam, kde jsi skončil</Typography>
           </Reveal>
 
-          <Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 2.5 }, overflowX: 'auto', py: 3, my: -3, px: 0.5, ...HIDE_SCROLLBAR_SX }}>
+          <Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 2.5 }, overflowX: 'auto', py: 3, my: -3, px: 0.5, ...HIDE_SCROLLBAR }}>
             {[
               { title: "Matematika", clr: "#60a5fa", notes: 12, tests: 2, cards: 145, date: "Dnes, 09:41", icon: <Folder size={20} style={{ color: '#60a5fa' }} />, delay: 0 },
-              { title: "Angličtina B2", clr: "#c084fc", notes: 5, tests: 1, cards: 320, date: "Včera", icon: <Folder size={20} style={{ color: '#c084fc' }} />, delay: 100 },
-              { title: "Fyzika", clr: "#4ade80", notes: 8, tests: 4, cards: 85, date: "Před 2 dny", icon: <Folder size={20} style={{ color: '#4ade80' }} />, delay: 200 },
-              { title: "Dějepis", clr: "#facc15", notes: 24, tests: 0, cards: 410, date: "Před 3 dny", icon: <Folder size={20} style={{ color: '#facc15' }} />, delay: 300 },
+              { title: "Angličtina B2", clr: COLORS.purple, notes: 5, tests: 1, cards: 320, date: "Včera", icon: <Folder size={20} style={{ color: COLORS.purple }} />, delay: 100 },
+              { title: "Fyzika", clr: COLORS.green, notes: 8, tests: 4, cards: 85, date: "Před 2 dny", icon: <Folder size={20} style={{ color: COLORS.green }} />, delay: 200 },
+              { title: "Dějepis", clr: COLORS.yellow, notes: 24, tests: 0, cards: 410, date: "Před 3 dny", icon: <Folder size={20} style={{ color: COLORS.yellow }} />, delay: 300 },
             ].map((item, idx) => (
               <Reveal key={idx} delay={item.delay} sx={{ width: { xs: '78vw', sm: '55vw', md: 'calc(50% - 12px)', lg: 'calc(33.333% - 16px)' }, flexShrink: 0, minHeight: '200px' }}>
                 <HoloCard item={item} />
@@ -764,7 +751,7 @@ function App() {
           <Box component="section">
             <Reveal direction="right">
               <Typography component="h2" sx={{ fontSize: { xs: '1.5rem', sm: '1.875rem' }, fontFamily: 'var(--font-heading)', mb: { xs: 3, sm: 4 }, display: 'flex', alignItems: 'center', justifyItems: 'space-between' }}>
-                <span style={{ flex: 1 }}>Na dnes</span>
+                <Box component="span" sx={{ flex: 1 }}>Na dnes</Box>
                 <Box component="span" sx={{ fontSize: '0.875rem', fontWeight: 400, bgcolor: 'rgba(255,255,255,0.05)', px: 1.5, py: 0.5, borderRadius: '9999px', color: 'var(--orb-color-1)' }}>
                   {(() => { const n = tasks.filter(t => !t.completed).length; return `${n} ${n === 1 ? 'úkol' : n <= 4 ? 'úkoly' : 'úkolů'}`; })()}
                 </Box>

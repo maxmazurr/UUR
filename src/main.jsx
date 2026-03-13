@@ -1,8 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { ThemeProvider, CssBaseline, Box, Button, Typography } from '@mui/material';
 import { darkTheme, GlobalStyleConfig } from './theme.jsx';
+import { COLORS } from './styles.js';
 import './index.css';
 import App from './App.jsx';
 import StudyFlow from './pages/StudyFlow.jsx';
@@ -11,29 +12,33 @@ export function Home() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      <h1>Výběr dashboardu</h1>
-      <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginTop: '40px' }}>
-        <button
+    <Box sx={{ p: 2.5, textAlign: 'center' }}>
+      <Typography variant="h4">Výběr dashboardu</Typography>
+      <Box sx={{ display: 'flex', gap: 2.5, justifyContent: 'center', mt: 5 }}>
+        <Button
+          variant="contained"
           onClick={() => navigate('/1')}
-          style={{
-            padding: '10px 20px', fontSize: '18px', cursor: 'pointer', borderRadius: '8px',
-            background: 'linear-gradient(135deg, #9055FF, #13E2DA)', color: 'white', border: 'none'
+          sx={{
+            px: 2.5, py: 1.25, fontSize: '18px', borderRadius: 2,
+            background: `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.secondary})`,
+            '&:hover': { background: `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.secondary})`, filter: 'brightness(1.1)' },
           }}
         >
           Dashboard 1 (Lapis)
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="contained"
           onClick={() => navigate('/2')}
-          style={{
-            padding: '10px 20px', fontSize: '18px', cursor: 'pointer', borderRadius: '8px',
-            background: 'linear-gradient(135deg, #7C6FF7, #4F9CF9)', color: 'white', border: 'none'
+          sx={{
+            px: 2.5, py: 1.25, fontSize: '18px', borderRadius: 2,
+            background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.blue})`,
+            '&:hover': { background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.blue})`, filter: 'brightness(1.1)' },
           }}
         >
           Dashboard 2 (StudyFlow)
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Box>
   );
 }
 

@@ -17,6 +17,7 @@ import {
     GLASS_PANEL, HEAT_COLORS,
     DEMO_COURSES, DEMO_CARDS, DEMO_EVENTS,
 } from '../studyflow/constants';
+import { COLORS, HIDE_SCROLLBAR } from '../styles';
 import { FadeUp, HoloCard, NavItem, NotifItem, TreeItem, ContinueCard, CardRow, WeakCard } from '../studyflow/components/Sidebar';
 import { TopicView } from '../studyflow/components/TopicView';
 import { PoznamkyView, AddTopicModal } from '../studyflow/components/TopicComponents';
@@ -26,10 +27,10 @@ import { PlanovacView } from '../studyflow/components/PlanovacView';
 import { ZenMode } from '../studyflow/components/ZenMode';
 
 const searchIcon = (type) => {
-    if (type === 'notes') return <FileText size={16} color="#4F9CF9" />;
-    if (type === 'cards') return <Layers size={16} color="#7C6FF7" />;
-    if (type === 'tests') return <CheckSquare size={16} color="#4ADE80" />;
-    return <BookOpen size={16} color="#FB923C" />;
+    if (type === 'notes') return <FileText size={16} color={COLORS.blue} />;
+    if (type === 'cards') return <Layers size={16} color={COLORS.accent} />;
+    if (type === 'tests') return <CheckSquare size={16} color={COLORS.green} />;
+    return <BookOpen size={16} color={COLORS.orange} />;
 };
 
 import { StudyFlowProvider, useStudyFlow } from '../studyflow/StudyFlowContext';
@@ -369,7 +370,7 @@ function StudyFlowContent() {
                             <Stack sx={{ whiteSpace: 'nowrap', minWidth: 0 }}>
                                 <Typography sx={{ fontWeight: 600, fontSize: 13, color: 'white' }}>Jan Novák</Typography>
                                 <Stack direction="row" alignItems="center" gap={0.5} mt={0.25}>
-                                    <Flame size={11} style={{ color: '#FB923C' }} />
+                                    <Flame size={11} style={{ color: COLORS.orange }} />
                                     <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>32 dní v řadě</Typography>
                                 </Stack>
                             </Stack>
@@ -408,7 +409,7 @@ function StudyFlowContent() {
                             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5} px={1}>
                                 <Typography sx={{ fontSize: 12, fontFamily: '"Clash Display", sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Moje kurzy</Typography>
                                 <IconButton size="small" onClick={() => setActiveNav('Poznámky')}
-                                    sx={{ width: 24, height: 24, borderRadius: 2, color: 'rgba(255,255,255,0.35)', '&:hover': { color: '#7C6FF7', bgcolor: 'rgba(124,111,247,0.1)', boxShadow: '0 0 10px rgba(124,111,247,0.3)' } }}>
+                                    sx={{ width: 24, height: 24, borderRadius: 2, color: 'rgba(255,255,255,0.35)', '&:hover': { color: COLORS.accent, bgcolor: 'rgba(124,111,247,0.1)', boxShadow: '0 0 10px rgba(124,111,247,0.3)' } }}>
                                     <Plus size={14} />
                                 </IconButton>
                             </Stack>
@@ -437,7 +438,7 @@ function StudyFlowContent() {
                                     onClick={exportData}
                                     sx={{ 
                                         justifyContent: 'flex-start', color: 'rgba(255,255,255,0.5)', textTransform: 'none', fontSize: 12, 
-                                        '&:hover': { color: '#9055FF', background: 'rgba(144,85,255,0.05)' } 
+                                        '&:hover': { color: COLORS.primary, background: 'rgba(144,85,255,0.05)' } 
                                     }}
                                 >
                                     Exportovat data
@@ -448,7 +449,7 @@ function StudyFlowContent() {
                                     startIcon={<Upload size={14} />}
                                     sx={{ 
                                         justifyContent: 'flex-start', color: 'rgba(255,255,255,0.5)', textTransform: 'none', fontSize: 12,
-                                        '&:hover': { color: '#4ade80', background: 'rgba(74,222,128,0.05)' } 
+                                        '&:hover': { color: COLORS.green, background: 'rgba(74,222,128,0.05)' } 
                                     }}
                                 >
                                     Importovat data
@@ -551,7 +552,7 @@ function StudyFlowContent() {
                                                             const safeQuery = escapeRegExp(query);
                                                             const parts = String(text).split(new RegExp(`(${safeQuery})`, 'gi'));
                                                             return parts.map((p, j) => p.toLowerCase() === query.toLowerCase() 
-                                                                ? <Box key={j} component="span" sx={{ color: '#9055FF', fontWeight: 800, background: 'rgba(144,85,255,0.15)', px: '2px', borderRadius: '1.5px' }}>{p}</Box> 
+                                                                ? <Box key={j} component="span" sx={{ color: COLORS.primary, fontWeight: 800, background: 'rgba(144,85,255,0.15)', px: '2px', borderRadius: '1.5px' }}>{p}</Box> 
                                                                 : p
                                                             );
                                                         };
@@ -564,7 +565,7 @@ function StudyFlowContent() {
                                                                     <Typography sx={{ fontSize: 13, color: '#C8CDD8' }}>{highlight(item.label, searchQuery)}</Typography>
                                                                     {item.subtitle && <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{highlight(item.subtitle, searchQuery)}</Typography>}
                                                                     {item.searchText && item.searchText.toLowerCase().includes(searchQuery.toLowerCase()) && !item.label.toLowerCase().includes(searchQuery.toLowerCase()) && (
-                                                                        <Typography sx={{ fontSize: 9, color: '#4ade80', mt: 0.25, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                                                        <Typography sx={{ fontSize: 9, color: COLORS.green, mt: 0.25, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                                                             ✓ v obsahu
                                                                         </Typography>
                                                                     )}
@@ -590,7 +591,7 @@ function StudyFlowContent() {
                             <IconButton onClick={() => setNotifOpen(!notifOpen)}
                                 sx={{ color: 'rgba(255,255,255,0.55)', '&:hover': { color: 'white', bgcolor: 'rgba(255,255,255,0.05)' } }}>
                                 <Bell size={18} />
-                                <Box sx={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, bgcolor: '#F87171', borderRadius: '50%', border: '2px solid var(--bg-primary)' }} />
+                                <Box sx={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, bgcolor: COLORS.red, borderRadius: '50%', border: '2px solid var(--bg-primary)' }} />
                             </IconButton>
                             {notifOpen && (
                                 <Paper elevation={8} sx={{ position: 'absolute', right: 0, top: 44, width: 320, maxWidth: 'calc(100vw - 1rem)', borderRadius: 3, overflow: 'hidden', zIndex: 102, animation: `${fadeInUpAnim} 0.3s ease-out forwards`, background: 'var(--bg-secondary)', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -598,9 +599,9 @@ function StudyFlowContent() {
                                         <Typography sx={{ fontSize: 13, fontWeight: 600 }}>Oznámení</Typography>
                                         <IconButton size="small" onClick={() => setNotifOpen(false)} sx={{ color: 'rgba(255,255,255,0.35)', '&:hover': { color: 'white' } }}><X size={14} /></IconButton>
                                     </Stack>
-                                    <NotifItem color="#4F9CF9" title="Nový test k dispozici" sub="Lineární algebra · před 2h" />
-                                    <NotifItem color="#4ADE80" title="Série 30 dní! 🎉" sub="Gratulujeme! · před 1d" />
-                                    <NotifItem color="#FB923C" title="5 kartiček expiruje" sub="Dějepis · před 3d" isLast />
+                                    <NotifItem color={COLORS.blue} title="Nový test k dispozici" sub="Lineární algebra · před 2h" />
+                                    <NotifItem color={COLORS.green} title="Série 30 dní! 🎉" sub="Gratulujeme! · před 1d" />
+                                    <NotifItem color={COLORS.orange} title="5 kartiček expiruje" sub="Dějepis · před 3d" isLast />
                                 </Paper>
                             )}
                         </Box>
@@ -672,13 +673,13 @@ function StudyFlowContent() {
                                 </Stack>
 
                                 <FadeUp delay={150} sx={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '12px', flexShrink: 0, width: { xs: '100%', md: 'auto' }, minWidth: { md: 240 } }}>
-                                    <Typography sx={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#7C6FF7', fontWeight: 700, mb: 0.5, pl: 0.5 }}>Rychlé akce</Typography>
+                                    <Typography sx={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: COLORS.accent, fontWeight: 700, mb: 0.5, pl: 0.5 }}>Rychlé akce</Typography>
                                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)', md: 'repeat(2, 1fr)' }, gap: { xs: 1, sm: 1.5 } }}>
                                         {[
-                                            { icon: <Play size={14} style={{ fill: 'currentColor' }} />, label: 'Opakování', accent: '#7C6FF7', action: () => { setZenCards(null); setShowZen(true); } },
-                                            { icon: <FileText size={14} />, label: 'Poznámka', accent: '#4F9CF9', action: () => { setOpenTopic(null); setActiveNav('Poznámky'); } },
-                                            { icon: <Layers size={14} />, label: 'Kartička', accent: '#4ADE80', action: () => { setOpenTopic(null); setActiveNav('Kartičky'); } },
-                                            { icon: <CheckSquare size={14} />, label: 'Nový test', accent: '#FB923C', action: () => { setOpenTopic(null); setActiveNav('Testy'); } },
+                                            { icon: <Play size={14} style={{ fill: 'currentColor' }} />, label: 'Opakování', accent: COLORS.accent, action: () => { setZenCards(null); setShowZen(true); } },
+                                            { icon: <FileText size={14} />, label: 'Poznámka', accent: COLORS.blue, action: () => { setOpenTopic(null); setActiveNav('Poznámky'); } },
+                                            { icon: <Layers size={14} />, label: 'Kartička', accent: COLORS.green, action: () => { setOpenTopic(null); setActiveNav('Kartičky'); } },
+                                            { icon: <CheckSquare size={14} />, label: 'Nový test', accent: COLORS.orange, action: () => { setOpenTopic(null); setActiveNav('Testy'); } },
                                         ].map((a, i) => (
                                             <Button key={i} onClick={a.action} sx={{
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, px: 2, py: 1.5,

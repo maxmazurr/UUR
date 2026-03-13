@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { X } from 'lucide-react';
 import { useStudyFlow } from '../StudyFlowContext';
+import { DIALOG_PAPER_SX, COLORS } from '../../styles';
 
 export const ZenMode = ({ onClose, specificCards = null }) => {
     const { cards, setCards } = useStudyFlow();
@@ -41,7 +42,7 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
 
     if (dueCards.length === 0) {
         return (
-            <Dialog open onClose={onClose} maxWidth="xs" fullWidth PaperProps={{ sx: { background: 'rgba(15,18,30,0.98)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backdropFilter: 'blur(24px)', textAlign: 'center', p: 4 } }}>
+            <Dialog open onClose={onClose} maxWidth="xs" fullWidth PaperProps={{ sx: { ...DIALOG_PAPER_SX, textAlign: 'center', p: 4 } }}>
                 <Typography fontSize={48} mb={2}>🎉</Typography>
                 <Typography variant="h6" fontWeight={700} mb={1}>Vše hotovo!</Typography>
                 <Typography variant="body2" color="text.secondary" mb={3}>Žádné kartičky k opakování. Vrať se zítra.</Typography>
@@ -55,7 +56,7 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
         const total = results.length;
         const pct = Math.round((correct / total) * 100);
         return (
-            <Dialog open onClose={onClose} maxWidth="xs" fullWidth PaperProps={{ sx: { background: 'rgba(15,18,30,0.98)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backdropFilter: 'blur(24px)', textAlign: 'center', p: 4 } }}>
+            <Dialog open onClose={onClose} maxWidth="xs" fullWidth PaperProps={{ sx: { ...DIALOG_PAPER_SX, textAlign: 'center', p: 4 } }}>
                 <Typography fontSize={48} mb={2}>{pct >= 70 ? '🎉' : pct >= 40 ? '💪' : '📚'}</Typography>
                 <Typography variant="h5" fontWeight={800} mb={1}>Výsledky</Typography>
                 <Stack direction="row" justifyContent="center" gap={4} my={3}>
@@ -69,7 +70,7 @@ export const ZenMode = ({ onClose, specificCards = null }) => {
     }
 
     return (
-        <Dialog open onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { background: 'rgba(15,18,30,0.98)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backdropFilter: 'blur(24px)' } }}>
+        <Dialog open onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: DIALOG_PAPER_SX }}>
             <DialogTitle sx={{ pb: 0 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="body2" color="text.secondary" fontWeight={600}>{idx + 1} / {dueCards.length}</Typography>

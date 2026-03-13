@@ -1,23 +1,40 @@
 import { createTheme } from '@mui/material/styles';
 import { GlobalStyles } from '@mui/material';
+import { COLORS } from './styles';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const darkTheme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: '#9055FF', // orb-color-1
+            main: COLORS.primary,
         },
         secondary: {
-            main: '#13E2DA', // orb-color-2
+            main: COLORS.secondary,
         },
         background: {
-            default: '#0F1117',
-            paper: 'rgba(255, 255, 255, 0.03)',
+            default: COLORS.bgPrimary,
+            paper: COLORS.glassBgLight,
         },
         text: {
-            primary: '#ffffff',
-            secondary: '#8891AA',
+            primary: COLORS.textPrimary,
+            secondary: COLORS.textSecondary,
+        },
+        // Custom palette entries for easy access via theme.palette.*
+        accent: {
+            main: COLORS.accent,
+        },
+        success: {
+            main: COLORS.green,
+        },
+        warning: {
+            main: COLORS.orange,
+        },
+        error: {
+            main: COLORS.red,
+        },
+        info: {
+            main: COLORS.blue,
         },
     },
     typography: {
@@ -42,7 +59,7 @@ export const darkTheme = createTheme({
             styleOverrides: {
                 root: {
                     backgroundImage: 'none',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    border: `1px solid ${COLORS.border}`,
                 },
             },
         },
@@ -53,21 +70,21 @@ export const GlobalStyleConfig = (
     <GlobalStyles
         styles={{
             ':root': {
-                '--bg-primary': '#0F1117',
-                '--bg-secondary': '#161B27',
-                '--bg-tertiary': '#1E2536',
-                '--bg-elevated': '#1A2030',
-                '--accent': '#7C6FF7',
-                '--text-secondary': '#8891AA',
-                '--text-muted': '#4A5270',
-                '--glass-bg': 'rgba(30, 37, 54, 0.6)',
-                '--glass-border': 'rgba(124, 111, 247, 0.12)',
+                '--bg-primary': COLORS.bgPrimary,
+                '--bg-secondary': COLORS.bgSecondary,
+                '--bg-tertiary': COLORS.bgTertiary,
+                '--bg-elevated': COLORS.bgElevated,
+                '--accent': COLORS.accent,
+                '--text-secondary': COLORS.textSecondary,
+                '--text-muted': COLORS.textMuted,
+                '--glass-bg': COLORS.glassBg,
+                '--glass-border': COLORS.borderAccent,
             },
             'html, body': {
                 margin: 0,
                 padding: 0,
-                backgroundColor: '#0F1117',
-                color: '#fff',
+                backgroundColor: COLORS.bgPrimary,
+                color: COLORS.textPrimary,
                 overflowX: 'hidden',
             },
             '#root': {

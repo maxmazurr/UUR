@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { X, Copy, Plus } from 'lucide-react';
 import { DIFF_COLORS, DIFF_LABELS } from '../constants';
+import { DIALOG_PAPER_SX, COLORS } from '../../styles';
 
 const AI_PROMPT_TEMPLATE = `Vytvoř 10 flashcard kartiček ve formátu JSON na téma [TÉMA].
 Vrať pouze JSON pole bez dalšího textu, bez markdown bloků:
@@ -167,7 +168,7 @@ export const CardWizard = ({ courses, onSave, onClose, editCard = null }) => {
 
     return (
         <Dialog open onClose={onClose} maxWidth="sm" fullWidth
-            PaperProps={{ sx: { background: 'rgba(15,18,30,0.98)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backdropFilter: 'blur(24px)' } }}>
+            PaperProps={{ sx: DIALOG_PAPER_SX }}>
             <DialogTitle sx={{ pb: 1 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" fontWeight={700}>{isEdit ? 'Upravit kartičku' : 'Nová kartička'}</Typography>
@@ -332,7 +333,7 @@ export const TestWizard = ({ courseId, courseName, courseColor, topicId, topicNa
     const accentColor = '#c084fc';
 
     return (
-        <Dialog open onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { background: 'rgba(15,18,30,0.98)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 3, backdropFilter: 'blur(24px)' } }}>
+        <Dialog open onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: DIALOG_PAPER_SX }}>
             <DialogTitle sx={{ pb: 1 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography variant="h6" fontWeight={700}>{isEdit ? 'Upravit test (ABCD)' : 'Nový test (ABCD)'}</Typography>
