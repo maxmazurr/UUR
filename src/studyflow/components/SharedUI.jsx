@@ -113,8 +113,8 @@ export const ProgressItem = ({ label, value, color, icon: Icon, subValue }) => (
     </Box>
 );
 
-export const WeakCard = ({ title, value, course, topic }) => (
-    <Stack gap={1} sx={{ 
+export const WeakCard = ({ title, value, course, topic, onDetail }) => (
+    <Stack gap={1} onClick={onDetail} sx={{ 
         p: 1.5, borderRadius: 3, transition: 'all 0.2s', cursor: 'pointer', 
         '&:hover': { bgcolor: COLORS.white02 },
         '&:hover .weak-title': { color: COLORS.textPrimary }

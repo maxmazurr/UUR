@@ -206,21 +206,28 @@ const HoloCard = ({ item }) => {
         ...style,
       }}
     >
-      <Box sx={{ width: 44, height: 44, borderRadius: '12px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+      <Box sx={{ 
+        width: 44, height: 44, borderRadius: '14px', 
+        background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2,
+        fontSize: '24px'
+      }}>
         {item.icon}
       </Box>
-      <Typography sx={{ fontSize: 13, color: item.clr, fontWeight: 500, mb: 0.5 }}>Složka</Typography>
+      <Typography sx={{ fontSize: 11, color: item.clr, fontWeight: 800, mb: 1, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Kurz</Typography>
       <Typography component="h3" sx={{ fontSize: 20, fontWeight: 600, mb: 2.5, fontFamily: 'var(--font-heading)', color: 'white' }}>{item.title}</Typography>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, mb: 3 }}>
         {[
-          { Icon: FileText, val: item.notes, label: 'poznámek' },
-          { Icon: PenTool, val: item.tests, label: 'testů' },
-          { Icon: Layers, val: item.cards, label: 'kartiček' },
-        ].map(({ Icon, val, label }, i) => (
-          <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.25, fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>
-            <Icon size={16} style={{ color: 'rgba(255,255,255,0.3)' }} />
-            <Typography component="span"><Typography component="strong" sx={{ color: 'white' }}>{val}</Typography> {label}</Typography>
+          { label: 'kartiček', val: item.cards, dotColor: COLORS.accent },
+          { label: 'testů', val: item.tests, dotColor: COLORS.green },
+          { label: 'poznámek', val: item.notes, dotColor: COLORS.orange },
+        ].map(({ label, val, dotColor }, i) => (
+          <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: dotColor }} />
+            <Typography sx={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <Typography component="span" sx={{ color: 'white' }}>{val}</Typography> {label}
+            </Typography>
           </Box>
         ))}
       </Box>
@@ -258,7 +265,7 @@ function App() {
   const [tasks, setTasks] = useState([
     { id: 1, title: "Opakovat 20 kartiček z Biologie", icon: <Layers size={20} style={{ color: COLORS.accent }} />, completed: false },
     { id: 2, title: "Napsat test: Derivace (Matematika)", icon: <PenTool size={20} style={{ color: COLORS.green }} />, completed: false },
-    { id: 3, title: "Přečíst nové poznámky z Historie", icon: <FileText size={20} style={{ color: COLORS.yellow }} />, completed: false },
+    { id: 3, title: "Přečíst nové poznámky z Historie", icon: <FileText size={20} style={{ color: COLORS.orange }} />, completed: false },
   ]);
   const [isUserInteractingTasks, setIsUserInteractingTasks] = useState(false);
   const heatmapRef = useRef(null);
@@ -573,10 +580,11 @@ function App() {
         {/* СЕКЦИЯ 2: АКТИВНОСТЬ */}
         <Box component="section" sx={{ py: { xs: 5, sm: 10 }, position: 'relative', zIndex: 10 }}>
           <Reveal direction="left">
-            <Typography component="h2" sx={{ fontSize: { xs: '1.5rem', sm: '1.875rem' }, fontFamily: 'var(--font-heading)', mb: { xs: 3, sm: 5 }, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Typography component="h2" sx={{ fontSize: { xs: '1.5rem', sm: '1.875rem' }, fontFamily: 'var(--font-heading)', mb: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Flame style={{ color: 'var(--orb-color-1)', animation: `${streakPulseAnim} 2s ease-in-out infinite` }} />
-              Tvoje aktivita
+              Aktivita za 30 dní
             </Typography>
+            <Typography sx={{ color: '#9ca3af', fontSize: '0.875rem', mb: { xs: 3, sm: 5 }, ml: 5 }}>Počet zopakovaných karet, testů a napsaných poznámek.</Typography>
           </Reveal>
 
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'repeat(3, 1fr)' }, gap: { xs: 2, sm: 3 } }}>
@@ -641,27 +649,30 @@ function App() {
                 </Box>
               </Box>
 
-              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: { xs: 1.5, sm: 3 }, pt: { xs: 2, sm: 3 }, borderTop: '1px solid rgba(255,255,255,0.1)', mt: 'auto' }}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: { xs: 1, sm: 2 }, pt: { xs: 2, sm: 3 }, borderTop: '1px solid rgba(255,255,255,0.1)', mt: 'auto' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography sx={{ color: '#9ca3af', fontSize: { xs: '0.75rem', sm: '0.875rem' }, mb: { xs: 0.25, sm: 0.5 } }}>Streak</Typography>
-                  <Typography sx={{ fontSize: { xs: '1.5rem', sm: '2.25rem' }, fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'white' }}>
-                    <CountUp end={32} /> <Box component="span" sx={{ fontSize: { sm: '1.125rem' }, fontWeight: 400, color: '#6b7280', display: { xs: 'none', sm: 'inline' } }}>dní v řadě</Box>
+                  <Typography sx={{ color: '#9ca3af', fontSize: '0.75rem', mb: 0.5 }}>Série</Typography>
+                  <Typography sx={{ fontSize: { xs: '1.25rem', sm: '1.75rem' }, fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'white' }}>
+                    <CountUp end={32} />
                   </Typography>
-                  <Typography sx={{ fontSize: '0.75rem', color: '#6b7280', display: { sm: 'none' } }}>dní v řadě</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography sx={{ color: '#9ca3af', fontSize: { xs: '0.75rem', sm: '0.875rem' }, mb: { xs: 0.25, sm: 0.5 } }}>Kartičky</Typography>
-                  <Typography sx={{ fontSize: { xs: '1.5rem', sm: '2.25rem' }, fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'white' }}>
-                    <CountUp end={248} /> <Box component="span" sx={{ fontSize: { sm: '1.125rem' }, fontWeight: 400, color: '#6b7280', display: { xs: 'none', sm: 'inline' } }}>karet</Box>
+                  <Typography sx={{ color: '#9ca3af', fontSize: '0.75rem', mb: 0.5 }}>Kartičky</Typography>
+                  <Typography sx={{ fontSize: { xs: '1.25rem', sm: '1.75rem' }, fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'white' }}>
+                    <CountUp end={248} />
                   </Typography>
-                  <Typography sx={{ fontSize: '0.75rem', color: '#6b7280', display: { sm: 'none' } }}>karet</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography sx={{ color: '#9ca3af', fontSize: { xs: '0.75rem', sm: '0.875rem' }, mb: { xs: 0.25, sm: 0.5 } }}>Testy</Typography>
-                  <Typography sx={{ fontSize: { xs: '1.5rem', sm: '2.25rem' }, fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'white' }}>
-                    <CountUp end={14} /> <Box component="span" sx={{ fontSize: { sm: '1.125rem' }, fontWeight: 400, color: '#6b7280', display: { xs: 'none', sm: 'inline' } }}>dokončeno</Box>
+                  <Typography sx={{ color: '#9ca3af', fontSize: '0.75rem', mb: 0.5 }}>Testy</Typography>
+                  <Typography sx={{ fontSize: { xs: '1.25rem', sm: '1.75rem' }, fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'white' }}>
+                    <CountUp end={14} />
                   </Typography>
-                  <Typography sx={{ fontSize: '0.75rem', color: '#6b7280', display: { sm: 'none' } }}>hotovo</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Typography sx={{ color: '#9ca3af', fontSize: '0.75rem', mb: 0.5 }}>Poznámky</Typography>
+                  <Typography sx={{ fontSize: { xs: '1.25rem', sm: '1.75rem' }, fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'white' }}>
+                    <CountUp end={45} />
+                  </Typography>
                 </Box>
               </Box>
             </Box>
@@ -732,10 +743,10 @@ function App() {
 
           <Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 2.5 }, overflowX: 'auto', py: 3, my: -3, px: 0.5, ...HIDE_SCROLLBAR }}>
             {[
-              { title: "Matematika", clr: "#60a5fa", notes: 12, tests: 2, cards: 145, date: "Dnes, 09:41", icon: <Folder size={20} style={{ color: '#60a5fa' }} />, delay: 0 },
-              { title: "Angličtina B2", clr: COLORS.purple, notes: 5, tests: 1, cards: 320, date: "Včera", icon: <Folder size={20} style={{ color: COLORS.purple }} />, delay: 100 },
-              { title: "Fyzika", clr: COLORS.green, notes: 8, tests: 4, cards: 85, date: "Před 2 dny", icon: <Folder size={20} style={{ color: COLORS.green }} />, delay: 200 },
-              { title: "Dějepis", clr: COLORS.yellow, notes: 24, tests: 0, cards: 410, date: "Před 3 dny", icon: <Folder size={20} style={{ color: COLORS.yellow }} />, delay: 300 },
+              { title: "Matematika", clr: "#60a5fa", notes: 12, tests: 2, cards: 145, date: "Dnes, 09:41", icon: "🧮", delay: 0 },
+              { title: "Angličtina B2", clr: COLORS.purple, notes: 5, tests: 1, cards: 320, date: "Včera", icon: "🌍", delay: 100 },
+              { title: "Fyzika", clr: COLORS.green, notes: 8, tests: 4, cards: 85, date: "Před 2 dny", icon: "⚛️", delay: 200 },
+              { title: "Dějepis", clr: COLORS.yellow, notes: 24, tests: 0, cards: 410, date: "Před 3 dny", icon: "📜", delay: 300 },
             ].map((item, idx) => (
               <Reveal key={idx} delay={item.delay} sx={{ width: { xs: '78vw', sm: '55vw', md: 'calc(50% - 12px)', lg: 'calc(33.333% - 16px)' }, flexShrink: 0, minHeight: '200px' }}>
                 <HoloCard item={item} />

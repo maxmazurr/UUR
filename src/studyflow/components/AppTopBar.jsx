@@ -24,10 +24,12 @@ export const AppTopBar = ({ sidebarOpen, setSidebarOpen, searchFocused, setSearc
                     <MenuIcon size={18} />
                 </IconButton>
                 <Typography sx={{ 
-                    fontSize: 18, fontFamily: '"Clash Display", sans-serif', fontWeight: 700, 
-                    ...GRADIENT_TEXT(COLORS.accent, COLORS.blue),
-                    backgroundSize: '200% auto', animation: 'shimmer 3s linear infinite', 
-                    '@keyframes shimmer': { '0%': { backgroundPosition: '0% center' }, '100%': { backgroundPosition: '200% center' } }, 
+                    fontSize: 20, fontFamily: '"Clash Display", sans-serif', fontWeight: 800, 
+                    letterSpacing: '-0.025em',
+                    color: COLORS.textPrimary,
+                    background: `linear-gradient(135deg, ${COLORS.accent} 0%, ${COLORS.blue} 100%)`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
                     display: { xs: 'none', sm: 'block' } 
                 }}>
                     StudyFlow
@@ -35,11 +37,14 @@ export const AppTopBar = ({ sidebarOpen, setSidebarOpen, searchFocused, setSearc
             </Stack>
         </Stack>
 
-        {/* Search bar */}
         <Box sx={{ position: 'relative', display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center', flex: 1, maxWidth: 'xl', mx: { xs: 1.5, sm: 3 } }}>
-
-            <Box sx={{ position: 'relative', width: '100%', transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)', maxWidth: searchFocused ? 560 : 480 }}>
-                <Search size={16} sx={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: COLORS.textMuted }} />
+            <Box sx={{ 
+                position: 'relative', 
+                width: '100%', 
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)', 
+                maxWidth: searchFocused ? 640 : 440,
+                filter: searchFocused ? 'drop-shadow(0 0 20px rgba(124, 111, 247, 0.15))' : 'none'
+            }}>
                 <TextField
                     inputRef={searchInputRef}
                     placeholder="Hledat poznámky, kartičky, kurzy..."
@@ -55,28 +60,44 @@ export const AppTopBar = ({ sidebarOpen, setSidebarOpen, searchFocused, setSearc
                         searchBlurTimerRef.current = setTimeout(() => setSearchFocused(false), 200);
                     }}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <Box sx={{ mr: 1.5, display: 'flex', color: searchFocused ? COLORS.accent : COLORS.textMuted, transition: 'color 0.3s' }}>
+                                <Search size={17} />
+                            </Box>
+                        ),
+                        endAdornment: !searchQuery && (
+                            <Typography component="kbd" sx={{ 
+                                fontSize: 10, px: 0.8, py: 0.3, borderRadius: 1.5, 
+                                fontFamily: 'monospace', fontWeight: 700,
+                                bgcolor: COLORS.white05, border: `1px solid ${COLORS.white10}`, 
+                                color: COLORS.textMuted, opacity: searchFocused ? 0 : 0.8,
+                                transition: 'opacity 0.2s',
+                                userSelect: 'none', pointerEvents: 'none'
+                            }}>⌘K</Typography>
+                        )
+                    }}
                     sx={{
                         '& .MuiOutlinedInput-root': {
-                            borderRadius: 3, py: 0.25, pl: 4.5, pr: 7, fontSize: 13, color: COLORS.textPrimary,
+                            borderRadius: '14px', py: 0.4, px: 2, fontSize: 13, color: COLORS.textPrimary,
                             background: COLORS.bgTertiary,
-                            '& fieldset': { borderColor: searchFocused ? `${COLORS.accent}66` : COLORS.border },
-                            '&:hover fieldset': { borderColor: `${COLORS.accent}4D` },
+                            transition: 'all 0.3s',
+                            '& fieldset': {
+                                borderColor: searchFocused ? `${COLORS.accent}66` : COLORS.border,
+                            },
+                            '&:hover fieldset': { borderColor: searchFocused ? `${COLORS.accent}80` : COLORS.white20 },
                         },
-                        '& input::placeholder': { color: COLORS.textMuted, opacity: 1 },
+                        '& input::placeholder': { color: COLORS.textMuted, opacity: 0.7 },
                     }}
                 />
-                <Typography component="kbd" sx={{ 
-                    position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', 
-                    fontSize: 10, px: 0.75, py: 0.25, borderRadius: 1, fontFamily: 'monospace', 
-                    bgcolor: COLORS.white05, border: `1px solid ${COLORS.white10}`, color: COLORS.textMuted 
-                }}>⌘K</Typography>
             </Box>
 
             {searchFocused && (
-                <Paper elevation={8} sx={{ 
-                    position: 'absolute', top: 44, width: '100%', maxWidth: 560, borderRadius: 3, 
-                    overflow: 'hidden', zIndex: 101, animation: `${fadeInUpAnim} 0.3s ease-out forwards`, 
-                    background: COLORS.bgSecondary, border: `1px solid ${COLORS.border}` 
+                <Paper elevation={12} sx={{ 
+                    position: 'absolute', top: 52, width: '100%', maxWidth: 640, borderRadius: 4, 
+                    overflow: 'hidden', zIndex: 101, animation: `${fadeInUpAnim} 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards`, 
+                    background: COLORS.bgSecondary, border: `1px solid ${COLORS.border}`,
+                    boxShadow: `0 24px 80px rgba(0,0,0,0.5), 0 0 20px ${COLORS.accent}15`
                 }}>
                     {filteredItems.length === 0 ? (
                         <Typography sx={{ p: 2, fontSize: 13, color: COLORS.textDim, textAlign: 'center' }}>
@@ -134,7 +155,13 @@ export const AppTopBar = ({ sidebarOpen, setSidebarOpen, searchFocused, setSearc
 
         {/* Right side */}
         <Stack direction="row" alignItems="center" gap={1}>
-            <IconButton sx={{ display: { md: 'none' }, color: COLORS.white50, '&:hover': { color: COLORS.textPrimary, bgcolor: COLORS.white05 } }}>
+            <IconButton 
+                onClick={() => {
+                    setSearchFocused(true);
+                    setTimeout(() => searchInputRef.current?.focus(), 10);
+                }}
+                sx={{ display: { md: 'none' }, color: COLORS.white50, '&:hover': { color: COLORS.textPrimary, bgcolor: COLORS.white05 } }}
+            >
                 <Search size={18} />
             </IconButton>
             <Box sx={{ position: 'relative' }}>

@@ -9,8 +9,9 @@ import { CHART_TOOLTIP_STYLE } from '../constants';
 import { useStudyFlow } from '../StudyFlowContext';
 import { today as getToday } from '../utils/date';
 import { SectionHeader } from './SharedUI';
+import { COLORS } from '../../styles';
 
-const srColor = (rate) => rate >= 70 ? '#4ade80' : rate >= 40 ? '#fb923c' : '#f87171';
+const srColor = (rate) => rate >= 70 ? COLORS.green : rate >= 40 ? COLORS.orange : COLORS.red;
 
 export const StatistikyView = () => {
     const { cards, courses } = useStudyFlow();
@@ -29,21 +30,41 @@ export const StatistikyView = () => {
         let totalReviews = 0;
         cards.forEach(c => {
             totalReviews += (c.totalReviews || 0);
-            if (c.lastReviewed) reviewsByDate[c.lastReviewed] = (reviewsByDate[c.lastReviewed] || 0) + 1;
+            if (c.lastReviewed) {
+                const type = c.type === 'test' ? 'tests' : 'cards';
+                if (!reviewsByDate[c.lastReviewed]) reviewsByDate[c.lastReviewed] = { cards: 0, tests: 0, notes: 0 };
+                reviewsByDate[c.lastReviewed][type] += 1;
+            }
+        });
+
+        // Add some mock notes activity based on topic creation dates or current date for demo
+        courses.forEach(course => {
+            course.topics?.forEach(topic => {
+                const date = topic.createdAt || '2026-03-01';
+                if (!reviewsByDate[date]) reviewsByDate[date] = { cards: 0, tests: 0, notes: 0 };
+                reviewsByDate[date].notes += 1;
+            });
         });
 
         let streak = 0;
         for (let i = 0; i < 365; i++) {
             const d = new Date(); d.setDate(d.getDate() - i);
             const key = d.toISOString().slice(0, 10);
-            if (reviewsByDate[key]) streak++;
+            if (reviewsByDate[key] && (reviewsByDate[key].cards > 0 || reviewsByDate[key].tests > 0 || reviewsByDate[key].notes > 0)) streak++;
             else if (i > 0) break;
         }
 
         const activityData = Array.from({ length: 30 }, (_, i) => {
             const d = new Date(); d.setDate(d.getDate() - (29 - i));
             const key = d.toISOString().slice(0, 10);
-            return { date: key.slice(5), count: reviewsByDate[key] || 0 };
+            const dayData = reviewsByDate[key] || { cards: 0, tests: 0, notes: 0 };
+            return { 
+                date: key.slice(5), 
+                count: dayData.cards + dayData.tests + dayData.notes,
+                cards: dayData.cards,
+                tests: dayData.tests,
+                notes: dayData.notes
+            };
         });
 
         const dueToday = cards.filter(c => c.nextReview <= todayStr).length;
@@ -72,8 +93,8 @@ export const StatistikyView = () => {
 
     const statBoxes = [
         {
-            label: 'Celkem zopakováno', val: totalReviews,
-            sub: 'karet za celou dobu', icon: TrendingUp, color: '#9055FF',
+            label: 'Celkem aktivit', val: totalReviews,
+            sub: 'bodů za celou dobu', icon: TrendingUp, color: COLORS.primary,
         },
         {
             label: 'Úspěšnost', val: `${avgSuccess}%`,
@@ -83,12 +104,12 @@ export const StatistikyView = () => {
         {
             label: 'Série dní', val: streak,
             sub: streak > 0 ? 'dní v řadě 🔥' : 'Začni dnes!',
-            icon: Flame, color: '#fb923c',
+            icon: Flame, color: COLORS.orange,
         },
         {
             label: 'K opakování dnes', val: dueToday,
             sub: dueToday > 0 ? 'čeká na tebe' : 'Vše hotovo ✓',
-            icon: RotateCcw, color: dueToday > 0 ? '#f87171' : '#4ade80',
+            icon: RotateCcw, color: dueToday > 0 ? COLORS.red : COLORS.green,
         },
     ];
 
@@ -109,14 +130,14 @@ export const StatistikyView = () => {
                     return (
                         <Paper key={i} elevation={0} sx={{
                             p: 2.5, borderRadius: 3, position: 'relative', overflow: 'hidden',
-                            background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)',
+                            background: COLORS.white02, border: `1px solid ${COLORS.white07}`,
                         }}>
                             <Box sx={{
                                 position: 'absolute', top: -20, right: -20, width: 80, height: 80,
                                 borderRadius: '50%', background: `${s.color}10`, pointerEvents: 'none',
                             }} />
                             <SIcon size={18} color={s.color} />
-                            <Typography fontSize={30} fontWeight={800} sx={{ mt: 1, color: 'white', lineHeight: 1 }}>
+                            <Typography fontSize={30} fontWeight={800} sx={{ mt: 1, color: COLORS.textPrimary, lineHeight: 1 }}>
                                 {s.val}
                             </Typography>
                             <Typography fontSize={11} color="text.secondary" sx={{ mt: 0.5 }}>{s.sub}</Typography>
@@ -128,53 +149,83 @@ export const StatistikyView = () => {
 
             {/* Activity chart + Due schedule */}
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, gap: 2, mb: 3 }}>
-                <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, background: COLORS.white02, border: `1px solid ${COLORS.white07}` }}>
                     <Typography fontSize={14} fontWeight={700} mb={0.5}>Aktivita za 30 dní</Typography>
-                    <Typography fontSize={11} color="text.secondary" mb={2}>Počet karet zopakovaných každý den</Typography>
+                    <Typography fontSize={11} color="text.secondary" mb={2}>Celkový počet zopakovaných karet, testů a poznámek</Typography>
                     <ResponsiveContainer width="100%" height={160}>
                         <AreaChart data={activityData}>
                             <defs>
                                 <linearGradient id="actGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#9055FF" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#9055FF" stopOpacity={0} />
+                                    <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                            <XAxis dataKey="date" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} interval={6} />
-                            <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} width={24} />
-                            <RTooltip {...CHART_TOOLTIP_STYLE} formatter={(v) => [`${v} karet`, 'Opakováno']} />
-                            <Area type="monotone" dataKey="count" stroke="#9055FF" strokeWidth={2} fill="url(#actGrad)" />
+                            <CartesianGrid strokeDasharray="3 3" stroke={COLORS.white05} />
+                            <XAxis dataKey="date" tick={{ fill: COLORS.white30, fontSize: 10 }} axisLine={false} tickLine={false} interval={6} />
+                            <YAxis tick={{ fill: COLORS.white30, fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} width={24} />
+                            <RTooltip 
+                                {...CHART_TOOLTIP_STYLE} 
+                                content={({ active, payload }) => {
+                                    if (active && payload && payload.length) {
+                                        const d = payload[0].payload;
+                                        return (
+                                            <Box sx={{ ...CHART_TOOLTIP_STYLE.contentStyle }}>
+                                                <Typography fontSize={10} color={COLORS.white40} mb={1} fontWeight={800} sx={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                                    {d.date}
+                                                </Typography>
+                                                <Stack gap={0.5}>
+                                                    <Typography fontSize={13} color={COLORS.textPrimary} fontWeight={700} mb={0.5}>Celkem: {d.count}</Typography>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: COLORS.accent }} />
+                                                        <Typography fontSize={12} color={COLORS.white70}>Kartičky: {d.cards}</Typography>
+                                                    </Box>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: COLORS.green }} />
+                                                        <Typography fontSize={12} color={COLORS.white70}>Testy: {d.tests}</Typography>
+                                                    </Box>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: COLORS.orange }} />
+                                                        <Typography fontSize={12} color={COLORS.white70}>Poznámky: {d.notes}</Typography>
+                                                    </Box>
+                                                </Stack>
+                                            </Box>
+                                        );
+                                    }
+                                    return null;
+                                }}
+                            />
+                            <Area type="monotone" dataKey="count" stroke={COLORS.primary} strokeWidth={2} fill="url(#actGrad)" />
                         </AreaChart>
                     </ResponsiveContainer>
                 </Paper>
 
-                <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, background: COLORS.white02, border: `1px solid ${COLORS.white07}` }}>
                     <Stack direction="row" alignItems="center" gap={1} mb={0.5}>
-                        <Calendar size={15} color="#4F9CF9" />
+                        <Calendar size={15} color={COLORS.blue} />
                         <Typography fontSize={14} fontWeight={700}>Plán opakování</Typography>
                     </Stack>
                     <Typography fontSize={11} color="text.secondary" mb={3}>Kolik karet tě čeká</Typography>
                     <Stack gap={2.5}>
                         {[
-                            { label: 'Dnes', count: dueToday, color: '#f87171' },
-                            { label: 'Zítra', count: dueTomorrow, color: '#fb923c' },
-                            { label: 'Tento týden', count: dueWeek, color: '#4ade80' },
+                            { label: 'Dnes', count: dueToday, color: COLORS.red },
+                            { label: 'Zítra', count: dueTomorrow, color: COLORS.orange },
+                            { label: 'Tento týden', count: dueWeek, color: COLORS.green },
                         ].map(({ label, count, color }) => (
                             <Stack key={label}>
                                 <Stack direction="row" justifyContent="space-between" mb={0.75}>
                                     <Typography fontSize={13} color="text.secondary">{label}</Typography>
-                                    <Typography fontSize={13} fontWeight={700} sx={{ color: count > 0 ? color : 'rgba(255,255,255,0.25)' }}>
+                                    <Typography fontSize={13} fontWeight={700} sx={{ color: count > 0 ? color : COLORS.white25 }}>
                                         {count} karet
                                     </Typography>
                                 </Stack>
                                 <LinearProgress variant="determinate"
                                     value={Math.min(100, (count / Math.max(1, cards.length)) * 200)}
-                                    sx={{ height: 5, borderRadius: 99, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { borderRadius: 99, background: color } }}
+                                    sx={{ height: 5, borderRadius: 99, bgcolor: COLORS.white05, '& .MuiLinearProgress-bar': { borderRadius: 99, background: color } }}
                                 />
                             </Stack>
                         ))}
                     </Stack>
-                    <Stack direction="row" justifyContent="space-between" sx={{ mt: 2.5, pt: 2, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                    <Stack direction="row" justifyContent="space-between" sx={{ mt: 2.5, pt: 2, borderTop: `1px solid ${COLORS.white06}` }}>
                         <Typography fontSize={11} color="text.secondary">Celkem v plánu</Typography>
                         <Typography fontSize={12} fontWeight={700}>{dueToday + dueTomorrow + dueWeek} karet</Typography>
                     </Stack>
@@ -184,7 +235,7 @@ export const StatistikyView = () => {
             {/* Course progress + Weak cards */}
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
                 {courseProgress.length > 0 && (
-                    <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                    <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, background: COLORS.white02, border: `1px solid ${COLORS.white07}` }}>
                         <Typography fontSize={14} fontWeight={700} mb={0.5}>Pokrok v kurzech</Typography>
                         <Typography fontSize={11} color="text.secondary" mb={2.5}>Průměrná úspěšnost karet</Typography>
                         <Stack gap={2.5}>
@@ -203,7 +254,7 @@ export const StatistikyView = () => {
                                         </Stack>
                                     </Stack>
                                     <LinearProgress variant="determinate" value={c.success}
-                                        sx={{ height: 6, borderRadius: 99, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { borderRadius: 99, background: c.color } }}
+                                        sx={{ height: 6, borderRadius: 99, bgcolor: COLORS.white05, '& .MuiLinearProgress-bar': { borderRadius: 99, background: c.color } }}
                                     />
                                 </Stack>
                             ))}
@@ -212,9 +263,9 @@ export const StatistikyView = () => {
                 )}
 
                 {weakCards.length > 0 && (
-                    <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                    <Paper elevation={0} sx={{ p: 2.5, borderRadius: 3, background: COLORS.white02, border: `1px solid ${COLORS.white07}` }}>
                         <Stack direction="row" alignItems="center" gap={1} mb={0.5}>
-                            <AlertCircle size={15} color="#f87171" />
+                            <AlertCircle size={15} color={COLORS.red} />
                             <Typography fontSize={14} fontWeight={700}>Nejslabší kartičky</Typography>
                         </Stack>
                         <Typography fontSize={11} color="text.secondary" mb={2}>Potřebují nejvíc procvičování</Typography>
@@ -232,7 +283,7 @@ export const StatistikyView = () => {
                                         }} />
                                     </Stack>
                                     <LinearProgress variant="determinate" value={card.successRate || 0}
-                                        sx={{ height: 3, borderRadius: 99, bgcolor: 'rgba(255,255,255,0.05)', '& .MuiLinearProgress-bar': { borderRadius: 99, background: srColor(card.successRate || 0) } }}
+                                        sx={{ height: 3, borderRadius: 99, bgcolor: COLORS.white05, '& .MuiLinearProgress-bar': { borderRadius: 99, background: srColor(card.successRate || 0) } }}
                                     />
                                     <Typography fontSize={10} color="text.secondary" sx={{ mt: 0.5 }}>
                                         {card.courseName} · {card.topicName}

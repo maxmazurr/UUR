@@ -23,6 +23,9 @@ export const orbFloat3Anim = keyframes`
   100% { transform: translate(0, 0) scale(1); }
 `;
 
+// --- APP CONSTANTS ---
+export const TOTAL_DAILY = 20; // daily flashcard goal
+
 // --- STYLE CONSTANTS ---
 export const HEAT_COLORS = {
     0: COLORS.glassBgLight,
@@ -121,7 +124,15 @@ export const DIFF_LABELS = { easy: 'Lehká', medium: 'Střední', hard: 'Těžk�
 
 // --- CHART CONFIG ---
 export const CHART_TOOLTIP_STYLE = {
-    contentStyle: { background: '#1a1b23', border: `1px solid ${COLORS.borderLight}`, borderRadius: 10, fontSize: 13 },
+    contentStyle: { 
+        background: 'rgba(15, 17, 23, 0.96)', 
+        border: `1px solid ${COLORS.borderLight}`, 
+        borderRadius: '12px', 
+        fontSize: 13,
+        padding: '10px 14px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(10px)'
+    },
     itemStyle: { color: COLORS.textPrimary },
     cursor: { stroke: COLORS.borderLight },
 };

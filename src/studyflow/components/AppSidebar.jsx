@@ -24,29 +24,29 @@ export const AppSidebar = ({ sidebarOpen, setSidebarOpen, activeNav, setActiveNa
             }}>
 
             {/* Profile area */}
-            <Stack sx={{ p: 2, borderBottom: `1px solid ${COLORS.white05}`, gap: 1.5, overflow: 'hidden', flexShrink: 0, transition: 'all 0.3s', ...(!sidebarOpen && { alignItems: 'center', justifyContent: 'center' }) }}>
+            <Stack sx={{ p: 2.5, borderBottom: `1px solid ${COLORS.white05}`, gap: 2, overflow: 'hidden', flexShrink: 0, transition: 'all 0.3s', ...(!sidebarOpen && { alignItems: 'center', justifyContent: 'center' }) }}>
                 <Stack direction="row" alignItems="center" sx={{ gap: sidebarOpen ? 1.5 : 0, justifyContent: sidebarOpen ? 'flex-start' : 'center' }}>
-                    <Box sx={{ width: 36, height: 36, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, background: `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.secondary})`, color: COLORS.textPrimary, flexShrink: 0, boxShadow: `0 4px 16px ${COLORS.primary}59` }}>
+                    <Box sx={{ width: 42, height: 42, borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 15, background: `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.secondary})`, color: 'white', flexShrink: 0, boxShadow: `0 8px 20px ${COLORS.primary}40` }}>
                         JN
                     </Box>
                     {sidebarOpen && (
                         <Stack sx={{ whiteSpace: 'nowrap', minWidth: 0 }}>
-                            <Typography sx={{ fontWeight: 600, fontSize: 13, color: COLORS.textPrimary }}>Jan Novák</Typography>
-                            <Stack direction="row" alignItems="center" gap={0.5} mt={0.25}>
-                                <Flame size={11} sx={{ color: COLORS.orange }} />
-                                <Typography sx={{ fontSize: 11, color: COLORS.white50 }}>32 dní v řadě</Typography>
+                            <Typography sx={{ fontWeight: 700, fontSize: 15, color: COLORS.textPrimary, fontFamily: '"Clash Display", sans-serif', letterSpacing: '-0.01em' }}>Jan Novák</Typography>
+                            <Stack direction="row" alignItems="center" gap={0.75} mt={0.5}>
+                                <Flame size={13} color={COLORS.orange} />
+                                <Typography sx={{ fontSize: 12, color: COLORS.white70, fontWeight: 600 }}>32 dní v řadě</Typography>
                             </Stack>
                         </Stack>
                     )}
                 </Stack>
                 {sidebarOpen && (
                     <Box sx={{ width: '100%' }}>
-                        <Stack direction="row" justifyContent="space-between" mb={0.5}>
-                            <Typography sx={{ fontSize: 10, color: COLORS.textDim, fontWeight: 500 }}>Dnešní cíl</Typography>
-                            <Typography sx={{ fontSize: 10, color: COLORS.white50, fontFamily: 'monospace' }}>{currentDone}/{TOTAL_DAILY}</Typography>
+                        <Stack direction="row" justifyContent="space-between" mb={1}>
+                            <Typography sx={{ fontSize: 12, color: COLORS.white70, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Dnešní cíl</Typography>
+                            <Typography sx={{ fontSize: 12, color: 'white', fontWeight: 800, fontFamily: 'monospace' }}>{currentDone}<Typography component="span" sx={{ color: COLORS.white40, fontSize: 10 }}>/{TOTAL_DAILY}</Typography></Typography>
                         </Stack>
                         <LinearProgress variant="determinate" value={dailyPercent}
-                            sx={{ height: 5, borderRadius: 99, bgcolor: COLORS.white05, '& .MuiLinearProgress-bar': { borderRadius: 99, background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`, transition: 'all 0.7s' } }} />
+                            sx={{ height: 6, borderRadius: 99, bgcolor: COLORS.white05, '& .MuiLinearProgress-bar': { borderRadius: 99, background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`, transition: 'all 0.7s', boxShadow: `0 0 10px ${COLORS.primary}40` } }} />
                     </Box>
                 )}
             </Stack>
@@ -81,7 +81,7 @@ export const AppSidebar = ({ sidebarOpen, setSidebarOpen, activeNav, setActiveNa
                                 <TreeItem key={c.id} title={c.name} color={c.color} courseId={c.id} topics={c.topics || []}
                                     topicStats={topicStats}
                                     onClick={() => { setOpenTopic(null); setActiveNav('Poznámky'); }}
-                                    onTopicClick={(topic) => setOpenTopic({ courseId: c.id, course: c, topic })}
+                                    onTopicClick={(topic, wizard) => setOpenTopic({ courseId: c.id, course: c, topic, wizard })}
                                     onRenameCourse={handleRenameCourse}
                                     onDeleteCourse={handleDeleteCourse}
                                     onRenameTopic={handleRenameTopic}

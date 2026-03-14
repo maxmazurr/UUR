@@ -30,6 +30,7 @@ export const COLORS = {
     textMuted: '#4A5270',
     textDim: 'rgba(255, 255, 255, 0.3)',
     textDimmer: 'rgba(255, 255, 255, 0.15)',
+    textLight: '#C8CDD8',
 
     // Borders
     border: 'rgba(255, 255, 255, 0.08)',

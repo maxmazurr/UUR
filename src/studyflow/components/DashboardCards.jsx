@@ -2,7 +2,7 @@
 import { Box, Stack, Typography, Button, Chip } from '@mui/material';
 import { Play, FileText, Layers, CheckSquare, ArrowRight, Flame, Lightbulb, Frown, Smile } from 'lucide-react';
 import { COLORS, GRADIENT_TEXT, bounceAnim } from '../../styles';
-import { FadeUp } from './Sidebar';
+import { FadeUp } from './SharedUI';
 
 export const HeroCard = ({ TOTAL_DAILY, currentDone, setZenCards, setShowZen, setOpenTopic, setActiveNav }) => (
     <Box component="section" sx={{
@@ -27,8 +27,8 @@ export const HeroCard = ({ TOTAL_DAILY, currentDone, setZenCards, setShowZen, se
                 </Typography>
             </FadeUp>
             <FadeUp delay={100}>
-                <Typography sx={{ fontSize: '1rem', color: COLORS.textSecondary, lineHeight: 1.625 }}>
-                    Máš před sebou skvělý den. Zbývá ti probrat <Typography component="strong" sx={{ color: COLORS.textPrimary, fontWeight: 500 }}>{TOTAL_DAILY - currentDone} kartiček</Typography> a mrknout na <Typography component="strong" sx={{ color: COLORS.textPrimary, fontWeight: 500 }}>2 nedokončené testy</Typography>. Pustíme se do toho?
+                <Typography sx={{ fontSize: '0.95rem', color: COLORS.textSecondary, lineHeight: 1.5, opacity: 0.9 }}>
+                    Zbývá ti <Typography component="span" sx={{ color: COLORS.textPrimary, fontWeight: 600 }}>{TOTAL_DAILY - currentDone} karet</Typography> a <Typography component="span" sx={{ color: COLORS.textPrimary, fontWeight: 600 }}>2 testy</Typography>.
                 </Typography>
             </FadeUp>
         </Stack>
@@ -37,7 +37,7 @@ export const HeroCard = ({ TOTAL_DAILY, currentDone, setZenCards, setShowZen, se
             <Typography sx={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: COLORS.accent, fontWeight: 700, mb: 0.5, pl: 0.5 }}>Rychlé akce</Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)', md: 'repeat(2, 1fr)' }, gap: { xs: 1, sm: 1.5 } }}>
                 {[
-                    { icon: <Play size={14} sx={{ fill: 'currentColor' }} />, label: 'Opakování', accent: COLORS.accent, action: () => { setZenCards(null); setShowZen(true); } },
+                    { icon: <Play size={14} style={{ fill: 'currentColor' }} />, label: 'Opakování', accent: COLORS.accent, action: () => { setZenCards(null); setShowZen(true); } },
                     { icon: <FileText size={14} />, label: 'Poznámka', accent: COLORS.blue, action: () => { setOpenTopic(null); setActiveNav('Poznámky'); } },
                     { icon: <Layers size={14} />, label: 'Kartička', accent: COLORS.green, action: () => { setOpenTopic(null); setActiveNav('Kartičky'); } },
                     { icon: <CheckSquare size={14} />, label: 'Nový test', accent: COLORS.orange, action: () => { setOpenTopic(null); setActiveNav('Testy'); } },
@@ -59,76 +59,91 @@ export const HeroCard = ({ TOTAL_DAILY, currentDone, setZenCards, setShowZen, se
 export const StatCards = ({ TOTAL_DAILY, currentDone, dailyPercent, tipFlipped, setTipFlipped, tipStatus, setTipStatus }) => (
     <Box component="section" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: { xs: 2, sm: '20px' } }}>
 
-        {/* Daily Goal */}
+        {/* Combined Goal & Streak Widget */}
         <FadeUp delay={80} sx={{
-            border: `1px solid ${COLORS.border}`, borderRadius: 4, p: '20px', position: 'relative',
-            overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center',
-            background: COLORS.bgSecondary, transition: 'all 0.3s',
+            gridColumn: { sm: 'span 2' },
+            border: `1px solid ${COLORS.border}`, borderRadius: 4, 
+            background: COLORS.bgSecondary, position: 'relative', overflow: 'hidden',
+            display: 'flex', flexDirection: { xs: 'column', md: 'row' },
+            transition: 'all 0.3s',
             '&:hover': { borderColor: COLORS.borderLight, transform: 'translateY(-4px)', boxShadow: '0 12px 40px rgba(0,0,0,0.3)' },
         }}>
-            <Typography sx={{ position: 'absolute', top: 20, left: 20, fontSize: '11px', fontWeight: 600, color: COLORS.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Dnešní cíl</Typography>
-            <Box sx={{ position: 'relative', width: 112, height: 112, mt: '20px' }}>
-                <svg viewBox="0 0 36 36" style={{ display: 'block', margin: '0 auto', width: '100%', height: '100%' }}>
-                    <path fill="none" stroke={COLORS.bgTertiary} strokeWidth="3.8" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    <path fill="none" strokeWidth="3.8" strokeLinecap="round" stroke="url(#goalGrad)" strokeDasharray={`${dailyPercent}, 100`} style={{ transition: 'stroke-dasharray 0.8s ease' }} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    <defs><linearGradient id="goalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor={COLORS.accent} /><stop offset="100%" stopColor={COLORS.green} />
-                    </linearGradient></defs>
-                </svg>
-                <Stack sx={{ position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center' }}>
-                    <Typography sx={{ fontSize: '1.5rem', fontFamily: 'monospace', fontWeight: 700, lineHeight: 1, color: COLORS.textPrimary }}>{currentDone}<Typography component="span" sx={{ color: COLORS.textSecondary, fontSize: '0.75rem' }}>/{TOTAL_DAILY}</Typography></Typography>
-                    <Typography sx={{ fontSize: '10px', color: COLORS.textMuted, mt: 0.25 }}>karet</Typography>
-                </Stack>
-            </Box>
-            <Stack direction="row" sx={{
-                width: '100%', mt: 2, borderRadius: 3, px: 2, py: 1.25,
-                justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer',
-                background: COLORS.white02, border: `1px solid ${COLORS.white05}`,
-                transition: 'background 0.2s', '&:hover': { background: COLORS.white05 },
-                '&:hover .arrow-icon': { transform: 'translateX(4px)' },
-            }}>
-                <Typography sx={{ fontSize: '0.75rem', color: COLORS.textSecondary }}>Zbývá <Typography component="strong" sx={{ color: COLORS.textPrimary }}>{TOTAL_DAILY - currentDone}</Typography></Typography>
-                <Box className="arrow-icon" sx={{ transition: 'transform 0.2s', display: 'flex' }}><ArrowRight size={14} sx={{ color: COLORS.accent }} /></Box>
-            </Stack>
-        </FadeUp>
-
-        {/* Streak */}
-        <FadeUp delay={140} sx={{
-            border: `1px solid ${COLORS.border}`, borderRadius: 4, p: 2, display: 'flex', flexDirection: 'column',
-            justifyContent: 'space-between', background: COLORS.bgSecondary, minWidth: 0, transition: 'all 0.3s',
-            '&:hover': { borderColor: COLORS.borderLight, transform: 'translateY(-4px)', boxShadow: '0 12px 40px rgba(0,0,0,0.3)' },
-        }}>
-            <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5, gap: 1, minWidth: 0 }}>
-                <Box sx={{ minWidth: 0 }}>
-                    <Stack direction="row" sx={{ fontSize: '10px', fontWeight: 600, color: COLORS.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', mb: 0.5, alignItems: 'center', gap: 0.5 }}>
-                        <Typography sx={{ fontSize: 'inherit', fontWeight: 'inherit', color: 'inherit', textTransform: 'inherit', letterSpacing: 'inherit' }}>Tvá série</Typography>
-                        <Flame size={12} sx={{ color: COLORS.orange, flexShrink: 0 }} />
+            {/* Subtle background decoration */}
+            <Box sx={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', opacity: 0.03, pointerEvents: 'none', background: `radial-gradient(circle at 100% 0%, ${COLORS.orange}, transparent)` }} />
+            
+            {/* Left Section: Daily Goal */}
+            <Stack sx={{ p: { xs: 2.5, sm: 3 }, flex: 1, borderRight: { md: `1px solid ${COLORS.white05}` }, alignItems: 'center', position: 'relative' }}>
+                <Typography sx={{ alignSelf: 'flex-start', fontSize: '14px', fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.15em', mb: 3 }}>Dnešní cíl</Typography>
+                
+                <Box sx={{ position: 'relative', width: 140, height: 140 }}>
+                    <Box component="svg" viewBox="0 0 36 36" sx={{ display: 'block', mx: 'auto', width: '100%', height: '100%' }}>
+                        <path fill="none" stroke={COLORS.bgTertiary} strokeWidth="3" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path fill="none" strokeWidth="3" strokeLinecap="round" stroke="url(#goalGradLarge)" strokeDasharray={`${dailyPercent}, 100`} style={{ transition: 'stroke-dasharray 0.8s ease' }} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <defs><linearGradient id="goalGradLarge" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor={COLORS.accent} /><stop offset="100%" stopColor={COLORS.green} />
+                        </linearGradient></defs>
+                    </Box>
+                    <Stack sx={{ position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center' }}>
+                        <Typography sx={{ fontSize: '2.25rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 800, lineHeight: 1, color: '#fff' }}>
+                            {currentDone}<Typography component="span" sx={{ color: COLORS.white50, fontSize: '0.95rem', fontWeight: 600 }}>/{TOTAL_DAILY}</Typography>
+                        </Typography>
+                        <Typography sx={{ fontSize: '11px', color: COLORS.white80, mt: 0.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>kartiček</Typography>
                     </Stack>
-                    <Typography sx={{ fontSize: '1.875rem', fontFamily: 'monospace', fontWeight: 700, color: COLORS.textPrimary, lineHeight: 1 }}>32 <Typography component="span" sx={{ fontSize: '1rem', color: COLORS.textSecondary, fontFamily: '"DM Sans", sans-serif', fontWeight: 500 }}>dní</Typography></Typography>
                 </Box>
-                <Chip label="Nejdelší: 45" size="small" sx={{ fontSize: '10px', fontWeight: 500, flexShrink: 0, whiteSpace: 'nowrap', height: 'auto', py: 0.5, px: 0.25, borderRadius: 2, background: `${COLORS.orange}14`, color: COLORS.orange, border: `1px solid ${COLORS.orange}26`, '& .MuiChip-label': { px: 0.75 } }} />
+
+                <Stack direction="row" sx={{
+                    width: '100%', mt: 3, borderRadius: 3, px: 2, py: 1.5,
+                    justifyContent: 'space-between', alignItems: 'center',
+                    background: COLORS.overlayDark, border: `1px solid ${COLORS.white05}`,
+                }}>
+                    <Typography sx={{ fontSize: '13px', color: COLORS.textSecondary }}>Zbývá ti <Typography component="strong" sx={{ color: COLORS.accent, fontWeight: 700 }}>{TOTAL_DAILY - currentDone}</Typography></Typography>
+                    <ArrowRight size={16} color={COLORS.accent} />
+                </Stack>
             </Stack>
-            <Box sx={{ minWidth: 0 }}>
-                <Typography sx={{ fontSize: '10px', color: COLORS.textMuted, mb: 1, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tento týden</Typography>
-                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px' }}>
-                    {['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'].map((d, i) => (
-                        <Stack key={i} sx={{ alignItems: 'center', gap: 0.5 }}>
-                            <Typography sx={{ fontSize: '9px', color: COLORS.textMuted, lineHeight: 1 }}>{d}</Typography>
-                            <Box sx={{
-                                width: '100%', aspectRatio: '1', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px',
-                                ...(i < 4
-                                    ? { background: `${COLORS.green}26`, color: COLORS.green }
-                                    : i === 4
-                                        ? { background: `${COLORS.orange}26`, color: COLORS.orange }
-                                        : { background: COLORS.white02, color: COLORS.textMuted }
-                                ),
-                            }}>
-                                {i < 4 ? <CheckSquare size={10} /> : i === 4 ? <Flame size={10} /> : '·'}
-                            </Box>
+
+            {/* Right Section: Streak & Week History */}
+            <Stack sx={{ p: { xs: 2.5, sm: 3 }, flex: { md: 1.4 }, justifyContent: 'space-between', bgcolor: 'rgba(255,255,255,0.01)' }}>
+                <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box>
+                        <Stack direction="row" sx={{ alignItems: 'center', gap: 1.5, mb: 2 }}>
+                            <Flame size={20} color={COLORS.orange} />
+                            <Typography sx={{ fontSize: '14px', fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Tvá série</Typography>
                         </Stack>
-                    ))}
+                        <Typography sx={{ fontSize: '3.5rem', fontFamily: '"Clash Display", sans-serif', fontWeight: 800, color: '#fff', lineHeight: 1, mb: 1 }}>
+                            32 <Typography component="span" sx={{ fontSize: '1.5rem', color: COLORS.white50, fontWeight: 600 }}>dní</Typography>
+                        </Typography>
+                    </Box>
+                    <Chip label="Rekord: 45 dní" size="small" sx={{ 
+                        fontSize: '11px', fontWeight: 700, background: `${COLORS.orange}1a`, color: COLORS.orange, 
+                        border: `1px solid ${COLORS.orange}33`, height: 26, borderRadius: 2
+                    }} />
+                </Stack>
+
+                <Box sx={{ mt: 3, pt: 2, borderTop: `1px solid ${COLORS.white05}` }}>
+                    <Typography sx={{ fontSize: '13px', color: COLORS.white70, mb: 2.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Aktivita tento týden</Typography>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: { xs: 1.5, sm: 2 } }}>
+                        {['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'].map((d, i) => (
+                            <Stack key={i} sx={{ alignItems: 'center', gap: 1.5 }}>
+                                <Typography sx={{ fontSize: '11px', color: COLORS.white60, fontWeight: 800 }}>{d}</Typography>
+                                <Box sx={{
+                                    width: '100%', aspectRatio: '1', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    transition: 'all 0.2s',
+                                    minHeight: 38,
+                                    ...(i < 4
+                                        ? { background: `linear-gradient(135deg, ${COLORS.green}33, ${COLORS.green}1a)`, border: `1px solid ${COLORS.green}4d`, color: COLORS.green }
+                                        : i === 4
+                                            ? { background: `linear-gradient(135deg, ${COLORS.orange}33, ${COLORS.orange}1a)`, border: `1px solid ${COLORS.orange}4d`, color: COLORS.orange }
+                                            : { background: COLORS.white02, border: `1px solid ${COLORS.white05}`, color: COLORS.textMuted }
+                                    ),
+                                    '&:hover': { transform: 'scale(1.1)', filter: 'brightness(1.2)' }
+                                }}>
+                                    {i < 4 ? <CheckSquare size={16} /> : i === 4 ? <Flame size={16} /> : null}
+                                </Box>
+                            </Stack>
+                        ))}
+                    </Box>
                 </Box>
-            </Box>
+            </Stack>
         </FadeUp>
 
         {/* Tip of the day (flip) */}

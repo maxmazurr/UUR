@@ -19,7 +19,11 @@
       "Bash(/tmp/verification_report.txt:*)",
       "Read(//tmp/**)",
       "Bash(cd \"C:\\\\Users\\\\mgrom\\\\Desktop\\\\UUR1.0\" && npm run lint 2>&1 | grep -v \"^$\")",
-      "Bash(find /c/Users/mgrom/Desktop/\"Новая папка \\(2\\)\"/UUR1.0/src -type f \\\\\\( -name \"*.jsx\" -o -name \"*.js\" -o -name \"*.css\" \\\\\\))"
+      "Bash(find /c/Users/mgrom/Desktop/\"Новая папка \\(2\\)\"/UUR1.0/src -type f \\\\\\( -name \"*.jsx\" -o -name \"*.js\" -o -name \"*.css\" \\\\\\))",
+      "Bash(del \"C:\\\\Users\\\\mgrom\\\\Desktop\\\\Новая папка \\(2\\)\\\\UUR1.0\\\\src\\\\studyflow\\\\components\\\\extensions\\\\ImageNode.jsx\")",
+      "Bash(cd \"C:\\\\Users\\\\mgrom\\\\Desktop\\\\Новая папка \\(2\\)\\\\UUR1.0\" && node -e \"console.log\\(require\\('./node_modules/@tiptap/core/package.json'\\).version\\)\")",
+      "Bash(ls \"C:\\\\Users\\\\mgrom\\\\Desktop\\\\Новая папка \\(2\\)\\\\UUR1.0\\\\node_modules\\\\prosemirror-state\" 2>/dev/null && echo \"exists\" || echo \"not found\")",
+      "Bash(ls \"C:\\\\Users\\\\mgrom\\\\Desktop\\\\Новая папка \\(2\\)\\\\UUR1.0\\\\node_modules\\\\@tiptap\\\\pm\" 2>/dev/null && echo \"exists\" || echo \"not found\")"
     ]
   }
 }

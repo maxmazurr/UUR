@@ -1,14 +1,12 @@
 import { useState, useRef, useCallback } from 'react';
-import { Box, Stack, Typography, Chip, Paper, Button, LinearProgress, Menu, MenuItem, ListItemIcon, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton } from '@mui/material';
-import { ChevronRight, FileText, ArrowRight, PenTool, Layers, Eye, CheckSquare, Plus, Pencil, Trash2, X, GripVertical, FolderPlus } from 'lucide-react';
-import { useOnScreen } from '../hooks';
-import { COURSE_COLORS, modalSlideInAnim } from '../constants';
+import { Box, Stack, Typography, Chip, Paper, Button, Menu, MenuItem, ListItemIcon, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton } from '@mui/material';
+import { ChevronRight, FileText, PenTool, Layers, CheckSquare, Plus, Pencil, Trash2, X, GripVertical, FolderPlus } from 'lucide-react';
+import { modalSlideInAnim } from '../constants';
 import { COLORS, DIALOG_PAPER_SX } from '../../styles';
-import { FadeUp, CardRow, WeakCard, FastAction } from './SharedUI';
 
 
 
-export const HoloCard = ({ item }) => {
+export const HoloCard = ({ item, onOpenCards, onOpenTests }) => {
     const ref = useRef(null);
     const [hStyle, setHStyle] = useState({});
 
@@ -18,61 +16,72 @@ export const HoloCard = ({ item }) => {
         const x = (e.clientX - r.left) / r.width;
         const y = (e.clientY - r.top) / r.height;
         setHStyle({
-            background: `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.06) 0%, transparent 60%)`,
-            transform: `perspective(800px) rotateY(${(x - 0.5) * 14}deg) rotateX(${(0.5 - y) * 14}deg) translateY(-6px) scale(1.02)`,
+            background: `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.08) 0%, transparent 60%)`,
+            transform: `perspective(1000px) rotateY(${(x - 0.5) * 10}deg) rotateX(${(0.5 - y) * 10}deg) translateY(-8px)`,
         });
     };
 
     const statItems = [
-        { Icon: FileText, val: item.notes, label: 'poznámek' },
-        { Icon: PenTool, val: item.tests, label: 'testů' },
-        { Icon: Layers, val: item.cards, label: 'kartiček' },
+        { Icon: Layers, val: item.cards, label: 'kartiček', dotColor: COLORS.accent },
+        { Icon: PenTool, val: item.tests, label: 'testů', dotColor: COLORS.green },
+        { Icon: FileText, val: item.notes, label: 'poznámek', dotColor: COLORS.orange },
     ];
 
     return (
         <Paper ref={ref} onMouseMove={move} onMouseLeave={() => setHStyle({})} elevation={0}
             sx={{
                 width: '100%', height: '100%', flexShrink: 0,
-                p: 'clamp(14px, 3vw, 24px)', borderRadius: 5, cursor: 'pointer',
+                p: 2.25, borderRadius: 5, cursor: 'pointer',
                 background: COLORS.white02, border: `1px solid ${COLORS.border}`,
                 backdropFilter: 'blur(16px)', position: 'relative', overflow: 'hidden',
                 transition: 'transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s',
-                boxShadow: hStyle.transform ? '0 20px 60px rgba(0,0,0,0.4)' : '0 4px 20px rgba(0,0,0,0.2)',
+                boxShadow: hStyle.transform ? '0 25px 50px -12px rgba(0,0,0,0.5)' : '0 10px 15px -3px rgba(0,0,0,0.1)',
                 display: 'flex', flexDirection: 'column',
                 ...hStyle,
                 '&:hover .holo-overlay': { opacity: 1 },
                 '&:hover .holo-overlay .holo-open-btn': { transform: 'translateY(0)' },
             }}
         >
-            <Box sx={{ width: 44, height: 44, borderRadius: 3, background: COLORS.white05, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+            <Box sx={{ 
+                width: 42, height: 42, borderRadius: 3, 
+                background: COLORS.white05, border: `1px solid ${COLORS.white10}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5,
+                fontSize: '22px'
+            }}>
                 {item.icon}
             </Box>
-            <Typography sx={{ fontSize: 13, color: item.clr, fontWeight: 500, mb: 0.5 }}>Složka</Typography>
-            <Typography variant="h6" sx={{ fontSize: 20, fontWeight: 600, mb: 2.5, fontFamily: 'Cabinet Grotesk, sans-serif', color: 'white' }}>{item.title}</Typography>
+            <Typography sx={{ fontSize: 11, color: item.clr, fontWeight: 800, mb: 0.5, opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Kurz</Typography>
+            <Typography variant="h6" sx={{ fontSize: 19, fontWeight: 700, mb: 2, fontFamily: 'Cabinet Grotesk, sans-serif', color: 'white', lineHeight: 1.2 }}>{item.title}</Typography>
 
-            <Stack gap={1.25} mb={3}>
+            <Stack gap={1} mb={2}>
                 {statItems.map((
-                    { Icon: ItemIcon, val, label }, i
+                    { Icon: ItemIcon, val, label, dotColor }, i
                 ) => (
                     <Stack key={i} direction="row" alignItems="center" gap={1.25}>
-                        <ItemIcon size={16} sx={{ color: COLORS.white30 }} />
-                        <Typography sx={{ fontSize: 14, color: COLORS.white60 }}>
-                            <Box component="strong" sx={{ color: 'white' }}>{val}</Box> {label}
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: dotColor }} />
+                        <Typography sx={{ fontSize: 13, fontWeight: 700, color: COLORS.white60, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <Box component="span" sx={{ color: 'white' }}>{val}</Box> {label}
                         </Typography>
                     </Stack>
                 ))}
             </Stack>
 
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 'auto', borderTop: `1px solid ${COLORS.white10}`, pt: 2 }}>
-                <Typography sx={{ fontSize: 13, color: COLORS.textSecondary }}>Naposledy otevřeno</Typography>
-                <Typography sx={{ fontSize: 13, color: COLORS.textSecondary }}>{item.date}</Typography>
+            <Stack direction="row" justifyContent="space-between" alignItems="flex-end" sx={{ mt: 'auto', borderTop: `1px solid ${COLORS.white05}`, pt: 2 }}>
+                <Typography sx={{ fontSize: 11, color: COLORS.white40, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Naposledy otevřeno</Typography>
+                <Typography sx={{ fontSize: 13, color: COLORS.white80, fontWeight: 700 }}>{item.date}</Typography>
             </Stack>
 
-            <Stack className="holo-overlay" alignItems="center" justifyContent="center"
-                sx={{ position: 'absolute', inset: 0, background: COLORS.overlay, backdropFilter: 'blur(4px)', opacity: 0, borderRadius: '24px', zIndex: 10, transition: 'opacity 0.3s' }}>
-                <Button className="holo-open-btn" variant="contained" endIcon={<ArrowRight size={16} />}
-                    sx={{ borderRadius: 99, px: 3, py: 1.25, fontWeight: 500, textTransform: 'none', background: 'white', color: 'black', transform: 'translateY(16px)', transition: 'all 0.3s', '&:hover': { background: 'white' } }}>
-                    Otevřít
+            <Stack className="holo-overlay" alignItems="center" justifyContent="center" gap={1.5}
+                sx={{ position: 'absolute', inset: 0, background: COLORS.overlay, backdropFilter: 'blur(8px)', opacity: 0, borderRadius: '24px', zIndex: 10, transition: 'opacity 0.3s', p: 2 }}>
+                <Button className="holo-open-btn" variant="contained" endIcon={<Layers size={14} />}
+                    onClick={(e) => { e.stopPropagation(); onOpenCards?.(); }}
+                    sx={{ borderRadius: 99, width: '90%', py: 1.1, fontWeight: 700, textTransform: 'none', background: 'white', color: 'black', transform: 'translateY(16px)', transition: 'all 0.3s', fontSize: '12px', '&:hover': { background: COLORS.white90 } }}>
+                    Kartičky
+                </Button>
+                <Button className="holo-open-btn" variant="contained" endIcon={<CheckSquare size={14} />}
+                    onClick={(e) => { e.stopPropagation(); onOpenTests?.(); }}
+                    sx={{ borderRadius: 99, width: '90%', py: 1.1, fontWeight: 700, textTransform: 'none', background: COLORS.white10, color: 'white', border: '1px solid rgba(255,255,255,0.4)', transform: 'translateY(16px)', transition: 'all 0.35s', fontSize: '12px', '&:hover': { background: COLORS.white20 } }}>
+                    Testy
                 </Button>
             </Stack>
         </Paper>
@@ -342,6 +351,15 @@ export const TreeItem = ({
                 anchorPosition={topicMenu ? { top: topicMenu.mouseY, left: topicMenu.mouseX } : undefined}
                 slotProps={{ paper: { sx: { ...DIALOG_PAPER_SX, minWidth: 160 } } }}
             >
+                <MenuItem onClick={() => { closeTopicMenu(); onTopicClick?.(activeTopicCtx, 'card'); }} sx={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', gap: 1.25 }}>
+                    <ListItemIcon sx={{ minWidth: 'auto!important', color: COLORS.blue }}><Plus size={14} /></ListItemIcon>
+                    <ListItemText primaryTypographyProps={{ fontSize: 13 }}>Nová kartička</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={() => { closeTopicMenu(); onTopicClick?.(activeTopicCtx, 'test'); }} sx={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', gap: 1.25 }}>
+                    <ListItemIcon sx={{ minWidth: 'auto!important', color: COLORS.purple }}><Plus size={14} /></ListItemIcon>
+                    <ListItemText primaryTypographyProps={{ fontSize: 13 }}>Nový test</ListItemText>
+                </MenuItem>
+                <Box sx={{ my: 0.5, borderTop: `1px solid ${COLORS.white05}` }} />
                 <MenuItem onClick={() => { closeTopicMenu(); setTopicRenameOpen(true); }} sx={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', gap: 1.25 }}>
                     <ListItemIcon sx={{ minWidth: 'auto!important', color: COLORS.accent }}><Pencil size={14} /></ListItemIcon>
                     <ListItemText primaryTypographyProps={{ fontSize: 13 }}>Přejmenovat</ListItemText>
@@ -373,39 +391,5 @@ export const TreeItem = ({
     );
 };
 
-export const ContinueCard = ({ color, course, topic, progress, cards, tests, time }) => (
-    <Paper elevation={0}
-        sx={{
-            minWidth: { xs: 210, sm: 250 }, flexShrink: 0, borderRadius: 4, p: { xs: 2, sm: 2.5 },
-            display: 'flex', flexDirection: 'column', cursor: 'pointer', position: 'relative', overflow: 'hidden',
-            background: COLORS.bgSecondary, border: `1px solid ${COLORS.borderSubtle}`,
-            transition: 'all 0.3s', '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 40px rgba(0,0,0,0.3)', borderColor: `${color}30` },
-            '&:hover .continue-footer': { opacity: 1, bottom: 0 },
-        }}>
-        <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 3, borderRadius: '16px 16px 0 0', background: `linear-gradient(90deg, ${color}, ${color}80)` }} />
-        <Typography sx={{ fontSize: 11, fontWeight: 600, mb: 0.25, mt: 0.5, textTransform: 'uppercase', letterSpacing: '0.05em', color }}>{course}</Typography>
-        <Typography sx={{ fontSize: 16, fontFamily: '"Clash Display", sans-serif', fontWeight: 600, color: 'white', mb: 1.5 }}>{topic}</Typography>
-
-        <Typography sx={{ fontSize: 11, color: COLORS.white35, mb: 1 }}>{time}</Typography>
-        <Stack direction="row" gap={1} mb={2}>
-            <Chip label={`${cards} kartiček`} size="small" sx={{ height: 20, fontSize: 10, fontWeight: 500, bgcolor: COLORS.white03 || 'rgba(255,255,255,0.03)', color: COLORS.white35 }} />
-            {tests > 0 && <Chip label={`${tests} test`} size="small" sx={{ height: 20, fontSize: 10, fontWeight: 500, bgcolor: COLORS.white03 || 'rgba(255,255,255,0.03)', color: COLORS.white35 }} />}
-        </Stack>
-
-        <Box sx={{ mt: 'auto' }}>
-            <Stack direction="row" justifyContent="space-between" mb={0.75}>
-                <Typography sx={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>Průchod</Typography>
-                <Typography sx={{ fontSize: 10, fontFamily: 'monospace', fontWeight: 600, color }}>{progress}%</Typography>
-            </Stack>
-            <LinearProgress variant="determinate" value={progress}
-                sx={{ height: 6, borderRadius: 99, bgcolor: 'rgba(255,255,255,0.04)', '& .MuiLinearProgress-bar': { borderRadius: 99, background: `linear-gradient(90deg, ${color}90, ${color})`, boxShadow: `0 0 8px ${color}30` } }} />
-        </Box>
-
-        <Stack className="continue-footer" alignItems="center" justifyContent="center"
-            sx={{ position: 'absolute', bottom: -40, left: 0, width: '100%', p: 1.5, opacity: 0, transition: 'all 0.3s', background: `linear-gradient(to top, ${COLORS.bgSecondary} 40%, transparent)` }}>
-            <Typography sx={{ fontSize: 11, fontWeight: 500, color, display: 'flex', alignItems: 'center', gap: 0.5 }}>Otevřít <ArrowRight size={11} /></Typography>
-        </Stack>
-    </Paper>
-);
 
 

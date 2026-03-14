@@ -14,7 +14,7 @@ const adaptCardForDetail = (card) => ({
     back: card.back || (card.options?.find(o => o.correct)?.text) || '',
     course: card.courseName || '',
     difficulty: card.difficulty || 'medium',
-    color: card.courseColor || '#7C6FF7',
+    color: card.courseColor || COLORS.accent,
     successRate: card.successRate || 0,
     totalReviews: card.totalReviews || 0,
     avgTime: '—',
@@ -26,11 +26,11 @@ const adaptCardForDetail = (card) => ({
     history: [],
 });
 
-export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
+export const TopicView = ({ course, topic, onBack, onOpenTopic, initialTab = 0, initialWizard = null }) => {
     const { courses, cards, setCards, getBacklinks } = useStudyFlow();
-    const [tab, setTab] = useState(0); // 0=Poznámky, 1=Kartičky, 2=Testy
-    const [showCardWizard, setShowCardWizard] = useState(false);
-    const [showTestWizard, setShowTestWizard] = useState(false);
+    const [tab, setTab] = useState(initialTab); // 0=Poznámky, 1=Kartičky, 2=Testy
+    const [showCardWizard, setShowCardWizard] = useState(initialWizard === 'card');
+    const [showTestWizard, setShowTestWizard] = useState(initialWizard === 'test');
     const [editingCard, setEditingCard] = useState(null);
     const [detailCard, setDetailCard] = useState(null);
 
@@ -257,10 +257,10 @@ export const TopicView = ({ course, topic, onBack, onOpenTopic }) => {
                 </Stack>
             )}
 
-            {showCardWizard && <CardWizard courses={[{ ...course, topics: [topic] }]} onSave={handleSaveCards} onClose={() => setShowCardWizard(false)} />}
-            {showTestWizard && <TestWizard courseId={course.id} courseName={course.name} courseColor={course.color} topicId={topic.id} topicName={topic.name} onSave={handleSaveTests} onClose={() => setShowTestWizard(false)} />}
-            {editingCard?.type === 'flashcard' && <CardWizard courses={[{ ...course, topics: [topic] }]} onSave={handleUpdateCard} onClose={() => setEditingCard(null)} editCard={editingCard} />}
-            {editingCard?.type === 'test' && <TestWizard courseId={course.id} courseName={course.name} courseColor={course.color} topicId={topic.id} topicName={topic.name} onSave={handleUpdateCard} onClose={() => setEditingCard(null)} editCard={editingCard} />}
+            {showCardWizard && <CardWizard open={true} courses={[{ ...course, topics: [topic] }]} onSave={handleSaveCards} onClose={() => setShowCardWizard(false)} />}
+            {showTestWizard && <TestWizard open={true} courseId={course.id} courseName={course.name} courseColor={course.color} topicId={topic.id} topicName={topic.name} onSave={handleSaveTests} onClose={() => setShowTestWizard(false)} />}
+            {editingCard?.type === 'flashcard' && <CardWizard open={true} courses={[{ ...course, topics: [topic] }]} onSave={handleUpdateCard} onClose={() => setEditingCard(null)} editCard={editingCard} />}
+            {editingCard?.type === 'test' && <TestWizard open={true} courseId={course.id} courseName={course.name} courseColor={course.color} topicId={topic.id} topicName={topic.name} onSave={handleUpdateCard} onClose={() => setEditingCard(null)} editCard={editingCard} />}
             {detailCard && <CardDetailModal card={adaptCardForDetail(detailCard)} onClose={() => setDetailCard(null)} />}
 
             {/* Backlinks section */}
